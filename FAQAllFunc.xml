@@ -1,0 +1,6165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2014.2 (Build 253U)" ts="2014-08-26 20:15:12">
+<Class name="FAQ.Error">
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeChanged>63413,70324.910682</TimeChanged>
+<TimeCreated>63391,41293.053811</TimeCreated>
+
+<Property name="EventDateTime">
+<Description>
+アプリケーションエラーを記録するクラス</Description>
+<Type>%TimeStamp</Type>
+</Property>
+
+<Property name="ErrorDescription">
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Method name="StoreErrorInformation">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pException:%Exception.General</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+	Try {
+	    set tError = ##class(FAQ.Error).%New()
+	    set tError.EventDateTime = $zdatetime($zts,3)
+	    set tStatus = pException.AsStatus()
+	    set tSC = $System.Status.DecomposeStatus(tStatus,.tErrorContent)
+	    set n = ""
+	    Do {
+		   set n= $order(tErrorContent(n))
+		   if n = "" quit
+		   set tErrorContent = $get(tErrorContent)_$get(tErrorContent(n))
+	    } while n='""
+
+	   set tError.ErrorDescription = $Get(tErrorContent)
+	   set tSC = tError.%Save()
+	} 
+	Catch tE {
+		Set ^FAQError(tError.EventDateTime)= $Get(tStatus)
+	}
+	quit tSC
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^FAQ.ErrorD</DataLocation>
+<DefaultData>ErrorDefaultData</DefaultData>
+<IdLocation>^FAQ.ErrorD</IdLocation>
+<IndexLocation>^FAQ.ErrorI</IndexLocation>
+<StreamLocation>^FAQ.ErrorS</StreamLocation>
+<Data name="ErrorDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>EventDateTime</Value>
+</Value>
+<Value name="3">
+<Value>ErrorDescription</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="FAQ.FAQApp">
+<Description>
+FAQ.FAQApp</Description>
+<Super>%ZEN.application</Super>
+<TimeChanged>61648,60944.604496</TimeChanged>
+<TimeCreated>61636,49507.17489</TimeCreated>
+
+<Parameter name="APPLICATIONNAME">
+<Description>
+これはこのアプリケーションの名前です。</Description>
+<Default>FAQApplication</Default>
+</Parameter>
+
+<Parameter name="HOMEPAGE">
+<Description>
+これはこのアプリケーションのメイン開始ページのURLです。</Description>
+<Default>FAQ.FAQTopicSearch.cls</Default>
+</Parameter>
+
+<XData name="Style">
+<Description>
+この Style ブロックにはアプリケーション全体のCSSスタイル定義が含まれます。</Description>
+<Data><![CDATA[
+<style type="text/css">
+</style>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="FAQ.FAQError">
+<Super>%ZEN.Component.page,%CSP.Error</Super>
+<TimeChanged>63403,59578.316115</TimeChanged>
+<TimeCreated>62378,63099.131192</TimeCreated>
+
+<Parameter name="APPLICATION">
+<Description>
+このページが属するアプリケーションのクラス名です。</Description>
+<Default>FAQ.FAQApp</Default>
+</Parameter>
+
+<Parameter name="PAGENAME">
+<Description>
+このページの表示名です。</Description>
+<Default>FAQErrorPage</Default>
+</Parameter>
+
+<Parameter name="DOMAIN">
+<Description>
+ローカライズで使用されるドメインです。</Description>
+</Parameter>
+
+<XData name="Style">
+<Description>
+この Style ブロックにはページ固有のCSSスタイル定義を記述します。</Description>
+<Data><![CDATA[
+<style type="text/css">
+
+/* style for title bar */
+#titlehgroup {
+	background: url('images/background/header-gradient.gif');
+	background-repeat: repeat-x;
+	padding: 5px;
+}
+
+#title1 {
+	color: #333399;
+	font-family:arial;
+	font-size: 33px;
+	font-weight: bold;
+	border: 0px;
+}
+
+#title2 {
+	color: #333399;
+	font-family:arial;
+	font-size: 25px;
+	border: 0px;
+}
+
+</style>
+]]></Data>
+</XData>
+
+<XData name="Contents">
+<Description>
+このXMLブロックはこのページのコンテンツを定義します。</Description>
+<XMLNamespace>http://www.intersystems.com/zen</XMLNamespace>
+<Data><![CDATA[
+<page xmlns="http://www.intersystems.com/zen" title="">
+<hgroup id="titlehgroup" width="100%">
+<vgroup id="titlevgroupl" width="30%">
+<html><a href="http://www.intersystems.co.jp"><img src="images/logo/intersys-ja-header-logo.gif" width="280" height="65" border="0" style="padding:0px 0px 0px 30px;"/></a></html>
+</vgroup>
+<vgroup width="40%">
+<html valign="bottom" align="center"><span id="title1">FAQ </span><span id="title2">(よくあるご質問)</span></html>
+</vgroup>
+<vgroup id="titlevgroupr" width="30%">
+</vgroup>
+</hgroup>
+<spacer height="30" />
+<hgroup align="center">
+<label id="msglabel" value="＊ページエラーが発生しました。恐れ入りますが、Top画面より再度検索を実行して下さい。＊"/>
+</hgroup>
+<spacer height="30"/>
+<hgroup align="center">
+<link id="totoppage" href="FAQ.FAQTopicSearch.cls" caption="InterSystems FAQトピック検索 Topへ" style=""/> 
+</hgroup>
+</page>
+]]></Data>
+</XData>
+
+<Parameter name="OTHERSTATICERRORPAGE">
+<Description><![CDATA[
+If the user with a new session goes to a page that causes an error before a license is obtained then in order to
+display the standard error page to report this error CSP would take out a license. To avoid this license use in
+this case the default behavior is to report a 'HTTP/1.1 404 Page not found' HTTP response. This does not require
+a license. You may change
+this by setting the class parameter OTHERSTATICERRORPAGE on the error page for this CSP application (or the default
+error page in the case of the application not found error). The values are:<ul>
+
+<li>"" - Return the 404 Page not found error (this is the default)</li>
+<li>1 - Will obtain a license and display the standard error page.</li>
+<li>Path to a static HTML page - Will display this static page, for example '/csp/samples/static.html' will use the
+stream server to serve up this static file. This does not require a license, but it will only work with static content.</li></ul>]]></Description>
+<Type>STRING</Type>
+<Default>1</Default>
+</Parameter>
+
+<Parameter name="PAGENOTFOUNDERRORPAGE">
+<Description><![CDATA[
+If the user with a new session goes to a page that is not present then in order to display the standard error page
+to report this error CSP would take out a license. To avoid this license use if the error is because the application
+is not found, or the page is not found, or the class does not exist, or the page is private and the token is not
+correct then the default behavior is to report a 'HTTP/1.1 404 Page not found' HTTP response. This does not require
+a license and it is standard behavior if you goto a page that is not present on a normal web server. You may change
+this by setting the class parameter PAGENOTFOUNDERRORPAGE on the error page for this CSP application (or the default
+error page in the case of the application not found error). The values are:<ul>
+
+<li>"" - Return the 404 Page not found error (this is the default)</li>
+<li>1 - Will obtain a license and display the standard error page.</li>
+<li>Path to a static HTML page - Will display this static page, for example '/csp/samples/static.html' will use the
+stream server to serve up this static file. This does not require a license, but it will only work with static content.</li></ul>]]></Description>
+<Type>STRING</Type>
+<Default>1</Default>
+</Parameter>
+
+<Method name="%OnPreHTTP">
+<Description><![CDATA[
+Zen page notification of an HTTP request. This method can be overwritten
+by subclasses.<br/>
+This is called <em>before</em> the standard Zen pre-HTTP processing occurs.]]></Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Boolean</ReturnType>
+<ServerOnly>1</ServerOnly>
+<Implementation><![CDATA[
+ Try {
+	    Set tSC=%request.Get("Error:ErrorCode")
+		if tSC'=1 {
+			if tSC = "" Quit
+			$$$ThrowStatus(tSC)
+		}
+	}
+		Catch tE {
+		set tSC = ##class(FAQ.Error).StoreErrorInformation(tE)
+        }
+	Quit $$$OK
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="FAQ.FAQTopicNotFound">
+<Super>%ZEN.Component.page</Super>
+<TimeChanged>62538,46653.196741</TimeChanged>
+<TimeCreated>62382,44876.749453</TimeCreated>
+
+<Parameter name="APPLICATION">
+<Description>
+このページが属するアプリケーションのクラス名です。</Description>
+<Default>FAQ.FAQApp</Default>
+</Parameter>
+
+<Parameter name="PAGENAME">
+<Description>
+このページの表示名です。</Description>
+<Default>InterSystems FAQ Not Found</Default>
+</Parameter>
+
+<Parameter name="DOMAIN">
+<Description>
+ローカライズで使用されるドメインです。</Description>
+</Parameter>
+
+<Parameter name="PAGETITLE">
+<Default>InterSystems FAQ Not Found</Default>
+</Parameter>
+
+<XData name="Style">
+<Description>
+この Style ブロックにはページ固有のCSSスタイル定義を記述します。</Description>
+<Data><![CDATA[
+<style type="text/css">
+
+/* style for title bar */
+#titlehgroup {
+	background: url('images/background/header-gradient.gif');
+	background-repeat: repeat-x;
+	padding: 5px;
+}
+
+#title1 {
+	color: #333399;
+	font-family:arial;
+	font-size: 33px;
+	font-weight: bold;
+	border: 0px;
+}
+
+#title2 {
+	color: #333399;
+	font-family:arial;
+	font-size: 25px;
+	border: 0px;
+}
+
+</style>
+]]></Data>
+</XData>
+
+<XData name="Contents">
+<Description>
+このXMLブロックはこのページのコンテンツを定義します。</Description>
+<XMLNamespace>http://www.intersystems.com/zen</XMLNamespace>
+<Data><![CDATA[
+<page xmlns="http://www.intersystems.com/zen" title="">
+<hgroup id="titlehgroup" width="100%">
+<vgroup id="titlevgroupl" width="30%">
+<html><a href="http://www.intersystems.co.jp"><img src="images/logo/intersys-ja-header-logo.gif" width="280" height="65" border="0" style="padding:0px 0px 0px 30px;"/></a></html>
+</vgroup>
+<vgroup width="40%">
+<html valign="bottom" align="center"><span id="title1">FAQ </span><span id="title2">(よくあるご質問)</span></html>
+</vgroup>
+<vgroup id="titlevgroupr" width="30%">
+</vgroup>
+</hgroup>
+<spacer height="30" />
+<hgroup align="center">
+<label id="msglabel" value="＊指定された番号のトピックは存在しません。＊"/>
+</hgroup>
+<spacer height="30"/>
+<hgroup align="center">
+<link id="totoppage" href="FAQ.FAQTopicSearch.cls" caption="InterSystems FAQトピック検索 Topへ" style=""/> 
+</hgroup>
+</page>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="FAQ.FAQTopicSearch">
+<Description>
+Created using the page template: タイトルページ</Description>
+<Super>%ZEN.Component.page</Super>
+<TimeChanged>63424,55875.642346</TimeChanged>
+<TimeCreated>61636,51413.567991</TimeCreated>
+
+<Parameter name="APPLICATION">
+<Description>
+このページが属するアプリケーションのクラス名です。</Description>
+<Default>FAQ.FAQApp</Default>
+</Parameter>
+
+<Parameter name="PAGENAME">
+<Description>
+このページの表示名です。</Description>
+<Default>InterSystems FAQ</Default>
+</Parameter>
+
+<Parameter name="DOMAIN">
+<Description>
+ローカライズで使用されるドメインです。</Description>
+</Parameter>
+
+<Parameter name="PAGETITLE">
+<Description><![CDATA[
+Optional. This is the default value for the page's
+<property>title</property>.]]></Description>
+<Default>InterSystems FAQ</Default>
+</Parameter>
+
+<Property name="SearchOption">
+<Type>%String</Type>
+</Property>
+
+<Property name="SearchId">
+<Type>%String</Type>
+</Property>
+
+<Property name="SearchKey">
+<Type>%String</Type>
+</Property>
+
+<Property name="SearchFacility">
+<Type>%String</Type>
+</Property>
+
+<XData name="Style">
+<Description>
+この Style ブロックにはページ固有のCSSスタイル定義が含まれます。</Description>
+<Data><![CDATA[
+<style type="text/css">
+
+body {
+	font-family:arial;
+}
+
+/* style for title bar */
+#titlehgroup {
+	background: url('images/background/header-gradient.gif');
+	background-repeat: repeat-x;
+	padding: 5px;
+}
+
+#title1 {
+	color: #333399;
+	font-family:arial;
+	font-size: 33px;
+	font-weight: bold;
+	border: 0px;
+}
+
+#title2 {
+	color: #333399;
+	font-family:arial;
+	font-size: 25px;
+	border: 0px;
+}
+
+#tabGroup {
+}
+
+a:active {
+	color:blue;
+	font-weight:bold;
+}
+
+.link {
+	font-size:14px;
+}
+
+.link:active {
+	color:blue;
+	font-weight:bold;
+}
+
+
+.expandoNode {
+	font-size:16px;
+	font-weight:bold;
+}
+
+.expandoNode a:hover {
+	color:black;
+	background:white;
+}
+
+.repeatingGroupSelected {
+	color:#990099;
+	background: #FFFFFF;
+	background-image:  ;
+}
+
+.checkboxCaption {
+	font-size:0.9em;
+}
+
+#newTopicsGroup td {
+	font-size:0.9em;
+}
+
+.searchLabel {
+	font-size:16px;
+}
+
+.text {
+	font-size:15px;
+}
+/* style for table pane */
+#TopicTitleTable {
+	border:1px solid #CCCCCC;
+	color:blue;
+}
+
+#TopicTitleTable th {
+	color: #30758C;
+	font-size: 16px;
+	font-family: arial;
+	font-weight: bold;
+	text-align: center;
+	padding: 2px;
+	overflow: hidden;
+	background: #D4E0EF;
+	background-image:  url('images/background/tblheader-gradient1.gif');;
+	border:1px solid #CCCCCC;
+	border-bottom-color:#30758C;
+}
+
+#TopicTitleTable td {
+	height:2.5em;
+	font-size: 15px;
+	color:#30468C;
+	border:1px solid #CCCCCC;
+}
+
+.tpEven {
+	background: #F5F8FC;
+	border:1px solid #CCCCCC;
+}
+
+.tpOdd {
+	background: #FFFFFF;
+	border:1px solid #CCCCCC;
+}
+
+#TopicTitleTable tr.tpSelected{
+	color:darkblue;
+	background:#FFFFCC;
+	background-image:none;
+}
+
+.noteStyle {
+	font-size:13px;
+}
+
+</style>
+]]></Data>
+</XData>
+
+<XData name="Contents">
+<Description>
+このXMLブロックはこのページのコンテンツを定義します。</Description>
+<XMLNamespace>http://www.intersystems.com/zen</XMLNamespace>
+<Data><![CDATA[
+<page id="page" xmlns="http://www.intersystems.com/zen" title="" height="100%">
+<hgroup id="titlehgroup" width="99.3%">
+<vgroup width="50%" align="left" height="100%">
+<html valign="bottom"><span id="title1" style="padding:0px 0px 0px 30px;">FAQ </span><span id="title2">(よくあるご質問)</span></html>
+</vgroup>
+<vgroup width="50%" align="center" height="100%">
+<html align="right" ><a href="http://www.intersystems.co.jp" ><img src="images/logo/intersys-ja-header-logo_trim.gif" width="200" height="50" border="0"/></a></html>
+</vgroup>
+</hgroup>
+<hgroup id="tabhgroup" align="center" width="100%">
+<vgroup id="tabvgroup" width="100%" height="100%">
+<!-- <tabGroup id="tabGroup" showTabBar="true" showBody="true" width="100%" height="650px" onshowTab="zenPage.setTabSize();"> -->
+<tabGroup id="tabGroup" showTabBar="true" showBody="true" width="100%" height="650px" >
+<tab id="hometab" caption="Home" align="center" width="100%" height="100%">
+<iframe id="homeframe" align="center" src="howto.CSP" width="99.8%" height="650px" scrolling="auto"/> 
+</tab>
+<tab id="gentab" caption="一般的質問" width="100%" height="100%">
+<iframe id="genframe" align="center" src="FAQ.FAQTopicSearchBodyGeneral.cls" width="99.8%" height="650px" scrolling="auto"/> 
+</tab>
+<tab id="cachetab" caption="Caché" width="100%" height="100%">
+<iframe id="cacheframe" align="center" src="FAQ.FAQTopicSearchBodyCache.cls" width="99.8%" height="650px" scrolling="auto"/> 
+</tab>
+<tab id="enstab" caption="Ensemble" width="100%" height="100%">
+<iframe id="ensframe" align="center" src="FAQ.FAQTopicSearchBodyEnsemble.cls" width="99.8%" height="650px" scrolling="auto"/> 
+</tab>
+</tabGroup>
+</vgroup>
+</hgroup>
+</page>
+]]></Data>
+</XData>
+
+<Method name="%OnAfterCreatePage">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set admin = $roles["FAQAdministrator"
+	set editor = $roles["FAQEditor"
+
+	//テスト用
+	//set admin=1
+	//set editor=1
+	
+	if admin=1 {
+		set %session.Data("roles")=1
+	}elseif editor=1{
+		set %session.Data("roles")=2
+	}else {
+		set %session.Data("roles")=0
+	}
+
+	if editor=1 {
+		set homeframe=..%GetComponentById("homeframe")
+		set homeframe.src= "howtoforeditors.csp"
+	}	
+		
+	//FAQアプリへのアクセスカウント
+	if $Get(%session.Data("Access"))="" {
+		set ^AccessCount = $Increment(^AccessCount)
+		set today=$zdate($h,8)
+		set ^AccessCount(today) = $Increment(^AccessCount(today))
+		set %session.Data("Access")=1
+	}
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="setTabSize">
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+	
+	var tabgroup = zenPage.getComponentById('tabGroup');
+
+	var winheight = zenGetWindowHeight();
+				
+	var titlehg = zenPage.getComponentById('titlehgroup');
+	var divtitlehg = titlehg.getEnclosingDiv();
+	var divtitleheight = divtitlehg.offsetHeight;
+	
+	var tabheight = winheight - divtitleheight - 30;
+	
+	var userAgent = window.navigator.userAgent.toLowerCase();
+    var appVersion = window.navigator.appVersion.toLowerCase();
+    
+
+	if (userAgent.indexOf('msie') != -1) {
+		if (appVersion.indexOf("msie 6.") != -1) {
+		   tabgroup.setProperty('height',tabheight);
+        } else if (appVersion.indexOf("msie 7.") != -1) {
+		   tabgroup.setProperty('height',tabheight);
+        } else if (appVersion.indexOf("msie 8.") != -1) {
+		   tabgroup.setProperty('height',tabheight);
+        } else {
+		   tabgroup.setBodySize(tabheight);
+        }
+	} else {
+		tabgroup.setBodySize(tabheight);
+	}
+]]></Implementation>
+</Method>
+
+<Method name="onlayoutHandler">
+<FormalSpec>load</FormalSpec>
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+	var tabgroup = zenPage.getComponentById('tabGroup');
+	var gentab = zenPage.getComponentById('gentab');
+	var cachetab = zenPage.getComponentById('cachetab');
+	var enstab = zenPage.getComponentById('enstab');
+	
+	var homeframe = zenPage.getComponentById('homeframe');
+	var genframe = zenPage.getComponentById('genframe');
+	var cacheframe = zenPage.getComponentById('cacheframe');
+	var ensframe = zenPage.getComponentById('ensframe');
+
+	// find height of window
+	var winheight = zenGetWindowHeight();
+				
+	// find divs for title & mainMenu
+	var titlehg = zenPage.getComponentById('titlehgroup');
+	var divtitlehg = titlehg.getEnclosingDiv();
+	var divtitleheight = divtitlehg.offsetHeight;
+	
+	var tabheight = winheight - divtitleheight - 30;
+	var frameheight = tabheight - 7;
+	
+	var userAgent = window.navigator.userAgent.toLowerCase();
+    var appVersion = window.navigator.appVersion.toLowerCase();
+
+	if (userAgent.indexOf('msie') != -1) {
+		if (appVersion.indexOf("msie 6.") != -1) {
+		   tabgroup.setProperty('height',tabheight);
+        } else if (appVersion.indexOf("msie 7.") != -1) {
+		   tabgroup.setProperty('height',tabheight);
+        } else if (appVersion.indexOf("msie 8.") != -1) {
+		   tabgroup.setProperty('height',tabheight);
+        } else {
+		   tabgroup.setBodySize(tabheight);
+        }
+	} else {
+		tabgroup.setBodySize(tabheight);
+	}
+	
+	homeframe.setProperty('height',frameheight);
+	genframe.setProperty('height',frameheight);
+	cacheframe.setProperty('height',frameheight);
+	ensframe.setProperty('height',frameheight);
+]]></Implementation>
+</Method>
+
+<Method name="onresizeHandler">
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[	zenPage.setTabSize();
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="FAQ.FAQTopicSearchBodyCache">
+<Super>FAQ.FAQTopicSearchBodyTemplate</Super>
+<TimeChanged>62780,58028.609986</TimeChanged>
+<TimeCreated>62766,53054.624572</TimeCreated>
+
+<Parameter name="APPLICATION">
+<Description>
+このページが属するアプリケーションのクラス名です。</Description>
+<Default>FAQ.FAQApp</Default>
+</Parameter>
+
+<Parameter name="PAGENAME">
+<Description>
+このページの表示名です。</Description>
+<Default>InterSystems FAQ</Default>
+</Parameter>
+
+<Parameter name="DOMAIN">
+<Description>
+ローカライズで使用されるドメインです。</Description>
+</Parameter>
+
+<XData name="Style">
+<Description>
+この Style ブロックにはページ固有のCSSスタイル定義を記述します。</Description>
+<Data><![CDATA[
+<style type="text/css">
+</style>
+]]></Data>
+</XData>
+
+<Property name="Product">
+<Type>%String</Type>
+<InitialExpression>2</InitialExpression>
+</Property>
+</Class>
+
+
+<Class name="FAQ.FAQTopicSearchBodyEnsemble">
+<Super>FAQ.FAQTopicSearchBodyTemplate</Super>
+<TimeChanged>62780,58050.414219</TimeChanged>
+<TimeCreated>62766,53068.092211</TimeCreated>
+
+<Parameter name="APPLICATION">
+<Description>
+このページが属するアプリケーションのクラス名です。</Description>
+<Default>FAQ.FAQApp</Default>
+</Parameter>
+
+<Parameter name="PAGENAME">
+<Description>
+このページの表示名です。</Description>
+<Default>InterSystems FAQ</Default>
+</Parameter>
+
+<Parameter name="DOMAIN">
+<Description>
+ローカライズで使用されるドメインです。</Description>
+</Parameter>
+
+<XData name="Style">
+<Description>
+この Style ブロックにはページ固有のCSSスタイル定義を記述します。</Description>
+<Data><![CDATA[
+<style type="text/css">
+</style>
+]]></Data>
+</XData>
+
+<Property name="Product">
+<Type>%String</Type>
+<InitialExpression>3</InitialExpression>
+</Property>
+</Class>
+
+
+<Class name="FAQ.FAQTopicSearchBodyGeneral">
+<Super>FAQ.FAQTopicSearchBodyTemplate</Super>
+<TimeChanged>62780,58039.958944</TimeChanged>
+<TimeCreated>62766,53094.304133</TimeCreated>
+
+<Parameter name="APPLICATION">
+<Description>
+このページが属するアプリケーションのクラス名です。</Description>
+<Default>FAQ.FAQApp</Default>
+</Parameter>
+
+<Parameter name="PAGENAME">
+<Description>
+このページの表示名です。</Description>
+<Default>InterSystems FAQ</Default>
+</Parameter>
+
+<Parameter name="DOMAIN">
+<Description>
+ローカライズで使用されるドメインです。</Description>
+</Parameter>
+
+<XData name="Style">
+<Description>
+この Style ブロックにはページ固有のCSSスタイル定義を記述します。</Description>
+<Data><![CDATA[
+<style type="text/css">
+</style>
+]]></Data>
+</XData>
+
+<Property name="Product">
+<Type>%String</Type>
+<InitialExpression>1</InitialExpression>
+</Property>
+</Class>
+
+
+<Class name="FAQ.FAQTopicSearchBodyTemplate">
+<Description>
+Created using the page template: タイトルページ</Description>
+<Abstract>1</Abstract>
+<IncludeCode>FAQ</IncludeCode>
+<Super>%ZEN.Component.page</Super>
+<TimeChanged>63425,62444.022405</TimeChanged>
+<TimeCreated>61636,51413.567991</TimeCreated>
+
+<Parameter name="APPLICATION">
+<Description>
+このページが属するアプリケーションのクラス名です。</Description>
+<Default>FAQ.FAQApp</Default>
+</Parameter>
+
+<Parameter name="PAGENAME">
+<Description>
+このページの表示名です。</Description>
+<Default>InterSystems FAQ</Default>
+</Parameter>
+
+<Parameter name="DOMAIN">
+<Description>
+ローカライズで使用されるドメインです。</Description>
+</Parameter>
+
+<Parameter name="PAGETITLE">
+<Description><![CDATA[
+Optional. This is the default value for the page's
+<property>title</property>.]]></Description>
+<Default>InterSystems FAQ</Default>
+</Parameter>
+
+<Property name="Product">
+<Type>%String</Type>
+</Property>
+
+<Property name="SearchOption">
+<Type>%String</Type>
+</Property>
+
+<Property name="SearchId">
+<Type>%String</Type>
+</Property>
+
+<Property name="SearchKey">
+<Type>%String</Type>
+</Property>
+
+<Property name="SearchFacility">
+<Type>%String</Type>
+</Property>
+
+<Property name="crosschecked">
+<Type>%Boolean</Type>
+</Property>
+
+<XData name="Style">
+<Description>
+この Style ブロックにはページ固有のCSSスタイル定義が含まれます。</Description>
+<Data><![CDATA[
+<style type="text/css">
+
+/* style for title bar */
+
+body {
+	font-family:arial;
+}
+
+a:active {
+	color:blue;
+	font-weight:bold;
+}
+
+.link {
+	font-size:14px;
+}
+
+.link:active {
+	color:blue;
+	font-weight:bold;
+}
+
+#LeftVgroup {
+	border-right:1px solid gray;
+}
+
+.expandoNode {
+	font-size:16px;
+	font-weight:bold;
+}
+
+.expandoNode a:hover {
+	color:black;
+	background:white;
+}
+
+.repeatingGroupSelected {
+	color:#990099;
+	background: #FFFFFF;
+	background-image:;
+}
+
+.checkboxCaption {
+	font-size:0.9em;
+}
+
+#newTopicsGroup td {
+	font-size:0.9em;
+}
+
+.searchLabel {
+	font-size:16px;
+}
+
+.text {
+	font-size:15px;
+}
+
+/* style for table pane */
+
+table.tpTable tbody tr {
+	height:1em;
+}
+
+#TopicTitleTable {
+	border:1px solid #CCCCCC;
+	color:blue;
+}
+
+#TopicTitleTable th {
+	color: #30758C;
+	font-size: 16px;
+	font-family: arial;
+	font-weight: bold;
+	text-align: center;
+	padding: 2px;
+	overflow: hidden;
+	background: #D4E0EF;
+	background-image:  url('images/background/tblheader-gradient1.gif');;
+	border:1px solid #CCCCCC;
+	border-bottom-color:#30758C;
+}
+
+#TopicTitleTable td {
+	height:2.5em;
+	font-size: 15px;
+	color:#30468C;
+	border:1px solid #CCCCCC;
+}
+
+
+.tpEven {
+	background: #F5F8FC;
+	border:1px solid #CCCCCC;
+}
+
+.tpOdd {
+	background: #FFFFFF;
+	border:1px solid #CCCCCC;
+}
+
+#TopicTitleTable tr.tpSelected{
+	color:darkblue;
+	background:#FFFFCC;
+	background-image:none;
+}
+
+.noteStyle {
+	font-size:13px;
+}
+
+</style>
+]]></Data>
+</XData>
+
+<XData name="Contents">
+<Description>
+このXMLブロックはこのページのコンテンツを定義します。</Description>
+<XMLNamespace>http://www.intersystems.com/zen</XMLNamespace>
+<Data><![CDATA[
+<page xmlns="http://www.intersystems.com/zen" title="">
+<hgroup id="WholeHgroup">
+<vgroup id="LeftVgroup" valign="top" width="25%" height="100%">
+<spacer height="20" />
+<hgroup height="50%" valign="top">
+<spacer width="20" />
+<expando id="frequentTree" caption="特に参照の多いトピック" expanded="true" childIndent="20px" remember="false" imageExpanded="images/treeminus.gif" imageContracted="images/treeplus.gif">
+<repeatingGroup id="frequentTopicsGroup"
+                  sql="SELECT Top 10 ID,Title,CASE WHEN LENGTH(Title)&lt;=25 then Title WHEN LENGTH(Title)&gt;25 then SUBSTR(Title,1,18)||'...' END As ShortTitle from KB.Topic where Completed=1 and Visible=1 and DeleteFlg!=1 and Product=? order by UsersVoice->RefFreq desc"
+                  >
+<parameter value="#(%page.Product)#" />
+<spacer height="10" />
+<hgroup>
+<link href="javascript:zenPage.openResult(#(%query.ID)#)" caption="#(%query.ShortTitle)#" title="#(%query.Title)#"/>
+</hgroup>
+</repeatingGroup>
+</expando>
+</hgroup>
+<spacer height="20" />
+<hgroup height="50%" valign="top">
+<spacer width="20" />
+<expando caption="最近追加されたトピック" expanded="true" childIndent="20px" remember="true" imageExpanded="images/treeminus.gif" imageContracted="images/treeplus.gif">
+<repeatingGroup id="newTopicsGroup"
+                  sql="SELECT ID,Title,CASE WHEN LENGTH(Title)&lt;=25 then Title WHEN LENGTH(Title)&gt;25 then SUBSTR(Title,1,18)||'...' END As ShortTitle from KB.Topic where Completed=1 and Visible=1 and DeleteFlg!=1 and IssueDate&gt;($Horolog-180) and Product=? order by IssueDate desc"
+                  >
+<parameter value="#(%page.Product)#" />
+<spacer height="10" />
+<hgroup>
+<link href="javascript:zenPage.openResult(#(%query.ID)#)" caption="#(%query.ShortTitle)#" title="#(%query.Title)#" />
+</hgroup>
+</repeatingGroup>
+</expando>
+</hgroup>
+<spacer height="20" />
+<!--
+<spacer height="20" />
+<hgroup height="30%" valign="top">
+<spacer width="20" />
+<expando caption="注目トピック" expanded="true" childIndent="20px" remember="true" imageExpanded="images/treeminus.gif" imageContracted="images/treeplus.gif">
+<repeatingGroup id="featureTopicsGroup"
+                  sql="SELECT ID,Title,CASE WHEN LENGTH(Title)&lt;=25 then Title WHEN LENGTH(Title)&gt;25 then SUBSTR(Title,1,18)||'...' END As ShortTitle 
+                       from KB.Topic where Completed=1 and Visible=1 and DeleteFlg!=1 and ID in (1,100,150)"
+                enclosingClass="repGroup" >
+<spacer height="10" />
+<hgroup>
+<link href="javascript:zenPage.openResult(#(%query.ID)#)" caption="#(%query.ShortTitle)#" title="#(%query.Title)#" enclosingClass="topicsLink"/>
+</hgroup>
+</repeatingGroup>
+</expando>
+</hgroup>
+-->
+</vgroup>
+<vgroup width="75%" valign="top" >
+<hgroup height="100">
+<spacer width="10" />
+<form>
+<hgroup label="*トピックID、または、キーワードで、トピックの検索ができます。*" labelStyle="color:olive; font-style:italic;">
+<vgroup>
+<spacer height="10" />
+<hgroup>
+<radioButton name="SearchOption" id="SearchOption" optionValue="tid" onchange="zenPage.searchOption();"/>
+<label id="IdLabel" value="トピックIDで検索：" enclosingClass="searchLabel" />
+<text name="SearchId" id="SearchId" size="5" title="検索ID(半角数字)を入力" onfocus="zenPage.autoCheck('tid');" onkeypress="zenPage.enterPress();" enclosingClass="searchTextBox"/>
+<spacer width="20" />
+<radioButton name="SearchOption" optionValue="keycate" onchange="zenPage.searchOption();"/>
+<label id="KeyWordLabel" value="キーワードで検索：" enclosingClass="searchLabel"/>
+<text name="SearchKey" id="SearchKey" size="30" maxlength="100" hint="*複数キーワード検索可*" hintStyle="color:dimgray;" title="検索キーワードを入力" onfocus="zenPage.autoCheck('keycate');" onkeypress="zenPage.enterPress();" enclosingClass="searchTextBox"/>
+<checkbox id="CrossSeachCheck" caption="全検索" label="" />
+</hgroup>
+</vgroup>
+<spacer width="30" />
+<vgroup valign="top">
+<image src="./images/button/Search.gif" onclick="zenPage.executeQuery();" onkeypress="zenPage.executeQuery();" valign="middle"/>
+</vgroup>
+</hgroup>
+</form>
+</hgroup>
+<hgroup height="70%">
+<vgroup valign="top">
+<hgroup>
+<spacer width="30" />
+<tableNavigator id="TableNavi" tablePaneId="TopicTitleTable" hidden="false"/>
+</hgroup>
+<hgroup width="95%">
+<spacer width="30" />
+<tablePane id="TopicTitleTable"
+	      OnCreateResultSet="CreateTitleRS"
+	      width="100%"
+          maxRows="1000"
+          pageSize="10"
+          bodyHeight="26"
+          useSnapshot="true"
+	      nowrap="false"
+          fixedHeaders="true"
+          extraColumnWidth="0"
+          showZebra="true"
+	      valueColumn="ID"
+	      initialExecute="true"
+	      hidden="false"
+	      ondblclick="zenPage.tableRowClick();"
+	      >
+<column colName="TopicID" width="10%" header="トピックID" title="項目名クリックでソート"/>
+<column colName="Facility" width="10%" header="カテゴリ" title="項目名クリックでソート"/>
+<column colName="Title" width="71%" header="タイトル" title="項目名クリックでソート" OnDrawCell="DrawTitleCell" seed=""/>
+<column colName="Version" width="10%" header="バージョン" title="項目名クリックでソート" />
+</tablePane>
+<spacer width="10" />
+</hgroup>
+<spacer height="10" />
+<hgroup id="NoteGroup" hidden="false" height="10%">
+<spacer width="35" />
+<vgroup>
+<label id="VersionNote" enclosingClass="noteStyle"
+	   value="※バージョン欄に記載のあるトピックは、記載のバージョン限定の内容です。記載の無いものについては、Caché5.1以降のバージョン全てが対象となります。"/>
+<spacer height="7" />
+<label id="ColTitleNote" enclosingClass="noteStyle"
+	   value="※列タイトルをクリックすると、その項目でソートされます。"/>
+</vgroup>
+</hgroup>
+<spacer height="10" />
+</vgroup>
+</hgroup>
+</vgroup>
+</hgroup>
+</page>
+]]></Data>
+</XData>
+
+<Method name="searchOption">
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+	var so=this.getComponentById('SearchOption');
+	var sovalue=so.getValue()
+	
+	if (sovalue=='tid') {
+		
+		var idlabel=this.getComponentById('IdLabel');
+		var idkey=this.getComponentById('SearchId');
+		idlabel.setProperty('enclosingStyle','color:black;');
+		idkey.setProperty('controlStyle','color:black;');
+
+		var keylabel=this.getComponentById('KeyWordLabel');
+		var keyword=this.getComponentById('SearchKey');
+		keylabel.setProperty('enclosingStyle','color:gray;');
+		keyword.setProperty('controlStyle','color:gray;');
+		keyword.setProperty('hintStyle','color:gray;');
+	
+	}else if (sovalue=='keycate') {
+		
+		var idlabel=this.getComponentById('IdLabel');
+		var idkey=this.getComponentById('SearchId');
+		idlabel.setProperty('enclosingStyle','color:gray;');
+		idkey.setProperty('controlStyle','color:gray;');
+		
+		var keylabel=this.getComponentById('KeyWordLabel');
+		var keyword=this.getComponentById('SearchKey');
+		keylabel.setProperty('enclosingStyle','color:black;');
+		keyword.setProperty('controlStyle','color:black;');
+		keyword.setProperty('hintStyle','color:dimgray;');
+		
+	}
+]]></Implementation>
+</Method>
+
+<Method name="autoCheck">
+<FormalSpec>option,chkval</FormalSpec>
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+
+	if (chkval==null || chkval==1) {
+		var so=this.getComponentById('SearchOption');
+		so.setProperty('value',option)
+		
+		this.searchOption();
+	}
+]]></Implementation>
+</Method>
+
+<Method name="enterPress">
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+	if(zenEvent.keyCode == 13) {
+		zenPage.executeQuery();
+	}
+]]></Implementation>
+</Method>
+
+<Method name="executeQuery">
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+	/*
+	var table=this.getComponentById('TopicTitleTable');
+	table.setProperty('hidden',0);
+	
+	var tnavi=this.getComponentById('TableNavi');
+	tnavi.setProperty('hidden',0);
+	
+	var notegrp=this.getComponentById('NoteGroup');
+	notegrp.setProperty('hidden',0);
+	*/
+	
+	var so=this.getComponentById('SearchOption');
+	var soval=so.getValue();
+	zenPage.setProperty('SearchOption',soval);
+
+	var idkey=this.getComponentById('SearchId');
+	var idval=idkey.getValue();
+	zenPage.setProperty('SearchId',idval);
+	
+	var key=this.getComponentById('SearchKey');
+	var keyval=key.getValue();
+	zenPage.setProperty('SearchKey',keyval);
+	
+	var crossSearch=this.getComponentById('CrossSeachCheck');
+	var crosschecked = crossSearch.getValue();
+	zenPage.setProperty('crosschecked',crosschecked);
+	
+	zen('TopicTitleTable').executeQuery();
+	
+	//var rowcnt=table.getProperty('rowCount');
+	//rowcnt = parseInt(rowcnt,10);
+	//zenPage.setProperty('RowCount',rowcnt);
+]]></Implementation>
+</Method>
+
+<Method name="CreateTitleRS">
+<FormalSpec>*pSC:%Status,pInfo:%ZEN.Auxiliary.QueryInfo</FormalSpec>
+<ReturnType>%ResultSet</ReturnType>
+<Implementation><![CDATA[
+	set pSC=$$$OK
+	
+	set admin = $roles["FAQEditor"
+	
+	set result = ##Class(%ResultSet).%New()
+	set cond=""
+	set keycond=""
+	set facicond=""
+	
+	set searchoption=%page.SearchOption
+	set searchid=%page.SearchId
+	set keylist=%page.SearchKey
+	set facilist=%page.SearchFacility
+	set crosssearch=%page.crosschecked
+	
+	//Select節
+	If crosssearch {
+		
+		// 全ての製品を選択するためにありえない（製品が100を超えることはないという想定）製品ID99を指定
+		// ORを使うと異常に遅くなるケースがあったため
+		
+	set sqlselect=" ID,TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where Product <>99"
+	}
+	Else {
+	set sqlselect=" ID,TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where Product="_..Product
+	}
+	//Guestユーザの参照共通条件のセット
+	set comcond="Completed=1 and Visible=1 and DeleteFlg!=1"
+
+
+	//SQL文の構築
+	
+	//全文検索条件のセット
+	if keylist '= "" {
+		set keycond = ..SetKeyCond(keylist)
+	}
+
+	//条件文の組み立て
+	
+	if searchoption="tid" {
+		if searchid'="" {
+			if ..Product=$$$General {
+				set cond=" and (TopicSubID='"_$translate($justify(searchid,3)," ","0")_"' or TopicID='"_searchid_"') "
+			}
+			else {
+				set cond=" and (TopicID='"_$translate($justify(searchid,$$$TopicDigitsNo)," ","0")_"' or ID='"_searchid_"') "
+			}
+		}
+	}elseif searchoption="keycate"{
+		if keycond'="" {
+			set cond="and "_keycond
+		}
+	}
+	
+	if admin'=1 {
+		if cond'="" {
+			set cond = cond_" and "_comcond
+		}else{
+			set cond = "and "_comcond
+		}
+	}
+	
+	if ..Product = $$$General {
+	  set orderclause=" order by TopicID"
+	}
+	Else {
+	  set orderclause=" order by ID"
+	}
+	
+	set sql="Select"_sqlselect_cond_orderclause
+			
+	Do result.Prepare(sql)
+
+	set pInfo.queryText=sql
+	
+	quit result
+]]></Implementation>
+</Method>
+
+<Method name="SetKeyCond">
+<FormalSpec>keylist:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	set keylist = $translate(keylist,"　"," ")   //全角スペース
+	set keylist = $translate(keylist,","," ")    //コンマ
+	set keylist = $translate(keylist,"、"," ")   //点
+	set keylen = $length(keylist," ")
+ 	
+ 	set keyno=0
+	for i=1:1:keylen{
+ 		set keyword = $piece(keylist," ",i) 
+ 		if keyword'= "" {
+	 		set keyno=keyno+1
+	 		set keyword(keyno) = keyword
+ 		}
+	}
+ 	 	
+ 	//キーワード5個まで全文検索実施	 
+	if keyno = 1 {
+ 		set keycond="(Description %Containsterm ('"_keyword(1)_"') or Title %Containsterm ('"_keyword(1)_"'))"
+	}
+	elseif keyno = 2 {
+		set keycond="(Description %Containsterm ('"_keyword(1)_"','"_keyword(2)_"') or Title %Containsterm ('"_keyword(1)_"','"_keyword(2)_"'))"
+ 	}
+	elseif keyno = 3 {
+ 		set keycond="(Description %Containsterm ('"_keyword(1)_"','"_keyword(2)_"','"_keyword(3)_"') or Title %Containsterm ('"_keyword(1)_"','"_keyword(2)_"','"_keyword(3)_"'))"
+	}
+	elseif keyno = 4 {
+ 		set keycond="(Description %Containsterm ('"_keyword(1)_"','"_keyword(2)_"','"_keyword(3)_"','"_keyword(4)_"') or Title %Containsterm ('"_keyword(1)_"','"_keyword(2)_"','"_keyword(3)_"','"_keyword(4)_"'))"
+	}
+	else {
+ 		set keycond="(Description %Containsterm ('"_keyword(1)_"','"_keyword(2)_"','"_keyword(3)_"','"_keyword(4)_"','"_keyword(5)_"') or Title %Containsterm ('"_keyword(1)_"','"_keyword(2)_"','"_keyword(3)_"','"_keyword(4)_"','"_keyword(5)_"'))"
+	}
+	
+	quit keycond
+]]></Implementation>
+</Method>
+
+<Method name="DrawTitleCell">
+<FormalSpec>pTable:%ZEN.Component.tablePane,pName:%String,pSeed:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+ 
+ 	set id = %query(pTable.valueColumn)
+ 	set pName=..EscapeHTML(%query(pName))
+ 	&html<<a href="javascript:zenPage.openResult(#(id)#)" >#(pName)#</a>>
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="tableRowClick">
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+	var table = this.getComponentById('TopicTitleTable');
+	var id = table.getProperty('value');
+	
+	var st =  zenPage.openResult(id);
+]]></Implementation>
+</Method>
+
+<Method name="openResult">
+<FormalSpec>id</FormalSpec>
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+	var url = 'result.CSP?DocNo='+id;
+  	
+    window.open(url,'TopicDescription'+id,'width=1000,height=600,left='+(window.screen.width-1000)/2+',top='+(window.screen.height-600)/2+',scrollbars=1');
+]]></Implementation>
+</Method>
+
+<Method name="showNewTopic">
+<FormalSpec>id</FormalSpec>
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+	var url = 'result.CSP?DocNo='+id
+  	
+    window.open(url,'TopicDescription'+id,'width=1000,height=600,left='+(window.screen.width-1000)/2+',top='+(window.screen.height-600)/2+',scrollbars=1');
+]]></Implementation>
+</Method>
+
+<Method name="openPrivateWindow">
+<FormalSpec>cspname</FormalSpec>
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+	var url = zenPage.SetURL(cspname);
+	 	
+    window.open(url,'','width=1000,height=600,left='+(window.screen.width-1000)/2+',top='+(window.screen.height-600)/2+',scrollbars=1');
+]]></Implementation>
+</Method>
+
+<Method name="SetURL">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>cspname</FormalSpec>
+<ReturnType>%String</ReturnType>
+<ZenMethod>1</ZenMethod>
+<Implementation><![CDATA[
+	set url = ..Link(cspname_".CSP")
+	
+	quit url
+]]></Implementation>
+</Method>
+
+<Method name="onloadHandler">
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+</Method>
+
+<Method name="onlayoutHandler">
+<FormalSpec>load</FormalSpec>
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+	var winheight = zenGetWindowHeight();
+	var leftvg = zenPage.getComponentById('LeftVgroup');
+	leftvg.setProperty('height',winheight);
+]]></Implementation>
+</Method>
+
+<Method name="onresizeHandler">
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+</Method>
+
+<UDLText name="T">
+<Content><![CDATA[
+// Parameter HTMLDTD As BOOLEAN = 1;
+
+]]></Content>
+</UDLText>
+
+<UDLText name="T">
+<Content><![CDATA[
+///                                 If true, draw an HTML Document Type Declaration at the start of this page.
+
+]]></Content>
+</UDLText>
+</Class>
+
+
+<Routine name="FAQ" type="INC" timestamp="63393,54653.290171"><![CDATA[
+#define General  1
+#define Cache    2
+#define Ensemble 3
+#define TopicDigitsNo 5
+]]></Routine>
+
+
+<Class name="FAQ.KeyWords">
+<Super>%Persistent</Super>
+<TimeChanged>62753,44902.027114</TimeChanged>
+<TimeCreated>62175,54512.683852</TimeCreated>
+
+<Property name="KeyWord">
+<Type>%String</Type>
+</Property>
+
+<Property name="TimeStamp">
+<Type>%String</Type>
+</Property>
+
+<Property name="SessionId">
+<Type>%String</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^FAQ.KeyWordsD</DataLocation>
+<DefaultData>KeyWordsDefaultData</DefaultData>
+<IdLocation>^FAQ.KeyWordsD</IdLocation>
+<IndexLocation>^FAQ.KeyWordsI</IndexLocation>
+<StreamLocation>^FAQ.KeyWordsS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="KeyWordsDefaultData">
+<Structure>listnode</Structure>
+<Subscript/>
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>KeyWord</Value>
+</Value>
+<Value name="3">
+<Value>TimeStamp</Value>
+</Value>
+<Value name="4">
+<Value>SessionId</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="FAQ.Test">
+<Super>%Base</Super>
+<TimeChanged>63396,63375.51527</TimeChanged>
+<TimeCreated>63392,49374.675309</TimeCreated>
+
+<Method name="ExceptionError">
+<Description>
+UnitTest用クラス</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+	Try {
+		set a = 10/0
+	}
+	Catch tE {
+		set tSC = ##class(FAQ.Error).StoreErrorInformation(tE)
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="CurrentTopicSubId">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+	set tSubID = ##class(KB.Topic).GetCurTopicSubID()
+	set tD = ##class(KB.Topic).DecrementTopicSubID()
+    Quit +tSubID
+]]></Implementation>
+</Method>
+
+<Method name="TopicId">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pId:%Integer</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+    Quit ##class(KB.Topic).ComputeTopicID(pId)
+]]></Implementation>
+</Method>
+
+<Method name="Reflink2">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pId1:%Integer,pId2:%Integer</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+	set tTopic1 = ##class(KB.Topic).%OpenId(pId1)
+	set tTopic1.RefTopic = pId2
+	set tSC =tTopic1.RefCheckLink(0)
+    set tRefTopic1 = tTopic1.RefTopic
+	set tTopic2 = ##class(KB.Topic).%OpenId(pId2)
+	set tRefTopic2 = tTopic2.RefTopic
+    Quit tRefTopic1_";"_tRefTopic2
+]]></Implementation>
+</Method>
+
+<Method name="Reflink3">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pId1:%Integer,pId2:%Integer,pId3:%Integer</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+	set tTopic1 = ##class(KB.Topic).%OpenId(pId1)
+	set tTopic1.RefTopic = pId2_","_pId3
+	set tSC =tTopic1.RefCheckLink(0)
+    set tRefTopic1 = tTopic1.RefTopic
+	set tTopic2 = ##class(KB.Topic).%OpenId(pId2)
+	set tRefTopic2 = tTopic2.RefTopic
+	set tTopic3 = ##class(KB.Topic).%OpenId(pId3)
+	set tRefTopic3 = tTopic3.RefTopic
+    Quit tRefTopic1_";"_tRefTopic2_";"_tRefTopic3
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Project name="FAQAllFunc" LastModified="2014-08-22 17:13:02.435974">
+  <Items>
+    <ProjectItem name="FAQ.Error" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQApp" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQError" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQTopicNotFound" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQTopicSearch" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQTopicSearchBodyCache" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQTopicSearchBodyEnsemble" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQTopicSearchBodyGeneral" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQTopicSearchBodyTemplate" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.INC" type="MAC"></ProjectItem>
+    <ProjectItem name="FAQ.KeyWords" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.Test" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.BitOperation" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Category" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Config" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Facility" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Platform" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Product" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Setup" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Text" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Topic" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.UpdateHistory" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.User" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.UsersVoice" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Utility" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Version" type="CLS"></ProjectItem>
+    <ProjectItem name="TestMe.test" type="CLS"></ProjectItem>
+    <ProjectItem name="Text.MecabJapanese2" type="CLS"></ProjectItem>
+    <ProjectItem name="Utility.MAC" type="MAC"></ProjectItem>
+    <ProjectItem name="bitutil.INC" type="MAC"></ProjectItem>
+    <ProjectItem name="csp/faq/images" type="DIR"></ProjectItem>
+    <ProjectItem name="csp/user/complete.CSP" type="CSP"></ProjectItem>
+    <ProjectItem name="csp/user/edit.CSP" type="CSP"></ProjectItem>
+    <ProjectItem name="csp/user/history.CSP" type="CSP"></ProjectItem>
+    <ProjectItem name="csp/user/howto.CSP" type="CSP"></ProjectItem>
+    <ProjectItem name="csp/user/howtoforeditors.csp" type="CSP"></ProjectItem>
+    <ProjectItem name="csp/user/images/logo/IntersystemsLogo.gif" type="CSP"></ProjectItem>
+    <ProjectItem name="csp/user/images/logo/cachecube.png" type="CSP"></ProjectItem>
+    <ProjectItem name="csp/user/images/logo/ensemblecube.png" type="CSP"></ProjectItem>
+    <ProjectItem name="csp/user/new.CSP" type="CSP"></ProjectItem>
+    <ProjectItem name="csp/user/result.CSP" type="CSP"></ProjectItem>
+    <ProjectItem name="csp/user/style.css" type="CSP"></ProjectItem>
+    <ProjectItem name="csp/user/styleedit.css" type="CSP"></ProjectItem>
+    <ProjectItem name="csp/user/stylehowto.css" type="CSP"></ProjectItem>
+  </Items>
+</Project>
+
+
+<Class name="KB.BitOperation">
+<IncludeCode>bitutil,%occInclude</IncludeCode>
+<TimeChanged>61047,42713</TimeChanged>
+<TimeCreated>60627,35144.721416</TimeCreated>
+
+<Method name="bitalloc">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>gn:%String,on:%Boolean,length:%Integer</FormalSpec>
+<Implementation><![CDATA[
+  Set chunk=(length-1)\$$$CHUNKSIZE,offset=length-(chunk*$$$CHUNKSIZE)
+  For i = 1:1:chunk {
+	 For j = 1:1:$$$CHUNKSIZE {
+		 Set $Bit(@gn@(i),j)=on
+	 }
+  }
+  For i = 1:1:offset {
+    Set $Bit(@gn@(chunk+1),i)=on
+  }
+]]></Implementation>
+</Method>
+
+<Method name="bitset">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>gn:%String,col:%Integer</FormalSpec>
+<Implementation><![CDATA[
+  //Cache SQLで使用するビットマップインデックスの1ビット目は使用していないため,1ずらす
+  set col = col + 1
+  Set chunk=(col-1)\$$$CHUNKSIZE,offset=col-(chunk*$$$CHUNKSIZE)
+  Set $Bit(@gn@(chunk+1),offset)=1
+]]></Implementation>
+</Method>
+
+<Method name="bitclear">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>gn:%String,col:%Integer</FormalSpec>
+<Implementation><![CDATA[
+  //Cache SQLで使用するビットマップインデックスの1ビット目は使用していないため,1ずらす
+   set col = col + 1	
+   Set chunk=(col-1)\$$$CHUNKSIZE,offset=col-(chunk*$$$CHUNKSIZE)
+   Set $Bit(@gn@(chunk+1),offset)=0
+]]></Implementation>
+</Method>
+
+<Method name="bitget">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>gn:%String,col:%Integer</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+  //Cache SQLで使用するビットマップインデックスの1ビット目は使用していないため,1ずらす
+ set col = col + 1
+ set $zt = "error"
+ Set chunk=(col-1)\$$$CHUNKSIZE,offset=col-(chunk*$$$CHUNKSIZE)
+ Quit $Bit(@gn@(chunk+1),offset)
+error	quit 0
+]]></Implementation>
+</Method>
+
+<Method name="bitcount">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>gn:%String,on:%Boolean=1</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+	Set chunk="",cnt=0
+	//chunkでループ
+	For  {
+		Set chunk=$Order(@gn@(chunk))
+		Quit:chunk=""
+		
+		Set cnt = cnt + $BITCOUNT((@gn@(chunk)),on)
+			
+ 
+		}
+		Quit cnt
+]]></Implementation>
+</Method>
+
+<Method name="bitand">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>gn1:%String,gn2:%String,result:%String</FormalSpec>
+<Implementation><![CDATA[
+	Set chunk=""
+	//chunkでループ
+	For  {
+		Set chunk=$Order(@gn1@(chunk))
+		Quit:chunk=""
+				
+		Set @result@(chunk)=$BITLOGIC(
+			(@gn1@(chunk))
+			&(@gn2@(chunk)))
+								
+		}
+]]></Implementation>
+</Method>
+
+<Method name="bitor">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>gn1:%String,gn2:%String,result:%String</FormalSpec>
+<Implementation><![CDATA[
+	Set chunk=""
+	//chunkでループ
+	For  {
+		Set chunk=$Order(@gn1@(chunk))
+		Quit:chunk=""
+				
+		Set @result@(chunk)=$BITLOGIC(
+			(@gn1@(chunk))
+			|(@gn2@(chunk)))
+								
+		}
+]]></Implementation>
+</Method>
+
+<Method name="bitnot">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>gn1:%String,result:%String</FormalSpec>
+<Implementation><![CDATA[
+	Set chunk=""
+	//chunkでループ
+	For  {
+		    Set chunk=$Order(@gn1@(chunk))
+		    Quit:chunk=""
+				
+		    Set @result@(chunk)=$BITLOGIC(
+			    ~(@gn1@(chunk)))
+			if chunk = 1 {
+				//先頭の1ビットは、かならず0
+				set $bit(@result@(chunk),1) = 0
+		    }
+								
+		}
+]]></Implementation>
+</Method>
+
+<Method name="bitandnot">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>gn1:%String,gn2:%String,result:%String</FormalSpec>
+<Implementation><![CDATA[
+	Set chunk=""
+	//chunkでループ
+	For  {
+		    Set chunk=$Order(@gn1@(chunk))
+		    Quit:chunk=""
+				
+		    Set @result@(chunk)=$BITLOGIC(
+			    @gn1@(chunk)&~(@gn2@(chunk)))
+			if chunk = 1 {
+				//先頭の1ビットは、かならず0
+				set $bit(@result@(chunk),1) = 0
+		    }
+								
+		}
+]]></Implementation>
+</Method>
+
+<Method name="bitfind">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>gn:%String,on:%Boolean,col:%Integer</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+    //Cache SQLで使用するビットマップインデックスの1ビット目は使用していないため,1ずらす
+	set col = col + 1
+    Set chunk=(col-1)\$$$CHUNKSIZE,offset=col-(chunk*$$$CHUNKSIZE)
+    //chunkでループ
+    Set start = chunk*$$$CHUNKSIZE
+    For  {
+	   Set chunk=$Order(@gn@(chunk))
+	   Quit:chunk=""							
+	   Set pos = $BITFIND(@gn@(chunk),on,offset)
+	   If pos=0 {
+		  Set offset = 0 	
+          Set start = start + $$$CHUNKSIZE
+	   }
+      Quit:pos
+	}
+	If chunk="" {
+		Set start = 0
+		Set pos = 0
+	}
+	Quit start+pos
+]]></Implementation>
+</Method>
+
+<UDLText name="T">
+<Content><![CDATA[
+// 引数1　bsgn　ビットスライス用インデックスグローバル参照　Cache SQLが生成する構造を想定
+
+]]></Content>
+</UDLText>
+
+<UDLText name="T">
+<Content><![CDATA[
+// 引数2　cdgn　計算条件用ビットマップグローバル
+
+]]></Content>
+</UDLText>
+
+<Method name="bitslicesum">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>bsgn:%String,cdgn:%String</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+	Set bitno="",sum = 0
+	//bitnoは、2進の桁数を表す
+	For  {
+		  Set bitno=$Order(@bsgn@(bitno))
+		  Quit:(bitno="-")||(bitno="N")||(bitno="Z")||(bitno="")
+		  // Cache SQLが生成するbitsliceインデックスには、-,N,Zを表現するbit列を別に持つ
+		  
+		  Set no = 2 ** (bitno - 1)		//桁数は飛び飛びになりうるので、この様に計算する
+		  Set chunk=""
+		  For {
+			Set chunk=$Order(@bsgn@(bitno,chunk))
+			Quit:chunk=""
+			set select = $bitlogic(@bsgn@(bitno,chunk)&@cdgn@(chunk))
+			set minus = $get(@bsgn@("-",chunk))
+			
+			// 全体を加算後、マイナス分を2倍して引く
+			
+			Set sum = sum + (no * ($bitcount(select,1) - (2*$bitcount($bitlogic(select&minus),1))))  
+		  }
+	} 	
+ 
+   Quit sum
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="KB.Category">
+<Description>
+情報区分</Description>
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeChanged>62794,62467.708268</TimeChanged>
+<TimeCreated>59953,67669.802222</TimeCreated>
+<Inheritance>right</Inheritance>
+
+<Property name="Description">
+<Description>
+説明</Description>
+<Type>%String</Type>
+<Parameter name="TRUNCATE" value="1"/>
+</Property>
+
+<Index name="DescriptionIndex">
+<Properties>Description</Properties>
+</Index>
+
+<Query name="QueryAll">
+<Type>%SQLQuery</Type>
+<SqlQuery>SELECT %ID FROM Category
+ ORDER BY %ID</SqlQuery>
+<Parameter name="CONTAINID" value="1"/>
+</Query>
+
+<Query name="ListDescription">
+<Type>%SQLQuery</Type>
+<SqlQuery>SELECT %ID,Description FROM Category</SqlQuery>
+<Parameter name="CONTAINID" value="1"/>
+</Query>
+
+<Method name="Init">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	Do ##class(KB.Category).%KillExtent()
+	&SQL(insert into KB.Category (Description) values ('技術情報'))
+	&SQL(insert into KB.Category (Description) values ('サンプルコード'))
+	&SQL(insert into KB.Category (Description) values ('制限事項'))
+	&SQL(insert into KB.Category (Description) values ('アラート'))
+	&SQL(insert into KB.Category (Description) values ('その他'))
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^KB.CategoryD</DataLocation>
+<DefaultData>CategoryDefaultData</DefaultData>
+<IdLocation>^KB.CategoryD</IdLocation>
+<IndexLocation>^KB.CategoryI</IndexLocation>
+<StreamLocation>^KB.CategoryS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="CategoryDefaultData">
+<Structure>listnode</Structure>
+<Subscript/>
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Description</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="KB.Config">
+<Description>
+構成情報</Description>
+<TimeChanged>62237,41667.372886</TimeChanged>
+<TimeCreated>59953,69516.676658</TimeCreated>
+
+<Method name="getWebServer">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("Web Server"))
+]]></Implementation>
+</Method>
+
+<Method name="getSMTPServer">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("SMTP Server"))
+]]></Implementation>
+</Method>
+
+<Method name="getMailSender">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("Mail Sender"))
+]]></Implementation>
+</Method>
+
+<Method name="getFTPDirectory">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("FTP Directory"))
+]]></Implementation>
+</Method>
+
+<Method name="getDirectorySeparator">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("Directory Separator"))
+]]></Implementation>
+</Method>
+
+<Method name="getAttachedFileName">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("Attached FileName"))
+]]></Implementation>
+</Method>
+
+<Method name="getStartYear">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("Start Year"))
+]]></Implementation>
+</Method>
+
+<Method name="setWebServer">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>server:%String</FormalSpec>
+<Implementation><![CDATA[	set ^Techinfo("Web Server") = server
+]]></Implementation>
+</Method>
+
+<Method name="setSMTPServer">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>server:%String</FormalSpec>
+<Implementation><![CDATA[	set ^Techinfo("SMTP Server") = server
+]]></Implementation>
+</Method>
+
+<Method name="setMailSender">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>sender:%String</FormalSpec>
+<Implementation><![CDATA[	set ^Techinfo("Mail Sender") = sender
+]]></Implementation>
+</Method>
+
+<Method name="setFTPDirectory">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>dir:%String</FormalSpec>
+<Implementation><![CDATA[	set ^Techinfo("FTP Directory") = dir
+]]></Implementation>
+</Method>
+
+<Method name="setDirectorySeparator">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>sep:%String</FormalSpec>
+<Implementation><![CDATA[	set ^Techinfo("Directory Separator") = sep
+]]></Implementation>
+</Method>
+
+<Method name="setAttachedFileName">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>afile:%String</FormalSpec>
+<Implementation><![CDATA[	set ^Techinfo("Attached FileName") = afile
+]]></Implementation>
+</Method>
+
+<Method name="setStartYear">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>year:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("Start Year") = year
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^KB.ConfigD</DataLocation>
+<DefaultData>ConfigDefaultData</DefaultData>
+<IdLocation>^KB.ConfigD</IdLocation>
+<IndexLocation>^KB.ConfigI</IndexLocation>
+<StreamLocation>^KB.ConfigS</StreamLocation>
+<Data name="ConfigDefaultData">
+<Structure>listnode</Structure>
+<Subscript/>
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>DirectorySeparator</Value>
+</Value>
+<Value name="3">
+<Value>FTPDirectory</Value>
+</Value>
+<Value name="4">
+<Value>MailSender</Value>
+</Value>
+<Value name="5">
+<Value>SMTPServer</Value>
+</Value>
+<Value name="6">
+<Value>WebServer</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="KB.Facility">
+<Description>
+機能区分</Description>
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeChanged>63392,60955.740931</TimeChanged>
+<TimeCreated>59953,67751.704155</TimeCreated>
+<Inheritance>right</Inheritance>
+
+<Property name="Description">
+<Description>
+説明</Description>
+<Type>%String</Type>
+<Parameter name="TRUNCATE" value="1"/>
+</Property>
+
+<Index name="DescriptionIndex">
+<Properties>Description</Properties>
+</Index>
+
+<Parameter name="XMLDEFAULTREFERENCE">
+<Default>ID</Default>
+</Parameter>
+
+<Query name="QueryAll">
+<Type>%SQLQuery</Type>
+<SqlQuery>SELECT %ID FROM Facility
+ ORDER BY %ID</SqlQuery>
+<Parameter name="CONTAINID" value="1"/>
+</Query>
+
+<Query name="ListDescription">
+<Type>%SQLQuery</Type>
+<SqlQuery>SELECT %ID,Description FROM Facility</SqlQuery>
+<Parameter name="CONTAINID" value="1"/>
+</Query>
+
+<Method name="Init">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	Do ##class(KB.Facility).%KillExtent()
+	&SQL(insert into KB.Facility (Description) values ('一般的質問'))
+	&SQL(insert into KB.Facility (Description) values ('Caché ObjectScript'))
+	&SQL(insert into KB.Facility (Description) values ('Object'))
+	&SQL(insert into KB.Facility (Description) values ('SQL'))
+	&SQL(insert into KB.Facility (Description) values ('CSP'))
+	&SQL(insert into KB.Facility (Description) values ('Java'))
+	&SQL(insert into KB.Facility (Description) values ('.NET'))
+	&SQL(insert into KB.Facility (Description) values ('言語バインディング'))
+	&SQL(insert into KB.Facility (Description) values ('XML'))
+	&SQL(insert into KB.Facility (Description) values ('Web Service'))
+	&SQL(insert into KB.Facility (Description) values ('システム'))
+	&SQL(insert into KB.Facility (Description) values ('その他'))
+	&SQL(insert into KB.Facility (Description) values ('Ensemble'))
+	&SQL(insert into KB.Facility (Description) values ('DeepSee'))
+	&SQL(insert into KB.Facility (Description) values ('iKnow'))
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^KB.FacilityD</DataLocation>
+<DefaultData>FacilityDefaultData</DefaultData>
+<IdLocation>^KB.FacilityD</IdLocation>
+<IndexLocation>^KB.FacilityI</IndexLocation>
+<StreamLocation>^KB.FacilityS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="FacilityDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Description</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="KB.Platform">
+<Description>
+稼動プラットフォーム</Description>
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeChanged>63392,61306.618965</TimeChanged>
+<TimeCreated>59953,67972.821434</TimeCreated>
+<Inheritance>right</Inheritance>
+
+<Property name="Name">
+<Description>
+プラットフォーム名</Description>
+<Type>%String</Type>
+<Parameter name="TRUNCATE" value="1"/>
+</Property>
+
+<Index name="NameIndex">
+<Properties>Name</Properties>
+</Index>
+
+<Query name="QueryAll">
+<Type>%SQLQuery</Type>
+<SqlQuery>SELECT %ID FROM Platform
+ ORDER BY %ID</SqlQuery>
+<Parameter name="CONTAINID" value="1"/>
+</Query>
+
+<Query name="ListDescription">
+<Type>%SQLQuery</Type>
+<SqlQuery>SELECT %ID,Name FROM Platform</SqlQuery>
+<Parameter name="CONTAINID" value="1"/>
+</Query>
+
+<Method name="Init">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	Do ##class(KB.Platform).%KillExtent()
+	&SQL(insert into KB.Platform (Name) values ('Windows'))
+	&SQL(insert into KB.Platform (Name) values ('Linux'))
+	&SQL(insert into KB.Platform (Name) values ('MAC OS X'))
+	&SQL(insert into KB.Platform (Name) values ('HP-UX'))
+	&SQL(insert into KB.Platform (Name) values ('Solaris'))
+	&SQL(insert into KB.Platform (Name) values ('AIX'))
+	&SQL(insert into KB.Platform (Name) values ('OpenVMS'))
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^KB.PlatformD</DataLocation>
+<DefaultData>PlatformDefaultData</DefaultData>
+<IdLocation>^KB.PlatformD</IdLocation>
+<IndexLocation>^KB.PlatformI</IndexLocation>
+<StreamLocation>^KB.PlatformS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="PlatformDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="KB.Product">
+<Description>
+情報区分</Description>
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeChanged>62882,42970</TimeChanged>
+<TimeCreated>59953,67669.802222</TimeCreated>
+<Inheritance>right</Inheritance>
+
+<Property name="ProductName">
+<Description>
+説明</Description>
+<Type>%String</Type>
+<Parameter name="TRUNCATE" value="1"/>
+</Property>
+
+<Index name="ProductNameIndex">
+<Properties>ProductName</Properties>
+</Index>
+
+<Query name="QueryAll">
+<Type>%SQLQuery</Type>
+<SqlQuery>SELECT %ID FROM Category
+ ORDER BY %ID</SqlQuery>
+<Parameter name="CONTAINID" value="1"/>
+</Query>
+
+<Query name="ListProduct">
+<Type>%SQLQuery</Type>
+<SqlQuery>SELECT %ID,ProductName FROM Product</SqlQuery>
+<Parameter name="CONTAINID" value="1"/>
+</Query>
+
+<Method name="Init">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	Do ##class(KB.Product).%KillExtent()
+	&SQL(insert into KB.Product (ProductName) values ('一般'))
+	&SQL(insert into KB.Product (ProductName) values ('Caché'))
+	&SQL(insert into KB.Product (ProductName) values ('Ensemble'))
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^KB.ProductD</DataLocation>
+<DefaultData>ProductDefaultData</DefaultData>
+<IdLocation>^KB.ProductD</IdLocation>
+<IndexLocation>^KB.ProductI</IndexLocation>
+<StreamLocation>^KB.ProductS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="ProductDefaultData">
+<Structure>listnode</Structure>
+<Subscript/>
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>ProductName</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="KB.Setup">
+<Description>
+</Description>
+<IncludeCode>%occInclude</IncludeCode>
+<TimeChanged>63396,60507.214562</TimeChanged>
+<TimeCreated>60910,3246.496269</TimeCreated>
+
+<Method name="createAccentTable">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	kill ^KB.accent
+	set ^KB.accent("é") = "&eacute;"
+	set ^KB.accent("à") = "&agrave;"
+	set ^KB.accent("è") = "&egrave;"
+	set ^KB.accent("ù") = "&ugrave;"
+	set ^KB.accent("â") = "&acirc;"
+	set ^KB.accent("ê") = "&ecirc;"
+	set ^KB.accent("î") = "&icirc;"
+	set ^KB.accent("ô") = "&ocirc;"
+	set ^KB.accent("û") = "&ucirc;"
+	set ^KB.accent("ë") = "&euml;"
+	set ^KB.accent("ï") = "&iuml;"
+	set ^KB.accent("ü") = "&uuml;"
+	set ^KB.accent("ç") = "&ccedil;"
+	set ^KB.accent("œ") = "&oelig;"
+	set ^KB.accent("æ") = "&aelig;"
+	set ^KB.accent("É") = "&Eacute;"
+	set ^KB.accent("À") = "&Agrave;"
+	set ^KB.accent("È") = "&Egrave;"
+	set ^KB.accent("Ù") = "&Ugrave;"
+	set ^KB.accent("Â") = "&Acirc;"
+	set ^KB.accent("Ê") = "&Ecirc;"
+	set ^KB.accent("Î") = "&Icirc;"
+	set ^KB.accent("Ô") = "&Ocirc;"
+	set ^KB.accent("Û") = "&Ucirc;"
+	set ^KB.accent("Ë") = "&Euml;"
+	set ^KB.accent("Ï") = "&Iuml;"
+	set ^KB.accent("Ü") = "&Uuml;"
+	set ^KB.accent("Ç") = "&Ccedil;"
+	set ^KB.accent("Œ") = "&OElig;"
+	set ^KB.accent("Æ") = "&AElig;"
+]]></Implementation>
+</Method>
+
+<Method name="setConfigParams">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	//運用パラメータ設定
+	do ##class(KB.Config).setDirectorySeparator("\")
+    //do ##class(KB.Config).setFTPDirectory("c:\InterSystems\Cache\CSP\KB\downloads")
+    do ##class(KB.Config).setFTPDirectory("D:\Cache200713\CSP\kb\downloads")
+    do ##class(KB.Config).setMailSender("jpnsup@intersystems.com")
+    do ##class(KB.Config).setSMTPServer("xxx.intersystems.com")
+    do ##class(KB.Config).setMailSender("jpnsup@intersystems.com")
+    do ##class(KB.Config).setStartYear("2003")
+]]></Implementation>
+</Method>
+
+<Method name="masterSetup">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	//マスタ初期化
+	do ##class(KB.Facility).Init()
+	do ##class(KB.Version).Init()
+	do ##class(KB.Platform).Init()
+	do ##class(KB.Category).Init()
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="attachedRebuild">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	//添付ファイル情報は、％FileBinaryObjectとして実装されているため、他環境からデータベースを
+	//移行してきた場合には、ファイル名のディレクトリ情報を調整する必要あり
+	set nooftopic = $get(^KB.TopicD)
+	set ftpdir = ##class(KB.Config).getFTPDirectory()
+	set sep = ##class(KB.Config).getDirectorySeparator()
+	for i = 1:1:nooftopic {
+		set toref = ##class(KB.Topic).%OpenId(i)
+		quit:'$isobject(toref)
+		set fileloc = toref.FileLoc
+		if fileloc'="" {
+			set filename = fileloc.Filename
+			set filename = $piece(filename,sep,$length(filename,sep))
+			set fileloc.Filename = ftpdir_sep_filename
+			set sts = toref.%Save()
+	        If $$$ISERR(sts) Do $system.OBJ.DisplayError(sts) Quit  
+		}
+	}
+]]></Implementation>
+</Method>
+
+<Method name="attachedRebuild2">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	//添付ファイル情報は、％FileBinaryObjectとして実装されているため、他環境からデータベースを
+	//移行してきた場合には、ファイル名のディレクトリ情報を調整する必要あり
+	// KB.Topic クラス変更に伴い修正 by A.Tanaka 2009/10/15
+	
+	set ftpdir = ##class(KB.Config).getFTPDirectory()
+	set sep = ##class(KB.Config).getDirectorySeparator()
+
+	Set rs=##class(%ResultSet).%New("KB.Topic:Extent")
+	Do rs.Execute()
+	while rs.Next() {
+		set i=rs.GetData(1)
+		set toref = ##class(KB.Topic).%OpenId(i)
+		quit:'$isobject(toref)
+		for filenum=1:1:3 {
+			set fileloc = $zobjproperty(toref,"FileLoc"_filenum)
+			if fileloc'="" {
+				set filename = fileloc.Filename
+				set filename = $piece(filename,sep,$length(filename,sep))
+				set fileloc.Filename = ftpdir_sep_i_sep_filename
+				set sts = toref.%Save()
+		        If $$$ISERR(sts) Do $system.OBJ.DisplayError(sts) Quit  
+			}
+		}
+	}
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="KB.Text">
+<Description>
+
+Class KB.Text Extends %Text.Japanese</Description>
+<Super>Text.MecabJapanese2</Super>
+<TimeChanged>63396,70677.581724</TimeChanged>
+<TimeCreated>60907,39023.035098</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+// Parameter NGRAMLEN = 10;
+
+]]></Content>
+</UDLText>
+
+<Parameter name="NGRAMLEN">
+<Description><![CDATA[
+<PARAMETER>NGRAMLEN</PARAMETER> is the maximum number of words that will be regarded as a single 
+search term.  When NGRAMLEN=2, two-word combinations will be added to any
+index, in addition to single words.  Consecutive words exclude noise words.
+]]></Description>
+<Default>5</Default>
+</Parameter>
+
+<Parameter name="CASEINSENSITIVE">
+<Default>1</Default>
+</Parameter>
+</Class>
+
+
+<Class name="KB.Topic">
+<Description>
+ナレッジベースのトピック</Description>
+<IncludeCode>FAQ</IncludeCode>
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeChanged>63419,57037.074108</TimeChanged>
+<TimeCreated>59953,69195.756844</TimeCreated>
+<Inheritance>right</Inheritance>
+
+<Property name="TopicID">
+<Description>
+Topic ID(FAQサイトへの表示ID)</Description>
+<Type>%String</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode> Set {TopicID}=##class(KB.Topic).ComputeTopicID({ID})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Property name="TopicSubID">
+<Type>%String</Type>
+</Property>
+
+<Property name="Product">
+<Description>
+一般的質問用のSubID
+製品名 (Caché/Ensemble/一般)</Description>
+<Type>KB.Product</Type>
+</Property>
+
+<Property name="Category">
+<Description>
+カテゴリ</Description>
+<Type>KB.Category</Type>
+</Property>
+
+<Property name="Facility">
+<Description>
+機能区分</Description>
+<Type>KB.Facility</Type>
+</Property>
+
+<Property name="Title">
+<Description>
+表題</Description>
+<Type>%Text</Type>
+<Required>1</Required>
+<Parameter name="COLLATION" value="SQLUPPER"/>
+<Parameter name="LANGUAGECLASS" value="KB.Text"/>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="Description">
+<Description>
+内容</Description>
+<Type>%Text</Type>
+<Parameter name="COLLATION" value="SQLUPPER"/>
+<Parameter name="LANGUAGECLASS" value="KB.Text"/>
+<Parameter name="MAXLEN" value="32000"/>
+</Property>
+
+<Property name="Platform">
+<Description>
+稼動プラットフォーム</Description>
+<Type>KB.Platform</Type>
+</Property>
+
+<Property name="StartVersion">
+<Description>
+適用開始バージョン</Description>
+<Type>KB.Version</Type>
+</Property>
+
+<Property name="EndVersion">
+<Description>
+適用終了バージョン</Description>
+<Type>KB.Version</Type>
+</Property>
+
+<Property name="VersionRange">
+<Description>
+適用バージョン範囲</Description>
+<Type>%String</Type>
+</Property>
+
+<Property name="FileFlg">
+<Description>
+添付ファイルフラグ</Description>
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="RefTopic">
+<Description>
+関連・参考トピック</Description>
+<Type>%String</Type>
+</Property>
+
+<Property name="Note">
+<Description>
+特記事項</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN"/>
+<Parameter name="XMLPROJECTION" value="NONE"/>
+</Property>
+
+<Property name="Completed">
+<Description>
+完成フラグ</Description>
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="Visible">
+<Description>
+公開フラグ</Description>
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="DeleteFlg">
+<Description>
+削除可フラグ</Description>
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="WebFlg">
+<Description>
+Web公開フラグ</Description>
+<Type>%String</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="IssueDate">
+<Description>
+作成日</Description>
+<Type>%Date</Type>
+</Property>
+
+<Property name="Creator">
+<Description>
+作成者</Description>
+<Type>%String</Type>
+<Parameter name="XMLPROJECTION" value="NONE"/>
+</Property>
+
+<Property name="UpdateDate">
+<Description>
+更新日付</Description>
+<Type>%Date</Type>
+</Property>
+
+<Property name="Updater">
+<Description>
+更新者</Description>
+<Type>%String</Type>
+<Parameter name="XMLPROJECTION" value="NONE"/>
+</Property>
+
+<Property name="OpenDate">
+<Description>
+Web公開日</Description>
+<Type>%Date</Type>
+</Property>
+
+<Property name="UsersVoice">
+<Description>
+参照回数・アンケート結果（※別グローバルにするためオブジェクト参照化）</Description>
+<Type>KB.UsersVoice</Type>
+</Property>
+
+<Property name="UpdateDetail">
+<Description>
+更新履歴</Description>
+<Type>KB.UpdateHistory</Type>
+<Cardinality>children</Cardinality>
+<Inverse>Topic</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<UDLText name="T">
+<Content><![CDATA[
+/*
+/// 添付ファイルフラグ1
+Property FileFlg1 As %Boolean [ InitialExpression = 0 ];
+
+/// 添付ファイル1
+Property FileLoc1 As %FileBinaryStream(XMLPROJECTION = "NONE");
+
+/// 添付ファイルフラグ2
+Property FileFlg2 As %Boolean [ InitialExpression = 0 ];
+
+/// 添付ファイル2
+Property FileLoc2 As %FileBinaryStream(XMLPROJECTION = "NONE");
+
+/// 添付ファイルフラグ3
+Property FileFlg3 As %Boolean [ InitialExpression = 0 ];
+
+/// 添付ファイル3
+Property FileLoc3 As %FileBinaryStream(XMLPROJECTION = "NONE");
+*/
+]]></Content>
+</UDLText>
+
+<Index name="IndexIssueDate">
+<Properties>IssueDate</Properties>
+</Index>
+
+<Index name="IndexTitle">
+<Properties>Title</Properties>
+</Index>
+
+<Parameter name="XMLDEFAULTREFERENCE">
+<Default>ID</Default>
+</Parameter>
+
+<Index name="IndexVisible">
+<Type>bitmap</Type>
+<Properties>Visible</Properties>
+</Index>
+
+<Index name="IndexCompleted">
+<Type>bitmap</Type>
+<Properties>Completed</Properties>
+</Index>
+
+<Index name="TitleIndex1">
+<Type>bitmap</Type>
+<Properties>Title(KEYS)</Properties>
+</Index>
+
+<Index name="DescriptionIndex1">
+<Type>bitmap</Type>
+<Properties>Description(KEYS)</Properties>
+</Index>
+
+<Index name="CreatorIndex">
+<Properties>Creator</Properties>
+</Index>
+
+<Method name="%OnBeforeSave">
+<Description><![CDATA[
+This callback method is invoked by the <METHOD>%Save</METHOD> method to 
+provide notification that the object is being saved. It is called before 
+any data is written to disk.
+
+<P><VAR>insert</VAR> will be set to 1 if this object is being saved for the first time.
+
+<P>If this method returns an error then the call to <METHOD>%Save</METHOD> will fail.]]></Description>
+<FormalSpec>pInsert:%Boolean</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<ServerOnly>1</ServerOnly>
+<Implementation><![CDATA[
+	
+	If pInsert {
+		If (..Product.%Id() = $$$General) {
+		   Set ..TopicSubID = ..GetCurTopicSubID()
+		}
+	}
+	
+	if $Get(%session)'=""{
+		if pInsert {
+			set ..Creator = $username
+			set ..IssueDate = +$h
+		}else {
+			if $Get(%session.Data("noAudit"))'=1{
+				set ..Updater = $username
+				set ..UpdateDate = +$h
+			}
+		}
+	}
+	
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="%OnAfterSave">
+<Description><![CDATA[
+This callback method is invoked by the <METHOD>%Save</METHOD> method to 
+provide notification that the object is being saved. It is called after 
+the object's data has been successfully written to disk.
+
+<P><VAR>insert</VAR> will be set to 1 if this object is being saved for the first time.
+
+<P>If this method returns an error then the call to <METHOD>%Save</METHOD> will fail.]]></Description>
+<FormalSpec>pInsert:%Boolean</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<ServerOnly>1</ServerOnly>
+<Implementation><![CDATA[
+	set tSC = $$$OK
+		
+	Try {
+	  if $Get(%session)'=""{
+		  if pInsert {
+    	      set message = "作成トピック "_..%Id()
+			  // tSC = 0 となることがあるが、エラーとしない
+        	  set tSC = $system.Security.Audit("FAQ","Create","Topic",message)
+			
+			  //UsersVoiceの新規セット
+   			  set uv=##class(UsersVoice).%New()
+			  set ..UsersVoice=uv
+			  set uv.TopicId=..%Id()
+		  }
+		  else {
+ 			  if %session.Data("noAudit")'=1 {
+				  set message = "修正トピック "_..%Id()
+				  // tSC = 0 となることがあるが、エラーとしない
+    	   		  set tSC = $system.Security.Audit("FAQ","Update","Topic",message)
+ 			  }
+		  }		
+	  }
+	}
+	Catch  tE {
+		Set tSC = $$$OK
+		Set tSC = tE.AsStatus()
+		set tSC2 = ##class(FAQ.Error).StoreErrorInformation(tE)
+	}
+	
+	If (tSC = 0) Set tSC = $$$OK  // tSC = 0はエラー扱いしない
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="GetCurTopicSubID">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	quit $translate($justify($Increment(^TopicSubID),3)," ","0")
+	//以下の方法は、アトミック性を確保できないことが判明
+	//&sql(select max(TopicSubID) into :tTopicSubID from KB.Topic )
+	//quit $Translate($justify($increment(tTopicSubID),3)," ",0)
+]]></Implementation>
+</Method>
+
+<Method name="ResetTopicSubID">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set tSC = $$$OK
+	&sql(select max(TopicSubID) into :tTopicSubID from KB.Topic )
+	set ^TopicSubID = tTopicSubID
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="DecrementTopicSubID">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $translate($justify($Increment(^TopicSubID,-1),3)," ","0")
+]]></Implementation>
+</Method>
+
+<Method name="ComputeTopicID">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pId:%Integer</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	Try {
+	  set tTopic = ##class(KB.Topic).%OpenId(pId,,.tSC)
+	  
+	  If $IsObject(tTopic) {
+		  If tTopic.Product.%Id() = $$$General {
+			  set tTopicId = $Translate("G-"_$Justify(tTopic.TopicSubID,3)," ",0)
+		  }
+		  Else {
+			  set tTopicId = $Translate($Justify(tTopic.%Id(),$$$TopicDigitsNo)," ",0)
+	      }
+	  }
+	  Else {
+		  $$$ThrowStatus(tSC)
+	  }
+	}
+	catch tE {
+		set tSC = ##class(FAQ.Error).StoreErrorInformation(tE)
+	}
+	quit $Get(tTopicId)
+]]></Implementation>
+</Method>
+
+<Method name="RefCheckLink">
+<FormalSpec>pDebug:%Boolean</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	//相互リンクを行う
+	
+	//リンクをはずすためにtopic番号を削除した場合については考慮していない
+	
+	set tSC = $$$OK
+	
+	Try {
+		
+		  set tId = ..%Id()
+
+		  set tRefTopic = ..RefTopic
+		  				
+		  if pDebug Write "tRefTopic = "_tRefTopic,!
+		  
+		  If '$Length(tRefTopic) Quit
+		  
+		  for i =1:1:$Length(tRefTopic,",") {
+			  set tOtherId = $Piece(tRefTopic,",",i)
+			  set tOther = ##class(KB.Topic).%OpenId(tOtherId,,.tSC)
+			  if '$IsObject(tOther) $$$ThrowStatus(tSC)
+			  set tFindFlag = 0
+	          set tORefTopic = tOther.RefTopic
+			  for j = 1:1:$Length(tORefTopic,",") {
+			    if tId = $Piece(tORefTopic,",",j) set tFindFlag = 1
+			  }
+			  if pDebug Write "tFindFlag = "_tFindFlag,!
+			  if 'tFindFlag {
+				  set tOther.RefTopic = tOther.RefTopic_","_tId
+				  if $extract(tOther.RefTopic) = "," Set tOther.RefTopic = $Extract(tOther.RefTopic,2,*)
+				  $$$THROWONERROR(tSC,tOther.%Save())
+			  }
+		  }
+	}
+	Catch tE {
+		Set tSC = tE.AsStatus()
+		set tSC2 = ##class(FAQ.Error).StoreErrorInformation(tE)
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="RemoveLink">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pId:%Integer,pOldValue:%String,pNewValue:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	//現在設定されているリンク番号を削除する場合、相手Topicからの参照をはずす必要がある
+		
+	set tSC = $$$OK	
+	
+	Try {
+		
+	    If (pOldValue = pNewValue) Quit
+	    
+	    If '$Length(pOldValue) Quit
+	    
+	    For i = 1:1:$Length(pOldValue,",") {
+		    Set tTopicId(i) = $Piece(pOldValue,",",i)
+		    Set tNoFindFlag = 1
+		    
+		    //古い値にはあるが新しい値に含まれないidを探す
+		    For j = 1:1:$Length(pNewValue,",") {
+			    Set tTopicId = $Piece(pNewValue,",",j)
+			    If (tTopicId(i) = tTopicId) Set tNoFindFlag = 0
+		    }
+		    
+		    If tNoFindFlag {
+			    Set tReferedTopic = ##class(KB.Topic).%OpenId(tTopicId(i))
+			    Set tRefTopic = tReferedTopic.RefTopic
+			    Set count = 0
+			    //新しい値からその削除されたidを取り除く
+			    For k = 1:1:$Length(tRefTopic,",") {
+				    Set tRefTopic2 = $Piece(tRefTopic,",",k)
+				    If (tRefTopic2 '= pId) {
+					    Set count = count + 1
+					    Set tNoRemovedRefTopic(count) = tRefTopic2
+				    }
+			    }
+			    
+			    For l = 1:1:count {
+				    Set tNewRefTopic = $Get(tNewRefTopic)_","_tNoRemovedRefTopic(l)
+			    }
+			    Set tReferedTopic.RefTopic = $extract($Get(tNewRefTopic),2,*)
+			    Set tSC = tReferedTopic.%Save()
+                Do tReferedTopic.%Reload()
+		    }
+	    }
+	}
+	Catch tE {
+		Set tSC = tE.AsStatus()
+		set tSC2 = ##class(FAQ.Error).StoreErrorInformation(tE)
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^KB.TopicD</DataLocation>
+<DefaultData>TopicDefaultData</DefaultData>
+<IdLocation>^KB.TopicD</IdLocation>
+<IndexLocation>^KB.TopicI</IndexLocation>
+<StreamLocation>^KB.TopicS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="TopicDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>TopicID</Value>
+</Value>
+<Value name="3">
+<Value>Category</Value>
+</Value>
+<Value name="4">
+<Value>Facility</Value>
+</Value>
+<Value name="5">
+<Value>Title</Value>
+</Value>
+<Value name="6">
+<Value>Description</Value>
+</Value>
+<Value name="7">
+<Value>Platform</Value>
+</Value>
+<Value name="8">
+<Value>Version</Value>
+</Value>
+<Value name="9">
+<Value>FileFlg1</Value>
+</Value>
+<Value name="10">
+<Value>FileLoc1</Value>
+</Value>
+<Value name="11">
+<Value>FileFlg2</Value>
+</Value>
+<Value name="12">
+<Value>FileLoc2</Value>
+</Value>
+<Value name="13">
+<Value>FileFlg3</Value>
+</Value>
+<Value name="14">
+<Value>FileLoc3</Value>
+</Value>
+<Value name="15">
+<Value>Note</Value>
+</Value>
+<Value name="16">
+<Value>Completed</Value>
+</Value>
+<Value name="17">
+<Value>Visible</Value>
+</Value>
+<Value name="18">
+<Value>DeleteFlg</Value>
+</Value>
+<Value name="19">
+<Value>IssueDate</Value>
+</Value>
+<Value name="20">
+<Value>Creator</Value>
+</Value>
+<Value name="21">
+<Value>UpdateDate</Value>
+</Value>
+<Value name="22">
+<Value>Updater</Value>
+</Value>
+<Value name="23">
+<Value>CheckFlg</Value>
+</Value>
+<Value name="24">
+<Value>WebFlg</Value>
+</Value>
+<Value name="25">
+<Value>OldTopicID</Value>
+</Value>
+<Value name="26">
+<Value>URL1</Value>
+</Value>
+<Value name="27">
+<Value>URL2</Value>
+</Value>
+<Value name="28">
+<Value>URL3</Value>
+</Value>
+<Value name="29">
+<Value>StartVersion</Value>
+</Value>
+<Value name="30">
+<Value>EndVersion</Value>
+</Value>
+<Value name="31">
+<Value>EnqYes</Value>
+</Value>
+<Value name="32">
+<Value>EnqNo</Value>
+</Value>
+<Value name="33">
+<Value>RefTopic</Value>
+</Value>
+<Value name="34">
+<Value>RefFreq</Value>
+</Value>
+<Value name="35">
+<Value>RefTopicM</Value>
+</Value>
+<Value name="36">
+<Value>FileFlg</Value>
+</Value>
+<Value name="37">
+<Value>TestVersion</Value>
+</Value>
+<Value name="38">
+<Value>VersionRange</Value>
+</Value>
+<Value name="39">
+<Value>OpenDate</Value>
+</Value>
+<Value name="40">
+<Value>Product</Value>
+</Value>
+<Value name="41">
+<Value>TopicSubID</Value>
+</Value>
+<Value name="42">
+<Value>UsersVoice</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="KB.UpdateHistory">
+<Super>%Persistent,%Populate,%XML.Adaptor</Super>
+<TimeChanged>62753,44903.219288</TimeChanged>
+<TimeCreated>62573,42752.648077</TimeCreated>
+
+<Property name="UpdateDate">
+<Type>%String</Type>
+</Property>
+
+<Property name="Updater">
+<Type>%String</Type>
+</Property>
+
+<Property name="Description">
+<Type>%String</Type>
+<Parameter name="MAXLEN"/>
+</Property>
+
+<Property name="Topic">
+<Type>KB.Topic</Type>
+<Cardinality>parent</Cardinality>
+<Inverse>UpdateDetail</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Index name="TopicIndex">
+<Properties>Topic</Properties>
+</Index>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^KB.UpdateHistoryD</DataLocation>
+<DefaultData>UpdateHistoryDefaultData</DefaultData>
+<IdLocation>^KB.UpdateHistoryD</IdLocation>
+<IndexLocation>^KB.UpdateHistoryI</IndexLocation>
+<StreamLocation>^KB.UpdateHistoryS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="UpdateHistoryDefaultData">
+<Structure>listnode</Structure>
+<Subscript/>
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>UpdateDate</Value>
+</Value>
+<Value name="3">
+<Value>Updater</Value>
+</Value>
+<Value name="4">
+<Value>Description</Value>
+</Value>
+<Value name="5">
+<Value>Topic</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="KB.User">
+<Description>
+ユーザ</Description>
+<Super>%Persistent</Super>
+<TimeChanged>62753,44902.91876</TimeChanged>
+<TimeCreated>59953,68354.675632</TimeCreated>
+
+<Property name="Name">
+<Description>
+ユーザ名</Description>
+<Type>%String</Type>
+<Parameter name="TRUNCATE" value="1"/>
+</Property>
+
+<Index name="NameIndex">
+<Properties>Name</Properties>
+</Index>
+
+<Property name="Password">
+<Description>
+パスワード</Description>
+<Type>%String</Type>
+<Private>1</Private>
+<Parameter name="TRUNCATE" value="1"/>
+</Property>
+
+<Method name="SetPassword">
+<Description>
+パスワードの暗号化</Description>
+<FormalSpec>New:%String,Old:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+	If (..Password '= "")
+	{
+		If (Old '= $System.Encryption.AESCBCDecrypt(..Password,"1234567890")) Quit 0
+	}
+	Set ..Password = $System.Encryption.AESCBCEncrypt(New,"1234567890")
+	Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="VerifyPassword">
+<Description>
+パスワードの復号化</Description>
+<FormalSpec>Arg1:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+	If Arg1 = $System.Encryption.AESCBCDecrypt(..Password,"1234567890") 
+	{Quit $$$OK}
+	Else {Quit 0}
+]]></Implementation>
+</Method>
+
+<Query name="ByName">
+<Type>%SQLQuery</Type>
+<FormalSpec>Name:%String</FormalSpec>
+<SqlQuery>SELECT %ID FROM "User"
+ WHERE (Name = :Name)</SqlQuery>
+<Parameter name="CONTAINID" value="1"/>
+</Query>
+
+<Property name="Simei">
+<Description>
+氏名</Description>
+<Type>%String</Type>
+<Parameter name="TRUNCATE" value="1"/>
+</Property>
+
+<Property name="Email">
+<Description>
+emailアドレス</Description>
+<Type>%String</Type>
+<Parameter name="TRUNCATE" value="1"/>
+</Property>
+
+<Property name="Company">
+<Description>
+会社名</Description>
+<Type>%String</Type>
+<Parameter name="TRUNCATE" value="1"/>
+</Property>
+
+<Property name="Dept">
+<Description>
+部署名</Description>
+<Type>%String</Type>
+<Parameter name="TRUNCATE" value="1"/>
+</Property>
+
+<Property name="Admin">
+<Description>
+管理者フラグ</Description>
+<Type>%Boolean</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^KB.UserD</DataLocation>
+<DefaultData>UserDefaultData</DefaultData>
+<IdLocation>^KB.UserD</IdLocation>
+<IndexLocation>^KB.UserI</IndexLocation>
+<StreamLocation>^KB.UserS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="UserDefaultData">
+<Structure>listnode</Structure>
+<Subscript/>
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>Password</Value>
+</Value>
+<Value name="4">
+<Value>Company</Value>
+</Value>
+<Value name="5">
+<Value>Dept</Value>
+</Value>
+<Value name="6">
+<Value>Email</Value>
+</Value>
+<Value name="7">
+<Value>Simei</Value>
+</Value>
+<Value name="8">
+<Value>Admin</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="KB.UsersVoice">
+<Super>%Persistent</Super>
+<TimeChanged>63015,58290.906797</TimeChanged>
+<TimeCreated>62888,45232.582968</TimeCreated>
+
+<Property name="TopicId">
+<Type>%String</Type>
+</Property>
+
+<Property name="RefFreq">
+<Type>%Integer</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="EnqYes">
+<Type>%Integer</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="EnqNo">
+<Type>%Integer</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^KB.UsersVoiceD</DataLocation>
+<DefaultData>UsersVoiceDefaultData</DefaultData>
+<IdLocation>^KB.UsersVoiceD</IdLocation>
+<IndexLocation>^KB.UsersVoiceI</IndexLocation>
+<StreamLocation>^KB.UsersVoiceS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="UsersVoiceDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>RefFreq</Value>
+</Value>
+<Value name="3">
+<Value>EnqYes</Value>
+</Value>
+<Value name="4">
+<Value>EnqNo</Value>
+</Value>
+<Value name="5">
+<Value>TopicId</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="KB.Utility">
+<Description>
+</Description>
+<IncludeCode>%occInclude</IncludeCode>
+<TimeChanged>63425,72889.900388</TimeChanged>
+<TimeCreated>60909,32153.415513</TimeCreated>
+
+<Method name="xmlImport">
+<Description>
+xmlインポートおよびxmlエクスポートでは、TopicのFileLoc(FileStream)は、交換できない</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>filename:%String</FormalSpec>
+<Implementation><![CDATA[
+	// Create a new XML Reader class
+	Set reader = ##class(%XML.Reader).%New()
+	// Begin processing of the XML input
+	Set sc=reader.OpenFile(filename)
+	If $$$ISERR(sc) Do $system.OBJ.DisplayError(sc) Quit  
+	// Associate a class name with the XML element name
+	Do reader.Correlate("Topic","KB.Topic")
+	// read KB.Topic objects from xml file
+	Set Count=0
+	While reader.Next(.kb,.sc) {
+		Set Count = Count + 1
+	    Set sc=kb.%Save()
+	    If $$$ISERR(sc) Do $system.OBJ.DisplayError(sc) Quit  
+	}
+	If $$$ISERR(sc) Do $system.OBJ.DisplayError(sc) Quit
+]]></Implementation>
+</Method>
+
+<Method name="ExecxmlImport">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>dir:%String</FormalSpec>
+<Implementation><![CDATA[
+	set fileInfors = ##class(%ResultSet).%New("%File:FileSet")
+	set count = 0
+	set dirname=^Techinfo("XmlExport Directory")_"\"_dir
+	
+	do fileInfors.Execute(dirname)
+	while(fileInfors.Next()) {
+		set filename = fileInfors.GetData(1)
+		set file = $Piece(filename,"\",$Length(filename,"\"))
+		if ($Piece(filename,".",2)="xml") {
+			do ..xmlImport(filename)
+			set count = count + 1
+		}
+	}
+
+	write count," topic(s) Loaded",!
+]]></Implementation>
+</Method>
+
+<Method name="xmlExport">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>id:%String,fileName:%String</FormalSpec>
+<Implementation><![CDATA[
+	set writer=##class(%XML.Writer).%New()
+	set sc = writer.OutputToFile(fileName)
+	If $$$ISERR(sc) Do $system.OBJ.DisplayError(sc) Quit
+	set sc=writer.RootElement("KBTopic")
+	If $$$ISERR(sc) Do $system.OBJ.DisplayError(sc) Quit
+	set tp=##class(KB.Topic).%OpenId(id)
+	set writer.ReferencesInline = 1
+	set writer.Charset="UTF-8"
+	set writer.Format="encoded"
+	set sc=writer.Object(tp,"Topic")
+	If $$$ISERR(sc) Do $system.OBJ.DisplayError(sc) Quit
+	set sc=writer.EndRootElement()
+	If $$$ISERR(sc) Do $system.OBJ.DisplayError(sc) Quit
+]]></Implementation>
+</Method>
+
+<Method name="ExecxmlExport">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>startid,endid</FormalSpec>
+<Implementation><![CDATA[
+	
+	set exportdir=^Techinfo("XmlExport Directory")_"\"_$zdate($h,8)
+	
+	set st1=##class(%File).DirectoryExists(exportdir)
+	if st1=0 {
+		set st2 = ##class(%File).CreateDirectory(exportdir)
+	}
+	
+	set expcount=0
+	
+	for id=startid:1:endid {
+		set tp=##class(KB.Topic).%OpenId(id)
+		if tp="" quit 
+		
+		set filename=exportdir_"\Topic"_id_".xml"
+		do ..xmlExport(id,filename)
+		w filename,!
+		set expcount=expcount+1
+	}
+]]></Implementation>
+</Method>
+
+<Method name="ExecxmlExport1">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>startID:%String,endID:%String</FormalSpec>
+<Implementation><![CDATA[
+	set dirName="F:\Public\Tech\FAQ\NewKB\Topics\xml\"
+	
+	;set endID=startID
+	
+	set filecount=0
+	
+	for id=startID:1:endID {
+	    set tp=##class(KB.Topic).%OpenId(id)
+	    
+	    if tp.DeleteFlg'=1 {
+		    set topicid=tp.TopicID
+		    set categoryid=tp.Category.%Id()
+	    	set facilityid=tp.Facility.%Id()
+	    	
+	    	if categoryid'="" {
+		    	set subdir1="Category"_categoryid_"\"
+	    	}
+	    	else {
+		    	set subdir1="Other\"
+	    	}
+	    	
+	    	if facilityid'="" {
+		    	set subdir2="Facility"_facilityid_"\"
+	    	}
+	    	else {
+		    	set subdir2="Other\"
+	    	}
+	    
+		    if categoryid=5 {
+			    set fileName=dirName_subdir1_"Topic"_topicid_".xml"
+	    	}
+	    	else {
+		    	set fileName=dirName_subdir1_subdir2_"Topic"_topicid_".xml"
+	    	}
+
+			kill tp  
+			set filecount=filecount+1
+			
+			w topicid,!
+
+	    	do ..xmlExport(id,fileName)
+				
+	    } 
+    }
+    w filecount,!
+]]></Implementation>
+</Method>
+
+<Method name="ExecxmlExport2">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>idlist:%String</FormalSpec>
+<Implementation><![CDATA[
+	set dirName="P:\Public\Tech\FAQ\NewKB\Topics\xml\"
+	
+	set filecount=0
+	
+	for i=1:1:$listlength(idlist) {
+		
+		set id=$list(idlist,i)
+	    set tp=##class(KB.Topic).%OpenId(id)
+	    
+	    if tp.DeleteFlg'=1 {
+		    set topicid=tp.TopicID
+		    set categoryid=tp.Category.%Id()
+	    	set facilityid=tp.Facility.%Id()
+	    	
+	    	if categoryid'="" {
+		    	set subdir1="Category"_categoryid_"\"
+	    	}
+	    	else {
+		    	set subdir1="Other\"
+	    	}
+	    	
+	    	if facilityid'="" {
+		    	set subdir2="Facility"_facilityid_"\"
+	    	}
+	    	else {
+		    	set subdir2="Other\"
+	    	}
+	    
+		    if categoryid=5 {
+			    set fileName=dirName_subdir1_"Topic"_topicid_".xml"
+	    	}
+	    	else {
+		    	set fileName=dirName_subdir1_subdir2_"Topic"_topicid_".xml"
+	    	}
+
+			kill tp  
+			set filecount=filecount+1
+			
+			w topicid,!,fileName,!
+
+	    	do ..xmlExport(id,fileName)
+				
+	    } 
+    }
+    w filecount,!
+]]></Implementation>
+</Method>
+
+<Method name="ExecxmlExportbk">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>startID,endID</FormalSpec>
+<Implementation><![CDATA[
+	;set dirName="F:\Public\Tech\FAQ\NewKB\Topics\xml\"
+	
+	set dirName="D:\MyISC\FAQ_Project\Topics\xml\"
+	
+	for id=startID:1:endID {
+		;set x1=##class(KB.Topic).%OpenId(id)
+	   	set fileName=dirName_"Topic"_id_".xml"
+		do ..xmlExport(id,fileName)
+	}
+]]></Implementation>
+</Method>
+
+<Method name="convertAccent">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>string:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	set output = ""
+	for i = 1:1:$length(string) {
+		set char = $extract(string,i)
+		if $data(^KB.accent($extract(string,i))) set char = ^KB.accent($extract(string,i))
+		set output = output_char
+	}
+	quit output
+]]></Implementation>
+</Method>
+
+<Method name="xmlImportOld">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>fileName:%String</FormalSpec>
+<Implementation><![CDATA[
+	// Create a new XML Reader class
+	Set reader = ##class(%XML.Reader).%New()
+	// Begin processing of the XML input
+	Set sc=reader.OpenFile(fileName)
+	If $$$ISERR(sc) Do $system.OBJ.DisplayError(sc) Quit  
+	// Associate a class name with the XML element name
+	Do reader.Correlate("problem","KB.OldTopic")
+	// read KB.Topic objects from xml file
+	Set Count=0
+	While reader.Next(.kb,.sc) {
+		Set Count = Count + 1
+	    Set sc=kb.%Save()
+	    If $$$ISERR(sc) Do $system.OBJ.DisplayError(sc) Quit  
+	}
+	If $$$ISERR(sc) Do $system.OBJ.DisplayError(sc) Quit
+]]></Implementation>
+</Method>
+
+<Method name="ExecxmlImport2">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>dir:%String</FormalSpec>
+<Implementation><![CDATA[
+	set dir1Infors = ##class(%ResultSet).%New("%File:FileSet")
+	set dir2Infors = ##class(%ResultSet).%New("%File:FileSet")
+	set fileInfors = ##class(%ResultSet).%New("%File:FileSet")
+	set count1 = 0
+	set count2 = 0
+	
+	do dir1Infors.Execute(dir)
+	while(dir1Infors.Next()) {
+		set dir1name = dir1Infors.GetData(1)
+		write !,dir1name," : ",!
+		do dir2Infors.Execute(dir1name)
+		while(dir2Infors.Next()) {
+			set dir2name = dir2Infors.GetData(1)
+			do fileInfors.Execute(dir2name)
+			while(fileInfors.Next()) {
+				set filename = fileInfors.GetData(1)
+				set file = $Piece(filename,"\",$Length(filename,"\"))
+				if ($Piece(filename,".",$Length(filename,"."))="xml") && ($Extract(file,1,4)="FAQ2"){
+					do ..xmlImportOld(filename)
+					w file,!
+					set count1 = count1 + 1
+					set count2 = count2 + 1
+				}
+			}
+		}
+		write count2, "topic(s)",!
+		set count2 = 0
+	}
+	write !,count1," topic(s) Loaded",!
+]]></Implementation>
+</Method>
+
+<Method name="ModFilename">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>startID:%String,endID:%String</FormalSpec>
+<Implementation><![CDATA[
+	set attachedpath="C:\InterSystems\Cache20102\CSP\faq\downloads\"
+	
+	set f=##class(%File).%New()
+	
+	for i=startID:1:endID {
+		set topic=##class(KB.Topic).%OpenId(i) 
+		set fileloc1=topic.FileLoc1
+		set filename1=fileloc1.Filename
+		set fileloc2=topic.FileLoc2
+		set filename2=fileloc2.Filename
+		set fileloc3=topic.FileLoc3
+		set filename3=fileloc3.Filename
+		
+		If (filename1'="")&($find(filename1,"\")=0) {
+			set mod1=$TR(filename1,$C(0),"\")
+			set fname1=f.GetFilename(mod1)
+			set mod2=attachedpath_i_"\"_fname1
+			set fileloc1.Filename=mod2
+			set mod1="",mod2=""
+		}
+		
+
+		If (filename2'="")&($find(filename2,"\")=0) {
+			set mod1=$TR(filename2,$C(0),"\")
+			set fname2=f.GetFilename(mod1)
+			set mod2=attachedpath_i_"\"_fname2
+			set fileloc2.Filename=mod2
+			set mod1="",mod2=""
+
+		}
+
+		If (filename3'="")&($find(filename3,"\")=0) {
+			set mod1=$TR(filename3,$C(0),"\")
+			set fname3=f.GetFilename(mod1)
+			set mod2=attachedpath_i_"\"_fname3
+			set fileloc3.Filename=mod2
+			set mod1="",mod2=""
+		}
+				
+		set st=topic.%Save()
+		
+		;k fileloc1,fileloc2,fileloc3,filename1,filename2,filename3,fname1,fname2,fname3,mod1,mod2
+		
+	}
+]]></Implementation>
+</Method>
+
+<Method name="SetFileFlg">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>startID,endID</FormalSpec>
+<Implementation><![CDATA[
+	for i=startID:1:endID {
+		
+		set tp=##class(KB.Topic).%OpenId(i)
+		
+		if tp.FileLoc1.Size'=0 {
+			set tp.FileFlg1=1
+		}
+		
+		if tp.FileLoc2.Size'=0 {
+			set tp.FileFlg2=1
+		}
+
+		if tp.FileLoc3.Size'=0 {
+			set tp.FileFlg3=1
+		}
+		
+		set st=tp.%Save()
+	}
+]]></Implementation>
+</Method>
+
+<Method name="SetTopicID">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>startID:%String,endID:%String</FormalSpec>
+<Implementation><![CDATA[
+	for i=startID:1:endID {
+		
+		set tp=##class(KB.Topic).%OpenId(i)
+		if tp'="" {
+			if tp.Product.%Id()=1 {
+				set tp.TopicSubID=$translate($justify(tp.TopicSubID,3)," ","0")
+				set tp.TopicID="G-"_tp.TopicSubID
+			}else {
+				set tp.TopicID=$translate($justify(i,3)," ","0")
+			}
+			set st=tp.%Save()
+		}
+		
+	}
+]]></Implementation>
+</Method>
+
+<Method name="CopyFilename">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>startID,endID</FormalSpec>
+<Implementation><![CDATA[
+	for i=startID:1:endID {
+		set topic=##class(KB.Topic).%OpenId(i) 
+		set fileloc1=topic.FileLoc1
+		set filename1=fileloc1.Filename
+		set fileloc2=topic.FileLoc2
+		set filename2=fileloc2.Filename
+		set fileloc3=topic.FileLoc3
+		set filename3=fileloc3.Filename
+		
+		set topicbk=##class(KB.Topicbk).%OpenId(i) 
+		set filelocbk1=topicbk.FileLoc1
+		set filenamebk1=filelocbk1.Filename
+		set filelocbk2=topicbk.FileLoc2
+		set filenamebk2=filelocbk2.Filename
+		set filelocbk3=topicbk.FileLoc3
+		set filenamebk3=filelocbk3.Filename
+		
+		If (filename1'="")&(filenamebk1'="") {
+			set fileloc1.Filename=filenamebk1
+		}
+		
+		If (filename2'="")&(filenamebk2'="") {
+			set fileloc2.Filename=filenamebk2
+		}
+
+		If (filename3'="")&(filenamebk3'="") {
+			set fileloc3.Filename=filenamebk3
+		}
+
+		set st=topic.%Save()
+
+	}
+]]></Implementation>
+</Method>
+
+<UDLText name="T">
+<Content><![CDATA[
+// 旧コード→新コードへ
+
+]]></Content>
+</UDLText>
+
+<Method name="ChangeFacility">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set faci7=##class(KB.Facility).%OpenId(7)
+	set faci8=##class(KB.Facility).%OpenId(8)
+	set faci9=##class(KB.Facility).%OpenId(9)
+	set faci10=##class(KB.Facility).%OpenId(10)
+	
+	for i=1:1:248 {
+		w i,!
+		set topic=##class(KB.Topic).%OpenId(i)
+		if topic'="" {
+			if topic.Facility.%Id()=7 {
+				set topic.Facility=faci8
+			}elseif topic.Facility.%Id()=8 {
+				set topic.Facility=faci9
+			}elseif topic.Facility.%Id()=9 {
+				set topic.Facility=faci10
+			}
+		}
+	}
+]]></Implementation>
+</Method>
+
+<UDLText name="T">
+<Content><![CDATA[
+// Version設定方法を変更したため、既存データを加工
+
+]]></Content>
+</UDLText>
+
+<Method name="SetVersion">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set Idlist=$lb(32,33,34,35,36,37,38,39,48,50,58,73,74,75,76,107,109,110,121,124,126,128,133,140,141,145,146,148,149,150,152,153,154,156,157,159,163,170,177,178,180,182,185,188,189,190,191,192,196,197,209,212,213,214,217,218,219,221)
+	set SVlist=$lb(6,7,7,7,7,7,7,7,6,10,6,6,6,6,6,6,6,6,7,6,6,7,6,7,7,7,6,6,6,6,7,6,7,7,9,6,9,9,9,9,7,9,9,7,7,11,11,9,7,7,11,9,9,7,11,11,11,7)
+	set EVlist=$lb(6,"","","","","","","",6,"",6,6,6,6,6,6,6,6,"",6,6,10,6,"","","",6,6,6,6,"",6,"","","",6,"","","","","","","","","","","","","","","","","","","","","","")
+	
+	for i=1:1:58 {
+		set tpid=$list(Idlist,i)
+		set svid=$list(SVlist,i)
+		set evid=$list(EVlist,i)
+		
+		set tp=##class(KB.Topic).%OpenId(tpid)
+		
+		if svid'="" {
+			set sv=##class(KB.Version).%OpenId(svid)
+		}else{
+			set sv=""
+		}
+		
+		if evid'=""{
+			set ev=##class(KB.Version).%OpenId(evid)
+		}else{
+			set ev=""
+		}
+		
+		set tp.StartVersion=sv
+		set tp.EndVersion=ev
+		
+		set st=tp.%Save()
+	}
+	
+	quit st
+]]></Implementation>
+</Method>
+
+<Method name="RenameFiles">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>dir,wildcard</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set filelist=##class(%ResultSet).%New("%File:FileSet")
+	set st=filelist.Execute(dir,wildcard)
+	while filelist.Next() {
+		set filepath = filelist.GetData(1)
+		set difdepth = $LENGTH(filepath,"\")
+		set filename = $PIECE(filepath,"\",difdepth)
+		set newfilename = "Attached"_filename
+		set cmd = "rename "_filepath_" "_newfilename
+		set sc = $ZF(-1,"rename "_filepath_" "_newfilename)
+		//if sc'=0 quit
+	}
+	
+	quit sc
+]]></Implementation>
+</Method>
+
+<Method name="SetVersionRange">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tid</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	w tid,":"
+	set topic=##class(KB.Topic).%OpenId(tid)
+	
+	if topic'="" {
+		
+		if topic.StartVersion'= "" {
+			set startname=topic.StartVersion.ExternalVersion
+		}
+
+		if topic.EndVersion'= "" {
+			set endname=topic.EndVersion.ExternalVersion
+		}
+
+		if topic.StartVersion'="" {
+			if topic.EndVersion'="" {
+				if topic.StartVersion=topic.EndVersion {
+					set topic.VersionRange=startname
+				}else{
+					set topic.VersionRange=startname_" ～ "_endname
+				}
+			}else{
+				set topic.VersionRange=startname_" ～"
+			}
+ 		}elseif topic.EndVersion'="" {
+			set topic.VersionRange=" ～ "_endname
+ 		}else {
+			set topic.VersionRange=""
+ 		}
+ 		
+ 		w topic.VersionRange,":"
+ 		
+ 		set st = topic.%Save()
+ 		
+ 		w st,!
+	}
+]]></Implementation>
+</Method>
+
+<Method name="SetOpenDate">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	for i=1:1:^KB.TopicD {
+		set tp=##class(KB.Topic).%OpenId(i)
+		
+		if $ISOBJECT(tp)'=1 quit
+		
+		if tp.WebFlg=1 {
+			set tp.OpenDate=+$h
+			set st=tp.%Save()
+		}
+	}
+]]></Implementation>
+</Method>
+
+<UDLText name="T">
+<Content><![CDATA[
+/*ClassMethod TopicRefCount() As %Status
+{
+	&sql(select sum(reffreq) into :topicrefcount from KB.Topic)
+	
+	if (SQLCODE=0) {
+		set yesterday=$zdate($h-1,8)
+		//前日分のトピック参照数を算出
+		set ^AccessCount(yesterday,"TopicRefCount") = topicrefcount- $Get(^AccessCount("TopicRefTotal"))
+		//積算トータル参照数をセット
+		set ^AccessCount("TopicRefTotal") = topicrefcount
+	}
+}
+*/
+]]></Content>
+</UDLText>
+
+<UDLText name="T">
+<Content><![CDATA[
+/*
+ClassMethod ClearUsersVoice() As %Status
+{
+	for i=1:1:^KB.TopicD {
+		set tp=##class(KB.Topic).%OpenId(i)
+		if tp {
+			set tp.UsersVoice=""
+			set st=tp.%Save()
+		}
+	}
+}
+*/
+]]></Content>
+</UDLText>
+
+<UDLText name="T">
+<Content><![CDATA[
+/*
+新規に追加されたトピック用に、
+UsersVoiceオブジェクトを作成し、セットする。
+トピックの更新後に必ず実行。
+*/
+]]></Content>
+</UDLText>
+
+<Method name="CreateUsersVoice">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set tSC = $$$OK
+	for i=$increment(^KB.UsersVoiceD):1:^KB.TopicD {
+		w "check:",i,"-"
+		set uv=##class(UsersVoice).%New()
+		set tp=##class(KB.Topic).%OpenId(i)
+		if tp {
+			//トピックにUsersVoiceオブジェクトが設定されていない場合＝新規トピックの場合は、
+			//新規作成したUsersVoiceオブジェクトをセット。
+			set tp.UsersVoice=uv
+			set uv.TopicId=i
+			set tSC=tp.%Save()
+			w i,"(new)",!
+		}
+		else {
+			//トピックの番号が抜けている場合は、UsersVoiceのTopicIdをN/Aで作成
+			//(トピックのIDとUsersVoiceのIDを同じにするため)
+			set uv.TopicId="N/A"
+			set tSC=uv.%Save()
+			w i,"(N/A)",!
+		}
+		
+	}
+	quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="ShowVersion">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit "1.0.005"
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="KB.Version">
+<Description>
+バージョン情報</Description>
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeChanged>63392,60542.670615</TimeChanged>
+<TimeCreated>59954,40406.058029</TimeCreated>
+<Inheritance>right</Inheritance>
+
+<Property name="ExternalVersion">
+<Description>
+表示用バージョン番号</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="20"/>
+<Parameter name="TRUNCATE" value="1"/>
+</Property>
+
+<Property name="InternalVersion">
+<Description>
+内部バージョン（大小比較用）</Description>
+<Type>%Integer</Type>
+</Property>
+
+<Property name="OrderId">
+<Description>
+時系列順ID</Description>
+<Type>%Integer</Type>
+</Property>
+
+<Index name="ExternalVersionIndex">
+<Properties>ExternalVersion</Properties>
+</Index>
+
+<Index name="InternalVersionIndex">
+<Properties>InternalVersion</Properties>
+</Index>
+
+<Index name="OrderIdIndex">
+<Properties>OrderId</Properties>
+</Index>
+
+<Query name="QueryAll">
+<Type>%SQLQuery</Type>
+<SqlQuery>SELECT %ID FROM Version
+ ORDER BY %ID</SqlQuery>
+<Parameter name="CONTAINID" value="1"/>
+</Query>
+
+<Query name="ListDescription">
+<Type>%SQLQuery</Type>
+<SqlQuery>SELECT %ID,ExternalVersion FROM Version ORDER BY OrderId</SqlQuery>
+<Parameter name="CONTAINID" value="1"/>
+</Query>
+
+<UDLText name="T">
+<Content><![CDATA[
+// Parameter XMLSUMMARY = ID;
+
+]]></Content>
+</UDLText>
+
+<Parameter name="XMLDEFAULTREFERENCE">
+<Default>ID</Default>
+</Parameter>
+
+<Method name="Init">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	Do ##class(KB.Version).%KillExtent()
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('300','3.0'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('310','3.1.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('320','3.2.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('400','4.0.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('410','4.1.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('500','5.0.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('510','5.1.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('520','5.2.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20071','2007.1.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20081','2008.1.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20082','2008.2.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20091','2009.1.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20101','2010.1.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20102','2010.2.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20111','2011.1.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20121','2012.1.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20122','2012.2.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20131','2013.1.x'))
+	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20141','2014.1.x'))
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^KB.VersionD</DataLocation>
+<DefaultData>VersionDefaultData</DefaultData>
+<IdLocation>^KB.VersionD</IdLocation>
+<IndexLocation>^KB.VersionI</IndexLocation>
+<StreamLocation>^KB.VersionS</StreamLocation>
+<ExtentSize>100000</ExtentSize>
+<Data name="VersionDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>ExternalVersion</Value>
+</Value>
+<Value name="3">
+<Value>InternalVersion</Value>
+</Value>
+<Value name="4">
+<Value>OrderId</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="TestMe.test">
+<Description>
+Created using the page template: Default</Description>
+<Super>%ZEN.Component.page</Super>
+<TimeChanged>63421,61813.177966</TimeChanged>
+<TimeCreated>63421,61813.177966</TimeCreated>
+
+<Parameter name="APPLICATION">
+<Description>
+このページが属するアプリケーションのクラス名です。</Description>
+</Parameter>
+
+<Parameter name="PAGENAME">
+<Description>
+このページの表示名です。</Description>
+<Default>test</Default>
+</Parameter>
+
+<Parameter name="DOMAIN">
+<Description>
+ローカライズで使用されるドメインです。</Description>
+</Parameter>
+
+<XData name="Style">
+<Description>
+この Style ブロックにはページ固有のCSSスタイル定義を記述します。</Description>
+<Data><![CDATA[
+<style type="text/css">
+</style>
+]]></Data>
+</XData>
+
+<XData name="Contents">
+<Description>
+このXMLブロックはこのページのコンテンツを定義します。</Description>
+<XMLNamespace>http://www.intersystems.com/zen</XMLNamespace>
+<Data><![CDATA[
+<page xmlns="http://www.intersystems.com/zen" title="layottest">
+<hgroup height="50%">
+<label id="IdLabel" value="トピックIDで検索：" enclosingClass="searchLabel" />
+</hgroup>
+</page>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Text.MecabJapanese2">
+<Super>%Text.Japanese</Super>
+<TimeChanged>63404,70828.062425</TimeChanged>
+<TimeCreated>62222,41849.078328</TimeCreated>
+
+<Parameter name="NOISEWORDS100">
+<Default>これ それ あれ この その あの ここ そこ あそこ こちら どこ だれ なに なん 何 私 貴方 貴方方 我々 私達 あの人 あのかた 彼女 彼 です あります おります います から まで より どの それで しかし</Default>
+</Parameter>
+
+<Parameter name="FILTERNOISEWORDS">
+<Default>1</Default>
+</Parameter>
+
+<Parameter name="NGRAMLEN">
+<Default>2</Default>
+</Parameter>
+
+<Parameter name="MINWORDLEN">
+<Default>1</Default>
+</Parameter>
+
+<Method name="SeparateWords">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>rawText:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<SqlProc>1</SqlProc>
+<Implementation><![CDATA[
+		
+	if '$data(^||mecab20140618) {
+		// 初回のみロードするように変更
+		// プライベート変数名がバッティングしないよう通常ではあり得ない名前を使用
+		
+	    set ^||mecab20140618 = 1	
+
+	    if $system.Version.GetOS() = "Windows" {
+	       set tDLL = $system.Util.InstallDirectory()_"bin\mecabzf.dll"
+	    }
+	    else {
+	       set tDLL = $system.Util.InstallDirectory()_"bin/mecabzf.so"
+	    }
+        set libID=$ZF(-4,1,tDLL)
+        set lfuncID = $ZF(-4,3,libID,"LOAD")
+        set sts = $ZF(-5,libID,lfuncID)
+        set funcID = $ZF(-4,3,libID,"EXEC")
+        set ^||mecab20140618("libID") = libID
+        set ^||mecab20140618("funcID") = funcID
+	}
+	
+	set libID = ^||mecab20140618("libID")
+	set funcID = ^||mecab20140618("funcID") 	
+    set tResult=$ZF(-5,libID,funcID,$ZCVT(rawText,"O","UTF8"))
+    set tResult=$ZCVT(tResult,"I","UTF8")
+    
+    // Cache for Windows (x86-64) 2013.2 (Build 299U)の環境で何故かLOADとUNLOADを繰り返すと
+    // LOADで例外が発生する。　
+    //　実際問題として毎回LOAD&UNLOADするのは無駄だが、このメソッドに初期化、終了処理の概念がないので
+    // 毎回LOAD,UNLOADを繰り返していた。
+    // この外部呼出しのUNLOADをしない弊害は未知数だが大した影響はなさそう
+        
+    //set ufuncID = $ZF(-4,3,libID,"UNLOAD")
+    //set tSTS=$ZF(-5,libID,ufuncID)
+    
+    // 結果にlfが含まれるのでそれを除外する
+    
+    set tResult = $Translate(tResult,$c(10),"")
+	Quit tResult
+]]></Implementation>
+</Method>
+
+<Method name="ExcludeCommonTerms">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>nTerms</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	k ^%SYSDict(-..#DICTIONARY)
+	//Full width Hiragana
+	f ascii=12353:1:12435 set ^%SYSDict(..#DICTIONARY,$$$noiseword,$C(ascii))=""
+	//Full width Katakana
+	f ascii=12449:1:12531 set ^%SYSDict(..#DICTIONARY,$$$noiseword,$C(ascii))=""
+	//Half width Katanaka
+	f ascii=65393:1:65439 set ^%SYSDict(..#DICTIONARY,$$$noiseword,$C(ascii))=""
+
+	//Half width English
+	//f ascii=65:1:90 set ^%SYSDict(..#DICTIONARY,$$$noiseword,$C(ascii))=""
+	//f ascii=97:1:122 set ^%SYSDict(..#DICTIONARY,$$$noiseword,$C(ascii))=""
+
+	//Numbers
+	//f ascii=48:1:57 set ^%SYSDict(..#DICTIONARY,$$$noiseword,$C(ascii))=""
+
+	//Full width English and so on..
+	f ascii=65281:1:65392 set ^%SYSDict(..#DICTIONARY,$$$noiseword,$C(ascii))=""
+
+	// Japanese punctuation marks
+	set splitchars = $listbuild(12289,12290,12300,12301,8220,8221)
+		
+	for ascii=1:1:$listlength(splitchars) {
+	    set ^%SYSDict(..#DICTIONARY,$$$noiseword,$C($list(splitchars,ascii)))=""
+	}
+
+	s maxW=$s(nTerms>100:100,1:nTerms)     for w=1:1:maxW { do ..AddToDictionary($p(..#NOISEWORDS100," ",w),0,0,"") }
+	s maxW=$s(nTerms>200:100,1:nTerms-100) for w=1:1:maxW { do ..AddToDictionary($p(..#NOISEWORDS200," ",w),0,0,"") }
+	s maxW=$s(nTerms>300:100,1:nTerms-200) for w=1:1:maxW { do ..AddToDictionary($p(..#NOISEWORDS300," ",w),0,0,"") }
+	s maxW=$s(nTerms>100:100,1:nTerms)     for w=1:1:maxW { do ..AddToDictionary($p(..#NOISEBIGRAMS100,",",w),0,0,"") }
+	s maxW=$s(nTerms>200:100,1:nTerms-100) for w=1:1:maxW { do ..AddToDictionary($p(..#NOISEBIGRAMS200,",",w),0,0,"") }
+	s maxW=$s(nTerms>300:100,1:nTerms-200) for w=1:1:maxW { do ..AddToDictionary($p(..#NOISEBIGRAMS300,",",w),0,0,"") }	
+
+	QUIT $$$OK
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Routine name="Utility" type="MAC" languagemode="0" timestamp="61047,42713"><![CDATA[
+LPADdate
+	set i=1
+	for {
+			set OT = ##class(KB.OldTopic).%OpenId(i)
+			if OT = "" {
+				quit
+			}
+		
+			set rd = OT.regdate
+		
+			if (rd?4N1"-"2N1"-"2N '= 1) {
+				set year = $piece(rd, "-", 1)
+				set month = $piece(rd, "-", 2)
+				set date = $piece(rd, "-", 3)
+		
+				if (month?2N'=1) {
+					set month = "0"_month
+				}
+		
+				if (date?2N'=1) {
+					set date = "0"_date
+				}
+		
+				set OT.regdate = year_"-"_month_"-"_date
+			
+				set st = OT.%Save()
+			
+				kill OT
+			
+			}
+			
+			set i = i+1
+	}
+]]></Routine>
+
+
+<Routine name="bitutil" type="INC" timestamp="61047,42713"><![CDATA[
+#define CHUNKSIZE 64000
+ 
+]]></Routine>
+
+
+<CSP name="complete.CSP" application="/csp/user/" default="1"><![CDATA[
+<html>
+<head>
+
+<!-- Put your page Title here -->
+<title>Cach&eacute; FAQ Database Edit Complete</title>
+
+</head>
+
+<body>
+
+<SCRIPT language="cache" runat="server">
+ Set DocNo=%request.Get("OBJID")
+ Do ..RefCheckLink(DocNo)
+
+//添付ファイルアップロード処理
+set fileupflg = $get(%session.Data("UpFlg"))
+if fileupflg=1 {
+	set filename=##class(KB.Config).getAttachedFileName()_DocNo_".zip"
+	set dir=##class(KB.Config).getFTPDirectory()
+	set sep=##class(KB.Config).getDirectorySeparator()
+	set filepath=dir_sep_filename
+
+	set attached = $get(%request.MimeData("AttachedFile",1))
+	if attached'="" {
+		set newfile = ##class(%File).%New(filepath)
+		set st = newfile.Open("NWUK\BIN\")
+		set st = newfile.CopyFrom(attached)
+		if st'=1 {
+			&js<alert('添付ファイルは保存できませんでした');>
+		}
+	 }else{
+		 &js<alert('指定されたファイルが存在しません');>
+	 }
+	 
+	 set %session.Data("UpFlg") = ""
+	 
+}
+
+//TopicId セット
+set topic=##class(KB.Topic).%OpenId(DocNo)
+/* TopipIDは計算フィールドとなったので以下の処理不要
+if topic.Product.%Id()=1 {
+	set topic.TopicID="G-"_topic.TopicSubID
+}else{
+	set topic.TopicID=topic.%Id()
+}
+*/
+
+//UsersVoice セット
+set uv=topic.UsersVoice
+
+if uv="" {
+	set uv=##class(KB.UsersVoice).%New()
+	set topic.UsersVoice=uv
+	set uv.TopicId=DocNo
+}
+
+set %session.Data("noAudit")=1
+set st=topic.%Save()
+set %session.Data("noAudit")=0
+
+
+</SCRIPT>
+
+<SCRIPT language="cache" method="RefCheckLink" arguments="pDocNo:%String"runat="server">
+
+Set topic = ##Class(KB.Topic).%OpenId(pDocNo)
+Set tSC = topic.RefCheckLink(0)
+Set OldList = $Get(%session.Data("RefTopic"))
+Set NewList = topic.RefTopic
+//編集した結果、前の関連トピックを削除した場合、相手のトピックからの参照も削除する
+set tSC = ##class(KB.Topic).RemoveLink(DocNo,OldList,NewList)
+</SCRIPT>
+
+<DIV align=center style="margin:20px; font-weight:bold;">
+  <SPAN>トピックを保存しました。（ID=#(DocNo)#) </SPAN><BR>
+</DIV>
+<DIV align=center style="margin:20px;">
+  <Input type="image" src="./images/button/tojiru1.gif" border="0" onclick="window.close()"><BR>
+</DIV>
+<DIV align=center style="margin:10px;">
+  <A href=result.CSP?DocNo=#(DocNo)# >&lt;&lt;トピック#(DocNo)#へ</A>
+</DIV>
+
+</body>
+</html>
+]]></CSP>
+
+
+<CSP name="edit.CSP" application="/csp/user/" default="1"><![CDATA[
+<CSP:PARAMETER name="EXPIRES" value="">
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=utf-8">
+<META name="GENERATOR" content="IBM HomePage Builder 2001 V5.0.0 for Windows">
+<title>Cach&eacute; FAQ Database Topic Edit</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="styleedit.css" >
+<!-- Specify that this page is PRIVATE -->
+<csp:CLASS PRIVATE=1>
+</head>
+
+<BODY bgcolor="#FFFFFF" onload="loadEvent();">
+
+<SCRIPT LANGUAGE="cache" RUNAT="Server">
+
+Set DocNo=%request.Get("DocNo")
+Set topic = ##Class(KB.Topic).%OpenId(DocNo)
+Set %session.Data("DocNo")=DocNo
+Set %session.Data("RefTopic") = topic.RefTopic
+
+//添付ファイル名のセット
+set filepath=%session.Data("filepath")
+set fileexists=##class(%File).Exists(filepath)
+
+if fileexists=1 {
+	set filename=%session.Data("filename")
+}else{
+	set filename=""
+}
+
+ /*
+ //ファイルアップロード処理 グローバルに格納する場合
+ set sep = ##class(KB.Config).getDirectorySeparator()
+ set dir = ##class(KB.Config).getFTPDirectory()
+ set dir = dir_"\"_DocNo
+ 
+ for i=1:1:3 {
+		
+	Set filenamei = "filename"_i
+	Set property = "FileLoc"_i
+	
+	Set fileloc = $ZOBJPROPERTY(topic,property)
+   	Set filename = fileloc.Filename
+   	Set @filenamei = $piece(filename,sep,$length(filename,sep))
+
+    Set attached = $get(%request.MimeData("AttachedFile"_i,1))
+	    
+   	If (attached'="") {
+    	set st = $ZUTIL(140,9,dir)
+     	set sts = fileloc.Clear()
+       	set file = attached.FileName
+       	// UploadはWindowsから行うことを前提
+       	set file = $piece(file,"\",$length(file,"\"))
+       	set sts = fileloc.LinkToFile(dir_sep_file)
+       	set sts = fileloc.CopyFrom(attached)
+       	Set status = topic.%Save()
+       	If $$$ISERR(status) {
+           	Set err =$System.Status.GetErrorText(status)
+       	}
+    	set filename = dir_sep_file
+        set @filenamei = $piece(filename,sep,$length(filename,sep))
+
+   	}
+ }
+ */
+ 
+//添付ファイルアップロード処理
+set fileupflg = $get(%session.Data("UpFlg"))
+if fileupflg=$$$OK {
+	set attached = $get(%request.MimeData("AttachedFile",1))
+	if attached'="" {
+		set newfile = ##class(%File).%New(filepath)
+		set st = newfile.Open("NWUK\BIN\")
+		set st = newfile.CopyFrom(attached)
+		if st=$$$OK {
+			set fileexists=##class(%File).Exists(filepath)
+			set filename=%session.Data("filename")
+		}else{
+			&js<alert('添付ファイルは保存できませんでした');>
+		}
+	 }else{
+		 &js<alert('指定されたファイルが存在しません');>
+	 }
+}elseif fileupflg=0{
+	  &js<alert('添付ファイルは保存されませんでした');>
+}
+
+set %session.Data("UpFlg") = ""
+
+if topic.OpenDate'="" {
+	set OpenDate=$ZDATE(topic.OpenDate)
+}else{
+	set OpenDate="未公開"
+}
+
+</SCRIPT>
+
+<TABLE width="100%">
+  <TBODY>
+  <TR>
+    <TD class="title" valign="top" align="center" >FAQトピック 編集</TD>
+  </TR>
+  <TR>
+    <TD align=center>
+      <csp:object NAME="topic" CLASSNAME="KB.Topic" OBJID="#(DocNo)#">
+      <table width=95% style="margin-top:10px;">
+      <tbody>
+        <!--<form name="form" cspbind="topic" cspjs="All" action="edit.CSP?DocNo=#(DocNo)#" enctype="multipart/form-data" method="POST">-->
+        <form name="form" cspbind="topic" cspjs="All" onsubmit="return saveTopic()" action="edit.CSP?DocNo=#(DocNo)#" enctype="multipart/form-data" method="POST">
+        <tr align=right>
+          <td colspan=2 class="readonlytitle" style="color:#666666;">作成者：<input type="text" name="Creator" cspbind="Creator" readonly size="10" class="readonly">  最終更新者：<input type="text" name="Updater" cspbind="Updater" readonly size="10" class="readonly" ></td>
+        </tr>
+        <tr>
+          <td width="13%" class="coltitle" style="color:#666666;">ID：</td>
+          <td><input type="text" name="TID" cspbind="%Id()" size="10" style="font-family:ＭＳ ゴシック" readonly></td>
+        </tr>
+        <tr>
+          <td width="13%" class="coltitle">一般トピック用ID：</td>
+          <td>G-<input type="text" name="SubID" cspbind="TopicSubID" size="10" class="textbox"></td>
+		</tr>
+        <tr>
+          <td class="coltitle">タイトル：</td>
+          <td ><input type="text" name="Title" cspbind="Title" size="70" class="textbox"></td>
+        </tr>
+          <td class="coltitle">内容：</td>
+          <td ><textarea onkeydown="insertTab(this, event);" name="Description" cspbind="Description" cols="50" rows="20"></textarea></td>
+		  <!--<td><textarea name="Description" cspbind="Description" cols="85" rows="30" style="font-size:100%;font-family:'ＭＳ ゴシック';line-height:1.5em;"></textarea></td>-->
+		</tr>
+   		<tr>
+          <td class="coltitle">プロダクト：</td>
+          <td><select name="Product" cspbind="Product" classname="KB.Product" query="ListProduct" field="ProductName" onchange="javascript:disableFacility()"></select></td>
+        </tr>
+        <tr>
+          <td class="coltitle">機能名：</td>
+          <td ><select name="FacilityDescription" cspbind="Facility" classname="KB.Facility" query="ListDescription" field="Description"></select></td>
+        </tr>
+        <tr>
+          <td class="coltitle">プラットフォーム：</td>
+          <td ><select name="PlatformName" cspbind="Platform" classname="KB.Platform" query="ListDescription" field="Name"></select></td>
+        </tr>
+        <tr>
+          <td class="coltitle">バージョン：</td>
+          <td ><select name="StartVersion" cspbind="StartVersion" classname="KB.Version" query="ListDescription" field="ExternalVersion"></select> ～ 
+              <select name="EndVersion" cspbind="EndVersion" classname="KB.Version" query="ListDescription" field="ExternalVersion"></select>
+              <input type="hidden" name="VersionRange" cspbind="VersionRange"/>
+          </td>       
+        </tr>
+        <tr>
+          <td class="coltitle">関連トピック：</td>
+          <td ><input type="text" name="RefTopic" cspbind="RefTopic" size="30" class="textbox"></td>
+        </tr>
+		<tr>
+          <td class="coltitle">添付ファイル：</td>
+          <td ><input type="text" name="AttachedFileName" value="#($Get(filename))#" size="30" class="textbox">
+              <input type="image" name="AttacheDel" src="./images/button/AttacheDel1.gif" onmousedown="this.src='./images/button/AttacheDel2.gif'" onmouseout="this.src='./images/button/AttacheDel1.gif'" border="0" height="17" width="17" onclick="delAttachedFile(#(fileexists)#)"></td>
+        </tr>
+        <tr>
+          <td class="coltitle">Upload：</td>
+          <td ><input type="file" name="AttachedFile" size="30" style="font-family:ＭＳ Ｐゴシック"></td>
+        </tr>
+        <tr valign="center">
+          <td class="coltitle">ステータス：</td>
+          <td>
+            <table width="100%" style="padding:0;">
+              <tr>
+                <td width="25%" class="childcoltitle">作成完了<input type="checkbox" name="Completed" cspbind="Completed"></td>
+                <td width="25%" class="childcoltitle">削除可<input type="checkbox" name="DeleteFlg" cspbind="DeleteFlg"></td>
+                <td width="20%" class="childcoltitle">公開[管理用]
+                <csp:if condition='%session.Data("roles")=1'>
+                  <input type="checkbox" name="Visible1" cspbind="Visible">
+                <csp:else>
+                  <input type="checkbox" name="Visible2" cspbind="Visible" disabled>
+		        </csp:if>
+		        </td>
+		        <td width="30%" style="font-size:90%;">※公開日：#(OpenDate)#</td>
+		      </tr>
+		    </table>
+		  </td>
+		</tr>
+        <tr>
+          <td class="coltitle">*社内用メモ*：</td>
+          <td ><textarea name="Note" cspbind="Note" cols="65" rows="3" ></textarea></td>
+        </tr>
+	    <tr>
+         <td class="coltitle">*更新履歴*：</td>
+         <td>
+            <table width="100%" border=1>
+              <tr class="childcoltitle">
+                <th width="18%" class="coltitle">更新日付</th>
+  				<th width="18%" class="coltitle">更新者</th>
+  				<th width="64%" class="coltitle">更新内容</th>
+			  </tr>
+			  <script language="sql" name=historyquery P1=#(DocNo)#>
+				SELECT UpdateDate,Updater,Description
+				FROM KB.UpdateHistory
+				WHERE Topic = ?
+			 </script>
+			  <csp:while condition="historyquery.Next()">
+				<tr>
+	  			  <td>#(historyquery.GetData(1))#</td>
+	  			  <td>#(historyquery.GetData(2))#</td>
+	  			  <td><textarea rows="1" readonly>#(historyquery.GetData(3))#</textarea></td>
+				</tr>
+			  </csp:while>
+			  <tr>
+  				<td class="newline">#($zdatetime($h,3,2))#</td>
+  				<td class="newline">#($username)#</td>
+  				<td><textarea name="UpdateDescription" rows="2"></textarea></td>
+			  </tr>
+            </table>
+          </td>
+        </tr>
+        <tr height=40>
+          <td colspan=6 align="center">
+            <input type="image" name="btnSave" src="./images/button/Save1.gif" border="0" onclick="formValidate(#(fileexists)#)">
+          </td>
+        </tr>
+        </tbody>
+     </table>
+     </TD>
+  </TR>
+  </form>
+</TBODY>
+</TABLE>
+<HR align="center" width="95%">
+<div align="center" style="margin:20px;font-weight:bold;font-style:italic"><a href="javascript:cancelConfirm();">&lt;&lt;&lt;中止</a></div>
+
+<csp:IF CONDITION='$Get(err)=""'>
+<csp:ELSE>
+<p><font color="#FF0000"> 保存エラー: #($Get(err))# </p>
+</csp:IF>
+
+
+<SCRIPT LANGUAGE="javascript">
+
+function loadEvent() {
+	this.disableFacility();	
+}
+
+function disableFacility() {
+	if (document.form.Product.value == 1) {
+		document.form.FacilityDescription.value = 1;
+		document.form.FacilityDescription.disabled = true;
+	}else{
+		document.form.FacilityDescription.disabled = false;
+	}
+}
+
+function roleChk() {
+	if (#(%session.Data("roles"))#==1) {
+		document.form.Visible.readonly=null;
+	}
+}
+
+function delAttachedFile(exist) {
+	if (exist==1) {
+		var delfile = confirm('添付ファイルを削除します。よろしいですか？');
+		if (delfile==1) {
+			var delst=#server(..AttachedFileBkup())#;
+ 		 	if (delst==1) {
+	 			 document.form.AttachedFileName.value='';
+ 		 	}else{
+	 			 alert('添付ファイルを削除できませんでした。');
+ 		 	}
+		}
+	}
+}
+
+function formValidate(fileexistsflg) {
+	
+	//Titleのチェック
+	var topictitle=document.form.Title.value;
+	if (topictitle=='') {
+		alert('トピックのタイトルが入力されていません。');
+		return;
+	}
+
+	var product = document.form.Product.value;
+	if (product=='') {
+		alert('プロダクトが選択されていません。');
+		return;
+	}
+	
+	//関連トピックのチェック
+	var reflist = document.form.RefTopic.value;
+	var refchk = #server(..RefListChk(reflist))#;
+	if (reflist) {
+	  if (refchk==0) {
+		  alert('関連トピックの指定が不正です。指定されたIDのトピックは存在しません。');
+		  document.form.RefTopic.value='';
+		  return;
+	  } 
+	  else {
+		  document.form.RefTopic.value=refchk;
+	  }
+	}
+	
+	//添付ファイルのチェック
+	var atfile = document.form.AttachedFile.value;
+	if (atfile) {
+		if (atfile.match(/\.zip$/i)) {
+			if (fileexistsflg) {
+				var fileconf = confirm('このトピックの添付ファイルは既に存在します。上書きしますか？');
+				#server(..SetFileUpFlg(fileconf))#;
+			} else {
+				#server(..SetFileUpFlg(1))#;	
+			}				
+		}else{
+			alert('添付ファイルの形式が不正です。ファイルはzipフォルダに格納して保存してください。');
+		}
+	}
+	
+	//バージョン指定のチェック
+	var start = document.form.StartVersion.value;
+	var end = document.form.EndVersion.value;
+	        
+	var vrange = #server(..SetVersionRange(start,end))#;
+	
+	if (vrange=='0') {
+		alert('バージョン指定が不正です。');
+		return;
+	}else{
+		document.form.VersionRange.value = vrange;
+	}	
+	
+	//更新履歴入力有無
+	var updatedescription =document.form.UpdateDescription.value;
+		
+	//トピック保存
+	var del=document.form.DeleteFlg.checked;
+	if (del==1) {
+		var msg='このトピックは削除対象に指定されています。保存しますか？';
+	}else {
+		var msg='変更を保存します。よろしいですか？';
+	}
+	
+	var saveconf = confirm(msg)
+	if (saveconf) {
+		#server(..SaveUpdateHistory(updatedescription))#
+		form_save(this);
+		form.action="complete.CSP";	
+	}
+				
+}
+
+function cancelConfirm() {
+	cancelconf = confirm('変更を保存せずに終了します。よろしいですか？');
+	if (cancelconf) {
+		window.history.back();
+	}
+}
+
+function insertTab(o, e)
+{
+	var kC = e.keyCode ? e.keyCode : e.charCode ? e.charCode : e.which;
+	if (kC == 9 && !e.shiftKey && !e.ctrlKey && !e.altKey)
+	{
+		var oS = o.scrollTop;
+		if (o.setSelectionRange)
+		{
+			var sS = o.selectionStart;
+			var sE = o.selectionEnd;
+			o.value = o.value.substring(0, sS) + "\t" + o.value.substr(sE);
+			o.setSelectionRange(sS + 1, sS + 1);
+			o.focus();
+		}
+		else if (o.createTextRange)
+		{
+			document.selection.createRange().text = "\t";
+			e.returnValue = false;
+		}
+		o.scrollTop = oS;
+		if (e.preventDefault)
+		{
+			e.preventDefault();
+		}
+		return false;
+	}
+	return true;
+}
+
+</SCRIPT>
+
+<SCRIPT language="cache" method="AttachedFileBkup" returntype="%String" runat="server">
+
+ set dir=%session.Data("dir")
+ set sep=%session.Data("sep")
+ set filename=%session.Data("filename")
+ set filepath=%session.Data("filepath")
+
+set bkupdir=dir_sep_"bkup"
+set bkuppath=bkupdir_"\"_$piece(filename,".",1)_"_bk"_$zdate($horolog,8)_".zip"
+
+set bkupst=##class(%File).CopyFile(filepath,bkuppath)
+if bkupst=1 {
+	set delst=##class(%File).Delete(filepath)
+}else{
+	set delst=0
+}
+
+quit delst
+
+</SCRIPT>
+
+<SCRIPT language="cache" method="RefListChk" arguments="rlist:%String" returntype="%String" runat="server">
+
+set rlist = $REPLACE(rlist," ","")
+set rlist = $REPLACE(rlist,"　","")
+
+set refchk=rlist
+If refchk = "" Quit refchk
+set rlen=$LENGTH(rlist,",")
+if rlen=1 {
+	set reftopic=##class(KB.Topic).%OpenId(rlist)
+	if '$IsObject(reftopic) {
+		set refchk='$$$OK
+	}
+}else{
+	for i=1:1:rlen {
+		set refid=$PIECE(rlist,",",i)
+		set reftopic=##class(KB.Topic).%OpenId(refid)
+		if '$IsObject(reftopic) {
+			set refchk='$$$OK
+		}
+	}
+}
+
+//チェックNGの場合は「0」、チェックOKの場合は、スペースを抜いた文字列を返す
+quit refchk
+
+</SCRIPT>
+
+<SCRIPT language="cache" method="SetFileUpFlg" arguments="upflg:%Boolean" runat="server">
+
+	set %session.Data("UpFlg")=upflg
+    
+</SCRIPT>
+
+<SCRIPT language="cache" method="SetVersionRange" arguments="startid:%String, endid:%String" runat="server">
+
+if startid'= "" {
+	set startver=##class(KB.Version).%OpenId(startid)
+	set startname=startver.ExternalVersion
+	set startorder=startver.OrderId
+}else{
+	set startver="",startname="",startorder=""
+}
+
+if endid'= "" {
+	set endver=##class(KB.Version).%OpenId(endid)
+	set endname=endver.ExternalVersion
+	set endorder=endver.OrderId
+}else{
+	set endver="",endname="",endorder=""
+}
+
+if startid'="" {
+	if endid'="" {
+		if startorder > endorder {
+			set vrange="0"
+		}
+		elseif startid=endid {
+			set vrange=startname
+		}else{
+			set vrange=startname_" ～ "_endname
+		}
+	}else{
+		set vrange=startname_" ～"
+	}
+ }elseif endid'="" {
+	set vrange=" ～ "_endname
+ }else {
+	set vrange=""
+ }
+ 
+ quit vrange	
+	
+</SCRIPT>
+
+<SCRIPT language="cache" method="SaveUpdateHistory" arguments="description=%String"runat="server">
+
+Set DocNo=%session.Data("DocNo")
+Set topic = ##Class(KB.Topic).%OpenId(DocNo)
+set uhistory=##class(KB.UpdateHistory).%New()
+set uhistory.UpdateDate=$zdatetime($h,3,2)
+set uhistory.Updater=$username
+set uhistory.Description=description
+set uhistory.Topic=topic
+set st=uhistory.%Save()
+
+</SCRIPT>
+
+<!--
+<SCRIPT LANGUAGE=CACHE METHOD="OnPreHTTP" RETURNTYPE="%Boolean">
+if ($Data(%session.Data("Login")) = 0) {
+	set %response.ServerSideRedirect="FAQ.FAQApp.cls"
+	 
+	 Quit $$$OK
+}
+Quit $$$OK
+
+</SCRIPT>
+-->
+
+</BODY>
+</HTML>]]></CSP>
+
+
+<CSP name="history.CSP" application="/csp/user/" default="1"><![CDATA[
+<CSP:PARAMETER name="EXPIRES" value="">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="GENERATOR" content="IBM HomePage Builder 2001 V5.0.0 for Windows">
+<title>	編集履歴検索 </title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="styleedit.css" >
+<!-- Specify that this page is PRIVATE -->
+<!--<csp:CLASS PRIVATE=1>-->
+
+
+<style type="text/css">
+	.Small { font-size: 10pt;}
+	.HedRow { background: #DFEFF4; }
+	.DarkRow { background: #DFF4EF; }
+	.LightRow { background: white; }
+	body { color: black; background: white;  face: "ＭＳ Ｐゴシック"; }
+</style>
+
+<script language="javascript">
+function submitForm() {
+	return;
+}
+</script>
+
+<script language=cache runat=server>
+set pYear = $Extract($ZDATE($Horolog,8),1,4)
+set pMon = $Extract($ZDATE($Horolog,8),5,6)
+set pDay = $Extract($ZDATE($Horolog,8),7,8)
+set minYear = pYear - 4 
+</script>
+
+</head>
+
+
+<script language="cache" runat="server">
+set uname = %request.Get("uname")
+set syear = %request.Get("syear")
+set smon = %request.Get("smon")
+set eyear = %request.Get("eyear")
+set emon = %request.Get("emon")
+set etype = %request.Get("etype")
+
+set strSQL = ""
+//担当者
+if uname'="" { set strSQL = " where  Username='"_uname_"'" }
+else { set strSQL = " where  Username not in ('','%system','UnknownUser','_SYSTEM')" }
+
+//検索日付
+if ((syear="----") || (smon="--")) && (eyear'="") && (emon'="") {
+	if strSQL = "" {set strSQL = " where "} else {set strSQL = strSQL_" and"}
+	set strSQL = strSQL_" UTCTimeStamp <= '"_eyear_"-"_$CASE($LENGTH(emon),1:"0"_emon,2:emon)_"-31%'"
+} elseif (syear'="") && (smon'="") && (eyear'="") && (emon'="") {
+	if strSQL = "" {set strSQL = " where "} else {set strSQL = strSQL_" and"}
+	set strSQL = strSQL_" UTCTimeStamp between '"_syear_"-"_$CASE($LENGTH(smon),1:"0"_smon,2:smon)_"-01%' and '"_eyear_"-"_$CASE($LENGTH(emon),1:"0"_emon,2:emon)_"-31%'"
+}
+
+//イベントタイプ
+if etype'="" {
+	if strSQL = "" {set strSQL = " where "} else {set strSQL = strSQL_" and"}
+	set strSQL = strSQL_" EventType ='"_etype_"'"
+} 
+else 
+{
+	if strSQL = "" {set strSQL = " where "} else {set strSQL = strSQL_" and"}
+	set strSQL = strSQL_" EventType in ('Create','Update')"
+//----- For TEST ---// 
+//	set strSQL = strSQL_" EventType in ('Create','Update','%System')"
+//------------------//
+}
+
+//デフォルト年月は、Horologの年月。
+//if syear="" {set syear=pYear}
+//if smon="" {set smon=$NUMBER(pMon)}
+if syear="" {set syear="----"}
+if smon="" {set smon="--"}
+
+//ユーザ名の登録
+set auser(1) = "Furuzono"
+set auser(2) = "Horita"
+set auser(3) = "Iwamoto"
+set auser(4) = "Kakechi"
+set auser(5) = "Kaminaka"
+set auser(6) = "Minamoto"
+set auser(7) = "Miura"
+set auser(8) = "MIYASHITA"
+set auser(9) = "Nakahashi"
+set auser(10) = "Sato"
+set auser(11) = "Tanaka"
+set auser(12) = "Yamamoto"
+set auser(13) = "Chika"
+set auser(14) = "Uematsu"
+
+//w !,"select Username,EventType,EventData,UTCTimeStamp,Description from %SYS.Audit "_$get(strSQL,"")
+</script>
+
+<body>
+
+<TABLE width=100% align="center" border=0>
+  <TBODY>
+  <TR height=60>
+    <TD class="title" valign="top" align="center" >編集履歴一覧表示</TD>
+  </TR>
+  <TR>
+    <TD align="center">
+	  <form name="form1" method=post action="history.CSP">
+	  <table width=90% align="center" border=0>
+	  <tbody>
+		<tr>
+		  <td>Username，EventType，TimeStamp(yyyy/mm)の指定検索ができます。</td>
+		</tr>
+        <tr>
+          <td>
+	        <script P1="param" language="SQL" name="sqlquery">
+	         select distinct Username from %SYS.Audit where  Username not in ('','%system','UnknownUser','_SYSTEM')
+	       </script>
+            担当者: 
+            <select name="uname">
+	        <csp:loop counter="x" from="1" to="14">
+    		  <option value=#(auser(x))# #($case(auser(x),uname:"selected",:""))#>#(auser(x))#</option>
+    	    </csp:loop>
+    	    <csp:if condition=(uname="")>
+	    	  <option value="" selected>----</option>
+	        <csp:else>
+	    	  <option value="">----</option>
+    	    </csp:if>
+	        </select>
+   	      </td>
+   	    </tr>
+   	    <tr>
+   	      <td>
+            開始日:
+            <select name="syear">
+   		    <csp:loop counter="x" from="0" to="4">
+        	  <option  value=#(minYear+x)# #($case($Number(syear),(minYear+x):"selected",:""))#>#(minYear+x)#</option>
+            </csp:loop>
+	          <option value="----" #($case(syear,"----":"selected",:""))#>----</option>
+            </select>
+            年
+            <select name="smon">
+      	    <csp:loop counter="x" from="1" to="14">
+        	  <option value=#(x)# #($case($Number(smon),x:"selected",:""))#>#(x)#</option>
+            </csp:loop>
+	          <option value="--" #($case(smon,"--":"selected",:""))#>--</option>
+            </select>
+            月 &nbsp;～
+            <select name="eyear">
+     	    <csp:loop counter="x" from="0" to="4">
+     	    <csp:if condition=(minYear+x=$Number(pYear))&(eyear="")>
+     	      <option value=#(minYear+x)# selected>#(minYear+x)#</option>
+     		<csp:else>
+     		  <option value=#(minYear+x)# #($case(minYear+x,$Number(eyear):"selected",:""))#>#(minYear+x)#</option>
+       		</csp:if>
+            </csp:loop>      
+            </select>
+            年
+            <select name="emon">
+      	      <csp:loop counter="x" from="1" to="12">
+      		<csp:if condition=(x=$Number(pMon))&(emon="")>
+      		  <option value=#(x)# selected>#(x)#</option>
+      		<csp:else>
+      		  <option value=#(x)# #($case(x,$Number(emon):"selected",:""))#>#(x)#</option>
+          	</csp:if>
+     	    </csp:loop>      
+            </select>
+            月
+   	      </td>
+   	    <tr>
+   	      <td colspan=2 width=480>
+          イベントタイプ： 
+	        <select name="etype">
+   		      <option value="Create" #($case(etype,"Create":"selected",:""))#>Create</option>
+  		      <option value="Update" #($case(etype,"Update":"selected",:""))#>Update</option>      	
+	   	      <option value="" #($case(etype,"":"selected",:""))#>----</option>
+            </select>
+   	      </td>
+   	    </tr>
+    	<tr>
+   	      <td>条件で絞り込み<INPUT type="image" src="./images/button/Search.gif" border=0></td>
+   	    </tr>
+   	  </tbody>
+	  </table>
+	</TD>
+  </TR>
+  <TR><TD><hr width=90% align="center"></TD></TR>
+  <TR align="center">	
+    <TD>
+      <table width=600 border=1>
+	    <caption style="font-size:16pt;font-weight=bold">検索結果</caption>
+			
+	    <script P1= "" language="SQL" name="sqlquery">
+	     #("select Username,EventType,EventData,UTCTimeStamp,Description from %SYS.Audit "_$get(strSQL,"")_"order by UTCTimeStamp desc")# 
+	   </script>
+	
+	    <tr class="HedRow">
+	      <td><b><font color=blue>Username</font></td>
+	      <td><b>EventType</td>
+	      <td><b>UTCTimeStamp</td>
+	      <td><b>EventData</td>
+	    </tr>
+	
+	  <csp:while counter="row"  condition="sqlquery.Next()">
+	
+	  <csp:if condition='row#2=0'>
+	    <tr class="LightRow">
+	  <csp:else>
+	    <tr class="DarkRow">
+	  </csp:if>
+	  
+	  	  <td><font color=blue>#($get(sqlquery.Data("Username")))#　</font></td>
+	  	  <td>#($get(sqlquery.Data("EventType")))#　</td>
+	  	  <td>#($get(sqlquery.Data("UTCTimeStamp")))#　</td>
+	  	  <td>#($get(sqlquery.Data("EventData")))#　</td> 
+	    </tr>
+	  </csp:while>
+
+	
+	  </table>
+	
+	  </form>
+	  
+    </TD>
+  </TR>
+  <TR><TD>&nbsp</TD></TR>
+  <TR height=50>
+    <TD align="center">
+		<Input type="image" src="./images/button/tojiru1.gif" border="0" onclick="window.close()">
+	<TD>
+  </TR>
+</TBODY>
+</TABLE>
+
+
+</body>
+</html>]]></CSP>
+
+
+<CSP name="howto.CSP" application="/csp/user/" default="1"><![CDATA[
+<html>
+
+<head>
+<!--<meta http-equiv="Refresh" content="600; URL=#url(search.csp)#">-->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="GENERATOR" content="IBM HomePage Builder 2001 V5.0.0 for Windows">
+<title>FAQトピック検索サイトご使用方法</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="stylehowto.css" >
+<!-- Specify that this page is PRIVATE -->
+</head>
+
+<body>
+<table class="howtouse" width="900" align="center" >
+<tr>
+<td align="center">
+<img src="images/logo/intersys-ja-header-logo_trim.gif" width="140" height="35" border="0"/>
+<span class="topline" align="center">FAQトピック検索サイトをご利用頂きありがとうございます。</span><br>
+</td>
+</tr>
+<tr>
+<td>
+<br>
+当サイトでは、<span class="companynm" >InterSystems</span>製品およびサービスに関するよくあるご質問とその回答を掲載しております。<br>
+<br>
+一般的なご質問、Cach&eacuteに関するご質問、Ensembleに関するご質問を、タブ別に掲載しております。<br>
+各タブでは、それぞれに関するトピックを検索することができます。<br>
+トピックIDを直接指定して検索　もしくは、キーワードを入力して検索(全文検索)　の2つの方法での検索が可能です。<br>
+<br>
+検索が実行されると、検索されたトピックの一覧が表示されます。<br>
+トピック一覧の項目名をクリックすると、その項目でのソートが可能です。（クリックする度に、昇順/降順が入れ替わります。)<br>
+<br>
+ご覧になりたいトピックのリンクをクリックすると、詳細内容が別ウィンドウで開きます。<br>
+※トピックの内容に関して、ご質問・ご不明点等ございましたら、詳細画面右下のメール送信用リンクよりご連絡下さい。<br>
+<br>
+検索画面左には、注目トピック・参照の多いトピック・最近追加されたトピックの一覧を随時更新して掲載しております。<br>
+<br>
+FAQトピック検索システム・バージョン #(##class(KB.Utility).ShowVersion())# 
+<br>
+<p class="note">
+【ブラウザに関する注意点】<br>
+ FireFoxをお使いの場合、バージョンおよびブラウザの設定により、トピックの詳細画面を連続して開いた場合に、<br>
+ 「このページによる追加のダイアログ表示を抑制する」という確認ダイアログが出ることがあります。<br>
+ この場合は、「いいえ」を選択するようにして下さい。<br>
+ 「はい」を選択された場合は、それ以降、詳細表示ができなくなってしまいますので、メイン画面を更新して、再検索をお願いいたします。<br>
+</p>
+<!--
+<p class="note">
+【ブラウザに関する注意点】<br>
+ FireFoxをお使いの場合、バージョンおよびブラウザの設定により、トピックの詳細画面を連続して開いた場合に、<br>
+ 「このページによる追加のダイアログ表示を抑制する」という確認ダイアログが出ることがあります。<br>
+ この場合は、「いいえ」を選択するようにして下さい。<br>
+ 「はい」を選択された場合は、それ以降、詳細表示ができなくなってしまいますので、メイン画面を更新して、再検索をお願いいたします。<br>
+<p>
+<p class="note">
+【ブラウザに関する注意点】<br>
+ FireFoxをお使いの場合、バージョンおよびブラウザの設定により、トピックの詳細画面を連続して開いた場合に、<br>
+ 「このページによる追加のダイアログ表示を抑制する」という確認ダイアログが出ることがあります。<br>
+ この場合は、「いいえ」を選択するようにして下さい。<br>
+ 「はい」を選択された場合は、それ以降、詳細表示ができなくなってしまいますので、メイン画面を更新して、再検索をお願いいたします。<br>
+<p>
+<p class="note">
+【ブラウザに関する注意点】<br>
+ FireFoxをお使いの場合、バージョンおよびブラウザの設定により、トピックの詳細画面を連続して開いた場合に、<br>
+ 「このページによる追加のダイアログ表示を抑制する」という確認ダイアログが出ることがあります。<br>
+ この場合は、「いいえ」を選択するようにして下さい。<br>
+ 「はい」を選択された場合は、それ以降、詳細表示ができなくなってしまいますので、メイン画面を更新して、再検索をお願いいたします。<br>
+<p>
+-->
+</td>
+</tr>
+</table>
+</body>
+</html>
+]]></CSP>
+
+
+<CSP name="howtoforeditors.csp" application="/csp/user/" default="1"><![CDATA[
+<html>
+
+<head>
+<!--<meta http-equiv="Refresh" content="600; URL=#url(search.csp)#">-->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="GENERATOR" content="IBM HomePage Builder 2001 V5.0.0 for Windows">
+<title>FAQトピック検索サイト ご使用方法 for ISJ Editors</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="stylehowto.css" >
+<!-- Specify that this page is PRIVATE -->
+</head>
+
+<body>
+<table class="howtouse" width="900" align="center" >
+<tr>
+<td align="center" colspan=2>
+<span class="topline" align="center">FAQサイトの使用方法について</span><br>
+</td>
+</tr>
+<tr>
+<td colspan=2>
+<br>
+FAQサイトをご利用いただきありがとうございます。
+<br>
+<br>
+<br>
+※編集者向けの利用ガイドを記載orリンクする予定・・・※
+<br>
+<br>
+FAQトピック検索システム・バージョン #(##class(KB.Utility).ShowVersion())# 
+<br>
+<br>
+<br>
+<br>
+</td>
+</tr>
+<tr>
+<td colspan=2 align="center">
+<br>
+↓↓↓トピックの新規作成、および、更新履歴の表示は、こちらから↓↓↓
+<br>
+</td>
+</tr>
+<tr height=70px">
+<td width="50%" align="center">
+<!-- <a href="javascript:window.open('new.CSP','new','width=1000,height=600,left='+(window.screen.width-1000)/2+',top='+(window.screen.height-600)/2+''),scrollbars=yes;void(0);" style="font-style:bold; font-size:80%; color:#00CC00"><IMG src="images/button/newtopic.gif"></A> -->
+<a href="javascript:openWindow('new.CSP');" style="font-style:bold; font-size:80%; color:#00CC00"><IMG src="images/button/newtopic.gif"></A>
+</td>
+<td width="50%" align="center">
+<a href="javascript:openWindow('history.CSP');" style="font-style:bold; font-size:80%; color:#00CC00"/><IMG src="images/button/history.gif"></A>
+</td>
+</tr>
+</table>
+</body>
+</html>
+
+<script language="javascript">
+function openWindow(cspname) {
+	window.open(cspname,'new',"width=1000,height=600,left='+(window.screen.width-1000)/2+',top='+(window.screen.height-600)/2+''),scrollbars=1;void(0)");
+}
+</script>
+
+]]></CSP>
+
+
+<CSPBase64 name="images/logo/IntersystemsLogo.gif" application="/csp/user/" default="1">
+R0lGODdhMgATAMYAADQynJyaxGRmrNTO1ISCtLy2zExOpHR2tOzm3KyqxIyOvFxapERCnMTC1Gxu
+rPTy5KSixJyWvNza3IyKvLy+zFxWpIR+tLSyzGRirExKpIyGvFRWpHx+tPTu5LSuzJSWvGRerExG
+pHRutDw6nKSexGxmrNzW3ISGvFROpHx2tPTq5KyuzJSOvFxerERGnMzK1Pz65KymxMS+zJyexNTS
+1ISCvLy6zOzq5KyqzFxarMzG1GxutPz25KSmxJyWxOTe3HRytDw+nGxqrFRSpHx6tJSSvERGpMS+
+1AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwA
+AAAAMgATAAAH/oAwgoOEhYaHiImKi4yNjoc8iZGIk5CKKhqClYkqExOWlIw3GY48GCw3m4+qgzyj
+RwUwPhi0PikYODUYPjQoPA0sMDgeR0C0GBM1ID4wIh0/NTAXOQOahTchOBs8RDhFNTcGNCotR7tD
+MOE8OQEGHhIeAjcgDalBJgVDLygSiQgZKwDgSGEjxgQeKFKBoBFghgEdPHZ4yKEhgKACRExVuzGi
+QAAjAT4lGuVBSAYMDbzxMFBDRwsTImwcQdHhAoMP8SIdIQIDA5EjEoz44GDkSAVWg/55CwBAxwoW
+CCGYaFEhxwMYFibcuGcKBw8dKXp+GPBCBAcRJX4AKTIyg8oW7Q08FFmJwJQQtumMmECBAMaPEBIa
+8ARRrUAREUAODAg3gJWrDB6CEdGB4+CQHzBaXAABI5IFEgb6wiDBQQdPDDRgQIAgZMIJGzAKlCBU
+SekJGAQ9nOAx5AaMhRlEH4gRWhCNHMV+p2ZxIUABHzF4/CB1aBSOTEQK7jbwg0cLGp91GLvBt3ON
+EwV29HzBQ8QRQTE4FADxAdI8uTA0UMABFQS7HSY0kEELMTzg3Q0qDAFEBzvBsEMONexQDQxHGCEE
+bJTwoGFnGkbCg4GTbGgNDB200mGHmqiCFCOOZbjiirTF+MiMNCqySYiL3ChIIAA7
+</CSPBase64>
+
+
+<CSPBase64 name="images/logo/cachecube.png" application="/csp/user/" default="1">
+iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAA
+fklEQVR4nMWTUQ7EIAhE5/DvbHMt9gOha3W77VcNMRMyIM+oopbErYgIkITGYq+pguGGKXXStHXn
+hmMA5sYjadt21gC2WfRRQBUAKkeaUtv+mgdlJ04jVdc+uejpq/gX1wyr3jM0Zc59xfCr64sM654M
+mhki4gFDPep7DP0LPgwnDr7EIWAgAAAAAElFTkSuQmCC
+</CSPBase64>
+
+
+<CSPBase64 name="images/logo/ensemblecube.png" application="/csp/user/" default="1">
+iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAALHRFWHRDcmVhdGlvbiBUaW1lAFRo
+dSAxNSBOb3YgMjAwNyAxNDoxNTo0NiAtMDUwMGNUMZsAAAAHdElNRQfXCw8TEQJP6/hlAAAACXBI
+WXMAAA7CAAAOwgEVKEqAAAAABGdBTUEAALGPC/xhBQAAAJtJREFUeNqNkrERgCAMRQPHOBaOQOlY
+GcjC0pLS0sKBDMEoqAE4CP8gP+admGPfAGBeVqgOxEtYWsPYyM49Jgps51FMwtHmvdeyQwhAeQhS
+E91zoX2Bpywx5Fi6kVv6PVVgIm2vgaGzlohbo/DMjVKuG1pkN7Rcu7JW3fKGrhruP12HJjYsS9l0
+mqC/MYr0cNhz7JNptn4PyqZ4AgQqRqBUMuHhAAAAAElFTkSuQmCC
+</CSPBase64>
+
+
+<CSP name="new.CSP" application="/csp/user/" default="1"><![CDATA[
+<CSP:PARAMETER name="EXPIRES" value="">
+<html style="height:100%;margin-bottom:1px;">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="GENERATOR" content="IBM HomePage Builder 2001 V5.0.0 for Windows">
+<title>Cach&eacute; FAQ Database New Topic Input</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="styleedit.css" >
+<!-- Specify that this page is PRIVATE -->
+<!--<csp:CLASS PRIVATE=1>-->
+</head>
+
+<BODY bgcolor="#FFFFFF">
+
+<TABLE width="100%" >
+  <TBODY>
+  <TR>
+    <TD class="title" valign="top" align="center" >FAQ新規トピック作成</TD>
+  </TR>
+  <TR>
+    <TD align=center>
+    <csp:object NAME="topic" CLASSNAME="KB.Topic" OBJID=#(%request.Get("OBJID"))#>
+      <table width=95% >
+      <tbody>
+        <form name="form" cspbind="topic" cspjs="All" enctype="multipart/form-data" method="POST">
+        <tr>
+          <td width="15%" class="coltitle" style="color:#666666;">ID：</div></b></font></td>
+          <td><input type="text" name="TID" cspbind="%Id()" size="10" style="font-family:ＭＳ ゴシック" readonly></td>
+        </tr>
+        <!--<tr>
+          <td width="13%" class="coltitle">一般トピック用ID：</td>
+          <td>G-<input type="text" name="SubID" cspbind="TopicSubID" size="10" class="textbox"></td>
+		</tr> -->
+        <tr>
+          <td class="coltitle">タイトル：</td>
+          <td><input type="text" name="Title" cspbind="Title" size="70" class="textbox"></td>
+        </tr>
+          <td class="coltitle">内容：</td>
+          <td><textarea onkeydown="insertTab(this, event);" name="Description" cspbind="Description" cols="50" rows="15"></textarea></td>
+		  <!--<td><textarea name="Description" cspbind="Description" cols="85" rows="30" style="font-size:100%;font-family:'ＭＳ ゴシック';line-height:1.5em;"></textarea></td>-->
+		</tr>
+		<tr>
+          <td class="coltitle">プロダクト：</td>
+          <td><select name="Product" cspbind="Product" classname="KB.Product" query="ListProduct" field="ProductName" onchange="javascript:disableFacility()"></select></td>
+        </tr>
+        <tr>
+          <td class="coltitle">機能名：</td>
+          <td><select name="FacilityDescription" cspbind="Facility" classname="KB.Facility" query="ListDescription" field="Description"></select></td>
+        </tr>
+        <tr>
+          <td class="coltitle">プラットフォーム名：</td>
+          <td><select name="PlatformName" cspbind="Platform" classname="KB.Platform" query="ListDescription" field="Name" onchange=></select></td>
+        </tr>
+        <tr>
+          <td class="coltitle">バージョン：</td>
+          <td><select name="StartVersion" cspbind="StartVersion" classname="KB.Version" query="ListDescription" field="ExternalVersion"></select> ～ 
+              <select name="EndVersion" cspbind="EndVersion" classname="KB.Version" query="ListDescription" field="ExternalVersion"></select>
+              <input type="hidden" name="VersionRange" cspbind="VersionRange"/>
+          </td>       
+        </tr>
+        <tr>
+          <td class="coltitle">関連トピック：</td>
+          <td><input type="text" name="RefTopic" cspbind="RefTopic" size="30" class="textbox"></td>
+        </tr>
+        <tr>
+          <td class="coltitle">添付ファイルUpload：</td>
+          <td><input type="file" name="AttachedFile" size="30" style="font-family:ＭＳ Ｐゴシック"></td>
+        </tr>
+        <tr>
+        <tr valign="center">
+          <td class="coltitle">ステータス：</td>
+          <td>
+            <table style="padding:0;">
+              <tr>
+                <td class="childcoltitle">作成完了<input type="checkbox" name="Completed" cspbind="Completed"></td>
+		      </tr>
+		    </table>
+		  </td>
+		</tr>
+        <tr>
+          <td class="coltitle">*社内用メモ*：</td>
+          <td ><textarea name="Note" cspbind="Note" cols="65" rows="3" ></textarea></td>
+        </tr>
+        <tr height=40>
+          <td colspan=2 align="center">
+            <input type="image" name="btnSave" src="./images/button/Save1.gif" border="0" onclick="formValidate()">
+          </td>
+        </tr>
+        </tbody>
+     </table>
+     </TD>
+  </TR>
+  </form>
+</TBODY>
+</TABLE>
+<HR align="center" width="95%">
+<div align="center" style="margin:20px;font-weight:bold;"><a href="javascript:window.close();">&lt;&lt;戻る</a></div>
+<csp:IF CONDITION='$Get(err)=""'>
+<csp:ELSE>
+<p><font color="#FF0000"> 保存エラー: #($Get(err))# </p>
+</csp:IF>
+
+
+<SCRIPT LANGUAGE="javascript">
+
+function loadEvent() {
+	this.disableFacility();	
+}
+
+function disableFacility() {
+	if (document.form.Product.value == 1) {
+		document.form.FacilityDescription.value = 1;
+		document.form.FacilityDescription.disabled = true;
+	}else{
+		document.form.FacilityDescription.disabled = false;
+	}
+}
+
+function formValidate() {
+	
+	//Titleのチェック
+	var topictitle = document.form.Title.value;
+	if (topictitle=='') {
+		alert('トピックのタイトルが入力されていません。');
+		return;
+	}
+	
+	//Productのチェック
+	var product = document.form.Product.value;
+	if (product=='') {
+		alert('プロダクトが選択されていません。');
+		return;
+	}
+	
+	//関連トピックのチェック
+	var reflist = document.form.RefTopic.value;
+	if (reflist) {
+		var refchk = #server(..RefListChk(reflist))#;
+		if (refchk==0) {
+			alert('関連トピックの指定が不正です。指定されたIDのトピックは存在しません。');
+			document.form.RefTopic.value='';
+		}else {
+			document.form.RefTopic.value=refchk;
+		}
+	}
+		
+	//添付ファイルのチェック
+	var upflg=''
+	var atfile = document.form.AttachedFile.value;
+	if (atfile) {
+		if (atfile.match(/\.zip$/i)) {
+			#server(..SetFileUpFlg())#;	
+		}else{
+			alert('添付ファイルの形式が不正です。ファイルはzipフォルダに格納して保存してください。');
+			return;
+		}
+	}
+	
+	//バージョン指定のチェック
+	var start = document.form.StartVersion.value;
+	var end = document.form.EndVersion.value;
+	
+	var vrange = #server(..SetVersionRange(start,end))#;
+
+	if (vrange=='0') {
+		alert('バージョン指定が不正です。');
+		return;
+	}else{
+		document.form.VersionRange.value = vrange;
+	}	
+	
+	//トピック保存
+	var saveconf = confirm('このトピックを追加します。よろしいですか？')
+	if (saveconf) {
+		//#server(..CreateUsersVoice())#;
+		form_save(this);
+		form.action="complete.CSP";	
+	}
+}
+
+function formClear() {
+	var clearconf=confirm('記入されたすべての内容をクリアします。よろしいですか？')
+	if (clearconf) {
+		form_new();
+	}
+}
+
+function insertTab(o, e)
+{
+	var kC = e.keyCode ? e.keyCode : e.charCode ? e.charCode : e.which;
+	if (kC == 9 && !e.shiftKey && !e.ctrlKey && !e.altKey)
+	{
+		var oS = o.scrollTop;
+		if (o.setSelectionRange)
+		{
+			var sS = o.selectionStart;
+			var sE = o.selectionEnd;
+			o.value = o.value.substring(0, sS) + "\t" + o.value.substr(sE);
+			o.setSelectionRange(sS + 1, sS + 1);
+			o.focus();
+		}
+		else if (o.createTextRange)
+		{
+			document.selection.createRange().text = "\t";
+			e.returnValue = false;
+		}
+		o.scrollTop = oS;
+		if (e.preventDefault)
+		{
+			e.preventDefault();
+		}
+		return false;
+	}
+	return true;
+}
+
+</SCRIPT>
+
+
+<SCRIPT language="cache" method="RefListChk" arguments="rlist:%String" returntype="%String" runat="server">
+
+set rlist = $REPLACE(rlist," ","")
+set rlist = $REPLACE(rlist,"　","")
+
+set refchk=rlist
+If refchk = "" Quit refchk
+set rlen=$LENGTH(rlist,",")
+if rlen=1 {
+	set reftopic=##class(KB.Topic).%OpenId(rlist)
+	if '$IsObject(reftopic) {
+		set refchk='$$$OK
+	}
+}else{
+	for i=1:1:rlen {
+		set refid=$PIECE(rlist,",",i)
+		set reftopic=##class(KB.Topic).%OpenId(refid)
+		if '$IsObject(reftopic) {
+			set refchk='$$$OK
+		}
+	}
+}
+
+//チェックNGの場合は「0」、チェックOKの場合は、スペースを抜いた文字列を返す
+quit refchk
+
+</SCRIPT>
+
+<SCRIPT language="cache" method="SetVersionRange" arguments="startid:%String, endid:%String" runat="server">
+
+if startid'= "" {
+	set startver=##class(KB.Version).%OpenId(startid)
+	set startname=startver.ExternalVersion
+	set startorder=startver.OrderId
+}else{
+	set startver="",startname="",startorder=""
+}
+
+if endid'= "" {
+	set endver=##class(KB.Version).%OpenId(endid)
+	set endname=endver.ExternalVersion
+	set endorder=endver.OrderId
+}else{
+	set endver="",endname="",endorder=""
+}
+
+if startid'="" {
+	if endid'="" {
+		if startorder > endorder {
+			set vrange="0"
+		}
+		elseif startid=endid {
+			set vrange=startname
+		}else{
+			set vrange=startname_" ～ "_endname
+		}
+	}else{
+		set vrange=startname_" ～"
+	}
+ }elseif endid'="" {
+	set vrange=" ～ "_endname
+ }else {
+	set vrange=""
+ }
+ 
+ quit vrange	
+	
+</SCRIPT>
+
+<SCRIPT language="cache" method="SetFileUpFlg" runat="server">
+
+set %session.Data("UpFlg")=1
+    
+</SCRIPT>
+
+</BODY>
+</HTML>
+
+]]></CSP>
+
+
+<CSP name="result.CSP" application="/csp/user/" default="1"><![CDATA[
+<CSP:PARAMETER name="EXPIRES" value="">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="GENERATOR" content="IBM HomePage Builder 2001 V5.0.0 for Windows">
+<title>Cach&eacute; FAQ Database Seach Result Detail</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="style.css" >
+<!-- Specify that this page is PRIVATE -->
+<!--<csp:CLASS PRIVATE=1>-->
+
+<script language="JavaScript">
+
+function loadEvent()
+{
+   var wname=window.name;
+   var wnamesub=wname.substring(0,16);
+   
+   if (wnamesub=='TopicDescription') {
+	   var closebtn=document.getElementById("closebtn");
+   	   closebtn.style.visibility='visible';
+   }else{
+	   var toplink=document.getElementById("toplink");
+       toplink.style.visibility='visible';
+   }   
+}
+
+
+</script>
+
+</head>
+
+
+<!--<script type="text/javascript">
+  window.resizeTo(800,1000);
+</script>-->
+
+
+<BODY bgcolor="#FFFFFF" onload="loadEvent()">
+
+<script language="cache" method="OnPreHTTP" arguments="" returntype="%Boolean">
+
+//FAQアプリへのアクセスカウント(直接詳細を参照された場合+1)
+if $Get(%session.Data("Access"))="" {
+	set ^AccessCount = $Get(^AccessCount)+1
+	set today=$zdate($h,8)
+	set ^AccessCount(today) = $Get(^AccessCount(today))+1
+	set %session.Data("Access")=1
+}
+
+ Set DocNo=%request.Get("DocNo")
+ 
+ if DocNo'="" {
+	 Set topic = ##Class(KB.Topic).%OpenId(DocNo)
+ 	if topic="" {
+		 set %response.Redirect="FAQ.FAQTopicNotFound.cls"
+ 	}else{
+	 	 set TopicID=topic.TopicID
+ 	}
+
+ }
+  
+ quit 1
+</script>
+
+<SCRIPT LANGUAGE="cache" RUNAT="Server">
+
+ Set %session.Data("DocNo")=DocNo
+ 
+ Set roles=$Get(%session.Data("roles"))
+ if roles="" {
+	 set roles=0
+ }
+  
+ //参照回数のセット
+ if $Get(%session.Data("RefFreqChk",DocNo)) ="" {
+	
+	//set topic.RefFreq=topic.RefFreq+1
+	set uv=topic.UsersVoice
+	
+	set uv.RefFreq=uv.RefFreq+1
+	
+	set %session.Data("noAudit")=1
+	set st=uv.%Save()
+	set %session.Data("noAudit")=0
+	
+	set %session.Data("RefFreqChk",DocNo)=%session.SessionId
+}
+
+
+ Set UpdateDate = topic.UpdateDate
+ Set title = ..EscapeHTML(topic.Title)
+ If topic.VersionRange'= "" {
+	 Set vrange = topic.VersionRange
+ }Else{
+	 Set vrange = ""
+ }
+ 
+ /*
+ If topic.Category'="" Set category = topic.Category.Description
+ If topic.Facility'="" Set facility = topic.Facility.Description
+ If topic.Platform'="" Set platform = topic.Platform.Name
+ If topic.FileFlg'="" Set fileflg = topic.FileFlg
+*/
+
+ // 関連トピックのセット
+ set refcount=0
+ if topic.RefTopic'="" {
+	 set refcount=$LENGTH(topic.RefTopic,",")
+ 
+	 for refkey=1:1:refcount {
+		 set refid = $PIECE(topic.RefTopic,",",refkey)
+		 set reftopic = ##class(KB.Topic).%OpenId(refid)
+		 if (reftopic '= "") {
+			 set refid(refkey) = refid
+			 set reftitle(refkey) = ..EscapeHTML(reftopic.Title)
+		 }else{
+			 set refcount=0
+		 }
+	 }
+ }
+ 
+ 
+ // 添付ファイル名のセット
+ set filename = ##class(KB.Config).getAttachedFileName()_DocNo_".zip"
+ set dir = ##class(KB.Config).getFTPDirectory()
+ set sep = ##class(KB.Config).getDirectorySeparator()
+ set filepath = dir_sep_filename
+ set fileexists = ##class(%File).Exists(filepath)
+ set %session.Data("filename")=filename
+ set %session.Data("dir")=dir
+ set %session.Data("sep")=sep
+ set %session.Data("filepath")=filepath
+ set %session.Data("fileexists")=fileexists
+ 
+ Set tProductId = topic.Product.%Id()
+ 
+ If (tProductId = 1) { //一般
+	 Set tLogo = "IntersystemsLogo.gif"
+	 Set tWidth = 50
+	 Set tHight = 19
+ }
+ ElseIf (tProductId = 2) { //Cache
+	 Set tLogo = "cachecube.png"
+	 Set tWidth = 16
+	 Set tHight = 16
+ }
+ ElseIf (tProductId = 3) { //Ensemble
+	 Set tLogo = "ensemblecube.png"
+	 Set tWidth = 16
+	 Set tHight = 16
+ }
+ 
+ /*
+ set dir = ##class(KB.Config).getFTPDirectory()
+ set file = ##class(KB.Config).getAttachedFileName()
+ set sep = ##class(KB.Config).getDirectorySeparator()
+ set attachedurl=dir_sep_file_DocNo_".zip"
+ 
+ Set filename1="",filename2="",filename3="",version="",category="",facility="",platform=""
+ 
+ for i=1:1:3 {
+		
+	Set filenamei = "filename"_i
+	Set property = "FileLoc"_i
+	
+	Set fileloc = $ZOBJPROPERTY(topic,property)
+
+	If fileloc.Filename'="" {
+		
+   		Set filename = fileloc.Filename
+    	set sep = ##class(KB.Config).getDirectorySeparator()
+    	If $Length(filename,sep)>1 {
+	    	//一番下位のファイル名だけを取得する
+       		Set @filenamei = $Piece(filename,sep,$length(filename,sep))
+    	}
+		
+ 	    set fileext = $piece(@filenamei,".",2)
+ 
+    	if fileext = "doc" {
+        	do fileloc.SetAttribute("ContentType","application/msword")
+    	}
+    	elseif fileext = "pdf" {
+       		do fileloc.SetAttribute("ContentType","application/pdf")
+    	}
+    	elseif (fileext = "html") || (fileext = "htm") {
+       		do fileloc.SetAttribute("ContentType","text/html")
+    	}
+    	elseif fileext = "xml" {
+       		do fileloc.SetAttribute("ContentType","text/xml")
+    	}
+    	elseif fileext = "txt" {
+       		do fileloc.SetAttribute("ContentType","application/msword")
+    	}
+    	else {
+       		do fileloc.SetAttribute("ContentType","application/x-zip-compressed")
+    	}
+
+	    set contentdisposition ="filename="""_@filenamei_"""" 
+    	do fileloc.SetAttribute("ContentDisposition",contentdisposition)
+
+   		//IEは、以下の設定を行なわないとContentTypeの設定が反映されない
+   		do fileloc.SetAttribute("Expires",600)
+   		//SetAttributeを実行後にOidの設定を行なわないと、ContentDispositionが反映されない
+   		set %session.Data("Attached"_i)=fileloc.%Oid()
+ 	}
+ 	else {
+   		Set %session.Data("Attached"_i)=""	 
+ 	}
+ } 
+
+ */
+   
+</SCRIPT>
+
+<!--Cache' Version-->
+<csp:if condition='vrange=""'>
+<csp:else>
+  <DIV class="version"><IMG src="./images/others/cachecube.png"><SPAN class="version">#(vrange)#</SPAN></DIV>
+</csp:if>
+<!--Topic Title-->
+<DIV><IMG class="titleicon" src="./images/others/Question.gif"><IMG class="titleicon" width="#(tWidth)#" height="#(tHight)#" src="./images/logo/#(tLogo)#"><h1 class="title">&nbsp;&nbsp;#(title)#</h1></DIV>
+<!--<DIV><hr></DIV>-->
+<!--Description-->
+<DIV class="description" border=1>
+  <SCRIPT LANGUAGE="CACHE" runat=server>
+   set description=topic.Description
+   //コード部分
+   set cmdstart="<DIV class=divcommand><PRE><CODE>"
+   set cmdfin="</CODE></PRE></DIV>"
+                   
+   //コード部分、URLのリンク処理
+   set crlf = $c(13,10)
+   set lineno = $length(description,crlf)
+   for i = 1:1:lineno {
+	   set line(i)=$piece(description,crlf,i)
+	   set tLine =$ZCVT(line(i),"U")
+	   if $Extract(tLine,1,9)="<COMMAND>" {
+		   set cmdflg=1
+		   write cmdstart
+	   }
+	   elseif $Extract(tLine,1,10)="</COMMAND>" {
+		   set cmdflg=0
+		   write cmdfin
+	   }
+       elseif $Extract(tLine,1,5)="<URL>" {
+	       set llen=$Length(line(i))
+		   set url=$Extract(line(i),6,llen-6)
+		   write "<A href="_url_" target=""blank"">"_url_"</A><br>" 
+   	   }
+	   elseif $Extract(tLine,1,10)="<REFTOPIC>" {
+		   	set refid1=$Extract(line(i),11,13)
+			set refid2=$NUMBER($Extract(line(i),11,13))
+			set ref=##class(KB.Topic).%OpenId(refid2)
+			set reft=ref.Title
+			set refurl="http://www.intersystems.co.jp/faq.php?id="_refid1
+			write "<br><img src=""./images/button/arrow1.gif""><A href="_refurl_">Q："_reft_"</A><br>"
+	   }
+	   else{
+		   write ..EscapeHTML(line(i))_"<br>"
+	   }         
+   }
+ </SCRIPT>
+
+</DIV>
+<!--関連トピック-->
+<DIV>
+  <SPAN class="refhead">関連トピック：</SPAN>
+  <csp:if condition='refcount>0'>
+    <SCRIPT LANGUAGE="CACHE" runat=server>
+     for i=1:1:refcount {
+	     if i=1 {
+		     write "<SPAN class=""refbody""><A href=result.CSP?DocNo="_refid(i)_">"_reftitle(i)_"</A></SPAN>"
+	     }else{
+		     write "<BR><SPAN style=""visibility:hidden"">関連トピック：</SPAN>"
+		     write "<SPAN class=""refbody""><A href=result.CSP?DocNo="_refid(i)_">"_reftitle(i)_"</A></SPAN>"
+	     }   
+     }
+   </SCRIPT>
+  </csp:if>
+  </DIV>
+  <DIV>
+  <SPAN class="refhead">添付ファイル：</SPAN>
+  <csp:if condition='fileexists=1'>
+    <SPAN class="refbody"><A href=downloads/#(filename)#>参考資料(zip)</A></SPAN>
+  <csp:else>
+  </csp:if>
+</DIV>
+<csp:if condition='roles=0'>
+<csp:else>
+  <DIV class="toedit"><A href="edit.CSP?DocNo=#(DocNo)#" target="_self" style="color:#00CC00;">&gt;&gt;&gt;編集</A></DIV>
+</csp:if>
+<DIV>
+  <HR>
+</DIV>
+<P>
+<DIV class=enquete>
+  <SPAN class="enqhead">アンケートにご協力をお願いします</SPAN><BR>
+  <SPAN class="enq">このトピックは参考になりましたか？</SPAN>
+  <input type="image" src="./images/button/Yes1.gif" onmousedown="this.src='./images/button/Yes2.gif'" onmouseout="this.src='./images/button/Yes1.gif'" onclick=#call(..Enquete('Y'))#>
+  <input type="image" src="./images/button/No1.gif" onmousedown="this.src='./images/button/No2.gif'" onmouseout="this.src='./images/button/No1.gif'" onclick=#call(..Enquete('N'))#>
+</DIV>
+<DIV class="mailto">
+  <SPAN class="mail"><A href="mailto:jpnsup@intersystems.com?subject=Question>>>FAQ #(TopicID)#"><IMG src="./images/button/mail01-y.gif" border=0> このトピックに関するお問い合わせ</A></SPAN>
+</DIV>
+</P>
+<DIV class="closebtn" align="center">
+  <Input type="image" id="closebtn" src="./images/button/tojiru1.gif" border="0" onclick="window.close()" style="visibility:hidden;"><br>
+  <A href="FAQ.FAQApp.cls" id="toplink" style="visibility:hidden;">【Topページ】</A>
+</DIV>
+
+<script language="Cache" method="Enquete" arguments="ans:%String">
+
+&js<alert('ご協力ありがとうございました');>
+
+set DocNo=%session.Data("DocNo")
+
+if $Get(%session.Data("EnqChk",DocNo)) '="" {
+	quit
+}
+
+set tp=##class(KB.Topic).%OpenId(DocNo)
+set uv=tp.UsersVoice
+
+If ans="Y" {
+	set uv.EnqYes=uv.EnqYes+1
+}elseif ans="N"{
+	set uv.EnqNo=uv.EnqNo+1
+}
+
+set %session.Data("noAudit")=1
+set st=uv.%Save()
+set %session.Data("noAudit")=0
+
+set %session.Data("EnqChk",DocNo)=%session.SessionId
+
+quit
+
+
+</script>
+
+</BODY>
+
+</HTML>
+
+]]></CSP>
+
+
+<CSP name="style.css" application="/csp/user/" default="1"><![CDATA[
+body {
+font-size:15px;
+font-family:arial;
+}
+
+div {
+margin:10px 40px;
+}
+
+div.version{
+height:5px;
+margin:0px 40px;
+text-align:right;
+}
+
+span.version
+{
+font:bold 100% "Arial";
+color:#3300CC;
+padding-right:20px;
+}
+
+h1.title
+{
+font-size:16px;
+color:#000055;
+background-image:url('images/background/title-gradient-bg_blue.gif');
+background-repeat:repeat-x;
+padding:10px 0px 10px 10px;
+}
+
+img.titleicon
+{
+padding:5px 0px 5px 10px;
+float:left;
+}
+
+div.description
+{
+margin:20px 30px 20px 45px;
+height:55%;
+overflow-y:auto;
+padding-right:20px;
+line-height:1.5;
+}
+
+div.divcommand
+{
+width:90%;
+overflow-x:auto;
+margin:10px 0px;
+background-color:#E0FFFF;
+}
+
+span.refhead
+{
+font-size:85%;
+font-weight:bold;
+color:#30758c;
+/*color:#6633FF;*/
+}
+
+span.refbody
+{
+font-size:85%;
+}
+
+div.toedit{
+margin:20px;
+text-align:center;
+font-weight:bold;
+font-style:italic;
+}
+
+div.enquete
+{
+margin:0px 50px;
+float:left;
+}
+
+span.enqhead
+{
+color:olive;
+font-size:70%;
+font-style:italic;
+text-align:left;
+}
+
+span.enq
+{
+font-size:90%;
+}
+
+div.mailto
+{
+margin:20px 50px;
+text-align:right;
+}
+
+span.mail
+{
+font-size:90%;
+}
+
+div.closebtn
+{
+margin:10px 30px 0px;
+}
+
+div.howtouse
+{
+font-size:0.5em;
+line-height:1.5;
+}]]></CSP>
+
+
+<CSP name="styleedit.css" application="/csp/user/" default="1"><![CDATA[
+td.title
+{
+font-size:16pt;
+font-weight:bold;
+font-style:italic;
+color:#6633FF;
+}
+
+td.coltitle
+{
+text-align:right;
+font-weight:bold;
+font-size:90%;
+color:#6633FF;
+}
+
+td.childcoltitle
+{
+font-weight:bold;
+font-size:90%;
+color:#6633FF;
+}
+
+.textbox
+{
+font-size:100%;
+font-family:"ＭＳ Ｐゴシック";
+}
+
+.readonlytitle
+{
+text-align:right;
+font-weight:bold;
+font-style:italic;
+font-size:90%;
+color:#666666;
+}
+
+textarea
+{
+width:100%;
+font-size:100%;
+font-family:"ＭＳ Ｐゴシック";
+line-height:1.5em;
+}
+
+th.coltitle
+{
+font-weight:bold;
+color:#6633FF;
+}
+
+td.newline
+{
+font-weight:bold;
+font-style:italic;
+}]]></CSP>
+
+
+<CSP name="stylehowto.css" application="/csp/user/" default="1"><![CDATA[
+/* 旧スタイル
+div.howtouse
+{
+font-size:1em;
+font-family:arial;
+line-height:1.5em;
+}
+
+span.companynm
+{
+font-size:1.1em;
+font-weigt:bold;
+font-style:italic;
+}
+
+p.note
+{
+font-size:0.9em;
+}
+*/
+
+body
+{
+font-size:13px;
+height:100%;
+margin-bottom:1px;
+}
+
+table.howtouse
+{
+font-size:1.2em;
+font-family:arial;
+line-height:1.5em;
+}
+
+span.topline
+{
+font-size:1.3em;
+font-weight:bold;
+color:blue;
+}
+
+span.companynm
+{
+font-size:1.1em;
+font-weigt:bold;
+font-style:italic;
+}
+
+p.note
+{
+font-size:0.9em;
+}
+]]></CSP>
+</Export>
