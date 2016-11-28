@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2016.1 (Build 656U)" ts="2016-08-02 14:54:18">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2016.1 (Build 656U)" ts="2016-08-05 12:46:45">
 <CSPBase64 name="images/background/header-gradient.gif" application="/csp/faq/" default="1">
 R0lGODlhDQBBAGAAACH5BAAAAAAALAAAAAANAEEAh/T4/f/+/fvVpN7p+f/69P/9+/3iwPX4/fzc
 s+Tu/f3ozeTv/eXv/f3kxv726/zWp/zYrPzbsefx/fzasPH2/vzXqPzYqv/8+f3jwv/79//79vzZ
@@ -2740,6 +2740,131 @@ for controls.]]></Description>
 ]]></Routine>
 
 
+<Class name="FAQ.Installer">
+<Description>
+%Installer Manifest FAQ.Installer</Description>
+<IncludeCode>%occInclude</IncludeCode>
+<TimeChanged>63658,65318.696235</TimeChanged>
+<TimeCreated>63393,40515.581067</TimeCreated>
+
+<XData name="FAQManifest">
+<Description>
+マニフェスト定義.</Description>
+<XMLNamespace>INSTALLER</XMLNamespace>
+<Data><![CDATA[
+<Manifest>
+
+<Namespace Name="${NAMESPACE}" 
+           Create="no">
+<CSPApplication 
+    Url="${CSPUrl}"
+    Description=""
+    Directory="${CSPDirectory}"
+    Resource=""
+    Grant="%DB_%DEFAULT"
+    Recurse="true"
+    LoginClass=""
+    CookiePath="${CSPUrl}"
+    AuthenticationMethods="${AuthenticationMethods}"
+     CustomErrorPage="${CustomErrorPage}"/>
+<If Condition='$L("${ClassFileName}")>0'>
+<Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
+    <Arg Value="${ClassFileName}"/>
+    <Arg Value="ck"/>
+</Invoke>
+</If>
+<If Condition='$L("${GlobalFileName}")>0'>
+<Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
+    <Arg Value="${GlobalFileName}"/>
+</Invoke>
+</If>
+<If Condition='$L("${KatakanaWordsFileName}")>0'>
+<Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
+    <Arg Value="${KatakanaWordsFileName}"/>
+</Invoke>
+</If>
+<Invoke Class="KB.Text" Method="ExcludeCommonTerms" CheckStatus="0" Return="RetVal"> 
+    <Arg Value="100"/>
+</Invoke>
+<Invoke Class="KB.Topic" Method="%BuildIndices" CheckStatus="0" Return="RetVal"> 
+</Invoke>
+<Invoke Class="KB.Setup" Method="masterSetup" CheckStatus="0" Return="RetVal"> 
+</Invoke>
+<Invoke Class="KB.Setup" Method="setConfigParams" CheckStatus="0" Return="RetVal"> 
+</Invoke>
+<If Condition='$L("${ResetTopicSubID}")>0'>
+<Invoke Class="KB.Topic" Method="ResetTopicSubID" CheckStatus="0" Return="RetVal"> 
+</Invoke>
+</If>
+</Namespace>
+</Manifest>
+]]></Data>
+</XData>
+
+<Method name="setup">
+<Description>
+これは XGL により生成されたメソッド・ジェネレーターです。.</Description>
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<CodeMode>objectgenerator</CodeMode>
+<FormalSpec><![CDATA[&pVars,pLogLevel:%Integer=3,pInstaller:%Installer.Installer,pLogger:%Installer.AbstractLogger]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+ #; XGL ドキュメントでこのメソッドのコードを生成する.
+ Quit ##class(%Installer.Manifest).%Generate(%compiledclass, %code, "FAQManifest")
+]]></Implementation>
+</Method>
+
+<Method name="runInstaller">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	//以下は毎回インストールの条件により書き換え必要
+	
+	//set vars("ClassFileName") = "F:\test\faq\FAQAllFunc_20140725.xml"
+	set vars("ClassFileName") = "" //プログラムの変更がない場合
+	//set vars("GlobalFileName") = "F:\test\faq\Topic_20140725.xml"
+	set vars("GlobalFileName") = ""  //データの変更がない場合
+	//set vars("KatakanaWordsFileName") = "F:\test\faq\KatakanaWords_20150225.xml"
+	set vars("KatakanaWordsFileName") = ""  //カタカナ語の登録に変更がない場合
+	set vars("ResetTopicSubID") = "" //TopicSubIDをリセットする場合。通常は必要ない
+
+    // テスト環境
+	set vars("NAMESPACE") = "USER" //test
+	set vars("CSPUrl") = "/csp/user" 
+	set vars("CSPDirectory") = "c:\InterSystems/Ensemble/csp/user/" 
+	set vars("CustomErrorPage") = "/csp/user/FAQ.FAQError.cls" 
+	set vars("AuthenticationMethods") = "64"  //認証なし 
+
+    //  JPNFILESRV用
+    /*
+	set vars("NAMESPACE") = "KNOWLEDGE"　//JPNFILESRV用
+	set vars("CSPUrl") = "/csp/knowledge" 
+	set vars("CSPDirectory") = "c:\InterSystems/Ensemble/csp/knowledge/" 
+	set vars("CustomErrorPage") = "/csp/knowledge/FAQ.FAQError.cls" 
+	set vars("AuthenticationMethods") = "32" //パスワード認証
+    */
+    
+    //  本番用
+    /*
+	set vars("NAMESPACE") = "FAQ"　　　　//Cloud用
+	set vars("CSPUrl") = "/csp/faq" 
+	set vars("CSPDirectory") = "/usr/InterSystems/Cache20122/csp/faq/" 
+	set vars("CustomErrorPage") = "/csp/faq/FAQ.FAQError.cls" 
+	set vars("AuthenticationMethods") = "64"  //認証なし
+	*/ 
+	do ..setup(.vars,3)
+]]></Implementation>
+</Method>
+
+<Method name="getVersion">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit "1.0.004"
+]]></Implementation>
+</Method>
+</Class>
+
+
 <Class name="FAQ.KeyWords">
 <Super>%Persistent</Super>
 <TimeChanged>62753,44902.027114</TimeChanged>
@@ -2785,6 +2910,8 @@ for controls.]]></Description>
 </Class>
 
 
+
+
 <Class name="FAQ.SessionEvents">
 <Super>%CSP.SessionEvents</Super>
 <TimeChanged>62469,67023.095644</TimeChanged>
@@ -2809,6 +2936,60 @@ Set %session.EndSession=1
 	set ^AccessCountTest(today) = $Get(^AccessCountTest(today))+1
     
     q $$$OK
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="FAQ.SourceTest">
+<Super>%RegisteredObject,%CSP.Page</Super>
+<TimeChanged>63888,43597.739887</TimeChanged>
+<TimeCreated>63888,42828.697853</TimeCreated>
+
+<Method name="ChkDisplay">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>tid</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set topic=##class(KB.Topic).%OpenId(tid)
+	set description=topic.Description
+   //コード部分
+   set cmdstart="<DIV class=divcommand><PRE><CODE>"
+   set cmdfin="</CODE></PRE></DIV>"
+                   
+   //コード部分、URLのリンク処理
+   set crlf = $c(13,10)
+   set lineno = $length(description,crlf)
+   for i = 1:1:lineno {
+	   set line(i)=$piece(description,crlf,i)
+	   set tLine =$ZCVT(line(i),"U")
+	   if $Extract(tLine,1,9)="<COMMAND>" {
+		   set cmdflg=1
+		   write cmdstart
+	   }
+	   elseif $Extract(tLine,1,10)="</COMMAND>" {
+		   set cmdflg=0
+		   write cmdfin
+	   }
+       elseif $Extract(tLine,1,5)="<URL>" {
+	       set llen=$Length(line(i))
+		   set url=$Extract(line(i),6,llen-6)
+		   write "<A href="_url_" target=""blank"">"_url_"</A><br>" 
+   	   }
+	   elseif $Extract(tLine,1,10)="<REFTOPIC>" {
+		   	set refid1=$Extract(line(i),11,13)
+			set refid2=$NUMBER($Extract(line(i),11,13))
+			set ref=##class(KB.Topic).%OpenId(refid2)
+			set reft=ref.Title
+			set refurl="http://www.intersystems.co.jp/faq.php?id="_refid1
+			write "<br><img src=""./images/button/arrow1.gif""><A href="_refurl_">Q："_reft_"</A><br>"
+	   }
+	   else{
+		   write ..EscapeHTML(line(i))_"<br>"
+	   }         
+   }
+   
+   w !,!,url,!
 ]]></Implementation>
 </Method>
 </Class>
@@ -2893,82 +3074,228 @@ UnitTest用クラス</Description>
 </Class>
 
 
-<Project name="FAQAllFunc" LastModified="2016-08-02 14:53:30.272908">
+<Class name="FAQ.UnitTests">
+<Super>%UnitTest.TestCase</Super>
+<TimeChanged>63624,56688.813789</TimeChanged>
+<TimeCreated>63393,60278.340983</TimeCreated>
+
+<Method name="TestExceptionError">
+<Implementation><![CDATA[
+ set tCurErrId = $get(^FAQ.ErrorD)	
+ do $$$AssertStatusOK(##class(FAQ.Test).ExceptionError(), "Genarating Exception error")
+ do $$$AssertEquals($get(^FAQ.ErrorD),tCurErrId+1, "Comfirming a FAQ.Error object has been produced")
+]]></Implementation>
+</Method>
+
+<Method name="TestCurrentTopicSubId">
+<Implementation><![CDATA[
+ set tTopicSubId = $Get(^TopicSubID) + 1	
+ do $$$AssertEquals(##class(FAQ.Test).CurrentTopicSubId(),tTopicSubId, "Getting ^TopicSubID + 1")
+]]></Implementation>
+</Method>
+
+<Method name="TestTopicId">
+<Implementation><![CDATA[
+ set tTopicId = "G-003"	
+ do $$$AssertEquals(##class(FAQ.Test).TopicId(1),tTopicId, "Getting a Topicid in G- format")
+ set tTopicId = "00100"	
+ do $$$AssertEquals(##class(FAQ.Test).TopicId(100),tTopicId, "Getting a TopicId in as is format")
+]]></Implementation>
+</Method>
+
+<Method name="TestReflink">
+<Implementation><![CDATA[
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ set tTopic1.RefTopic = ""
+ set tTopic2.RefTopic = ""
+ set tSC = tTopic1.%Save()
+ set tSC = tTopic2.%Save()
+ set tResult = "2;1"	
+ do $$$AssertEquals(##class(FAQ.Test).Reflink2(1,2),tResult, "Linking RefTopic 1 & 2")
+ do $$$AssertEquals(##class(FAQ.Test).Reflink2(1,2),tResult, "Linking RefTopic 1 & 2 (already linked)")
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ set tTopic1.RefTopic = ""
+ set tTopic2.RefTopic = ""
+ set tSC = tTopic1.%Save()
+ set tSC = tTopic2.%Save()
+ set tResult = "2,3;1;1"	
+ do $$$AssertEquals(##class(FAQ.Test).Reflink3(1,2,3),tResult, "Linking RefTopic 1 & 2 & 3")
+ do $$$AssertEquals(##class(FAQ.Test).Reflink3(1,2,3),tResult, "Linking RefTopic 1 & 2 & 3 (aleady linked")
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ set tTopic3 = ##class(KB.Topic).%OpenId(3)
+ set tTopic1.RefTopic = ""
+ set tTopic2.RefTopic = ""
+ set tTopic3.RefTopic = ""
+ set tSC = tTopic1.%Save()
+ set tSC = tTopic2.%Save()
+ set tSC = tTopic3.%Save()
+ set tResult1 = "3;2"
+ set tResult2 = "2;3,1"
+ do $$$AssertEquals(##class(FAQ.Test).Reflink2(2,3),tResult1, "Linking RefTopic 2 & 3")
+ do $$$AssertEquals(##class(FAQ.Test).Reflink2(1,2),tResult2, "Linking RefTopic 1 & 2 2 has already a link")
+ do $$$AssertEquals(##class(FAQ.Test).Reflink2(1,2),tResult2, "Linking RefTopic 1 & 2 2 has already a link aleady linked")
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ set tTopic3 = ##class(KB.Topic).%OpenId(3)
+ set tTopic1.RefTopic = ""
+ set tTopic2.RefTopic = ""
+ set tTopic3.RefTopic = ""
+ set tSC = tTopic1.%Save()
+ set tSC = tTopic2.%Save()
+ set tSC = tTopic3.%Save()
+]]></Implementation>
+</Method>
+
+<Method name="TestRemoveLink">
+<Implementation><![CDATA[
+
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic1.RefTopic = "2,3"
+ set tSC = tTopic1.%Save()
+ do tTopic1.RefCheckLink(0)
+ Set tSC = ##class(KB.Topic).RemoveLink(1,"2,3","3")
+ Set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ Set tResult = tTopic2.RefTopic
+ do $$$AssertEquals("",tResult, "Remove id 2 of the id 1")
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ set tTopic3 = ##class(KB.Topic).%OpenId(3)
+ set tTopic1.RefTopic = ""
+ set tTopic2.RefTopic = ""
+ set tTopic3.RefTopic = ""
+ set tSC = tTopic1.%Save()
+ set tSC = tTopic2.%Save()
+ set tSC = tTopic3.%Save()
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic1.RefTopic = "3,2"
+ set tSC = tTopic1.%Save()
+ do tTopic1.RefCheckLink(0)
+ Set tSC = ##class(KB.Topic).RemoveLink(1,"3,2","3")
+ Set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ Set tResult = tTopic2.RefTopic
+ do $$$AssertEquals("",tResult, "Remove id 2 of the id 1")
+
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ set tTopic3 = ##class(KB.Topic).%OpenId(3)
+ set tTopic1.RefTopic = ""
+ set tTopic2.RefTopic = ""
+ set tTopic3.RefTopic = ""
+ set tSC = tTopic1.%Save()
+ set tSC = tTopic2.%Save()
+ set tSC = tTopic3.%Save()
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic1.RefTopic = "3,2"
+ set tSC = tTopic1.%Save()
+ do tTopic1.RefCheckLink(0)
+ Set tSC = ##class(KB.Topic).RemoveLink(1,"3,2","3,2")
+ Set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ Set tResult = tTopic2.RefTopic
+ do $$$AssertEquals("1",tResult, "No Change")
+
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ set tTopic3 = ##class(KB.Topic).%OpenId(3)
+ set tTopic1.RefTopic = ""
+ set tTopic2.RefTopic = ""
+ set tTopic3.RefTopic = ""
+ set tSC = tTopic1.%Save()
+ set tSC = tTopic2.%Save()
+ set tSC = tTopic3.%Save()
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic1.RefTopic = "3,2"
+ set tSC = tTopic1.%Save()
+ do tTopic1.RefCheckLink(0)
+ Set tSC = ##class(KB.Topic).RemoveLink(1,"3,2","")
+ Set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ Set tResult = tTopic2.RefTopic
+ do $$$AssertEquals("",tResult, "Remove id 2 of the id 1")
+ Set tTopic3 = ##class(KB.Topic).%OpenId(2)
+ Set tResult = tTopic3.RefTopic
+ do $$$AssertEquals("",tResult, "Remove id 3 of the id 1")
+
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ set tTopic3 = ##class(KB.Topic).%OpenId(3)
+ set tTopic1.RefTopic = ""
+ set tTopic2.RefTopic = ""
+ set tTopic3.RefTopic = ""
+ set tSC = tTopic1.%Save()
+ set tSC = tTopic2.%Save()
+ set tSC = tTopic3.%Save()
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic1.RefTopic = "3,2"
+ set tSC = tTopic1.%Save()
+ do tTopic1.RefCheckLink(0)
+ Set tSC = ##class(KB.Topic).RemoveLink(1,"3,2","3;2")
+ do $$$AssertStatusNotOK(tSC, "Format Error")
+]]></Implementation>
+</Method>
+
+<Method name="TestFindKatakanaWord">
+<Implementation><![CDATA[
+ set tString = "カタカナ"	
+ set tResult = 1
+ do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Found a Katakana Word")
+ set tString = "カタカナ"	
+ set tResult = 0
+ do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString),tResult, "The length is short")
+ set tString = "abcカタカナ"	
+ set tResult = 1
+ do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Found a Katakana Word")
+ set tString = "カタカナabc"	
+ set tResult = 1
+ do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Found a Katakana Word")
+ set tString = "カタabcカタカナ"	
+ set tResult = 1
+ do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Found a Katakana Word")
+ set tString = "かたかな"	
+ set tResult = 0
+ do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Not Found a Katakana Word")
+]]></Implementation>
+</Method>
+
+<Method name="TestSpritKatakanaKeyWord">
+<Implementation><![CDATA[
+ set tString = "アンインストール"	
+ set tResult = "アン インストール "
+ do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found a Katakana KeyWord")
+ set tString = "アンインストール"	
+ set tResult = "アンインストール"
+ do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,7),tResult, "The length is long")
+ set tString = "アンインストールレポート"	
+ set tResult = "アン インストール レポート "
+ do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found Katakana KeyWords")
+ set tString = "アンインストールレポ"	
+ set tResult = "アン インストール レポ"
+ do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found a Katakana KeyWord")
+ set tString = "abcアンインストールレポ"	
+ set tResult = "abcアン インストール レポ"
+ do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found a Katakana KeyWords")
+ set tString = "アンインストールレポabc"	
+ set tResult = "アン インストール レポabc"
+ do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found a Katakana KeyWord")
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Project name="FAQRefOnly" LastModified="2016-08-05 12:46:28.89406">
   <Items>
-    <ProjectItem name="FAQ.Error" type="CLS"></ProjectItem>
-    <ProjectItem name="FAQ.FAQApp" type="CLS"></ProjectItem>
-    <ProjectItem name="FAQ.FAQError" type="CLS"></ProjectItem>
-    <ProjectItem name="FAQ.FAQTopicNotFound" type="CLS"></ProjectItem>
-    <ProjectItem name="FAQ.FAQTopicSearch" type="CLS"></ProjectItem>
-    <ProjectItem name="FAQ.FAQTopicSearchBodyCache" type="CLS"></ProjectItem>
-    <ProjectItem name="FAQ.FAQTopicSearchBodyEnsemble" type="CLS"></ProjectItem>
-    <ProjectItem name="FAQ.FAQTopicSearchBodyGeneral" type="CLS"></ProjectItem>
-    <ProjectItem name="FAQ.FAQTopicSearchBodyTemplate" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQTopicSearchTest" type="CLS"></ProjectItem>
     <ProjectItem name="FAQ.INC" type="MAC"></ProjectItem>
-    <ProjectItem name="FAQ.KeyWords" type="CLS"></ProjectItem>
-    <ProjectItem name="FAQ.SessionEvents" type="CLS"></ProjectItem>
-    <ProjectItem name="FAQ.Test" type="CLS"></ProjectItem>
-    <ProjectItem name="KB.BitOperation" type="CLS"></ProjectItem>
-    <ProjectItem name="KB.Category" type="CLS"></ProjectItem>
-    <ProjectItem name="KB.Config" type="CLS"></ProjectItem>
-    <ProjectItem name="KB.Event" type="CLS"></ProjectItem>
-    <ProjectItem name="KB.Facility" type="CLS"></ProjectItem>
-    <ProjectItem name="KB.Platform" type="CLS"></ProjectItem>
-    <ProjectItem name="KB.Product" type="CLS"></ProjectItem>
-    <ProjectItem name="KB.Setup" type="CLS"></ProjectItem>
-    <ProjectItem name="KB.Text" type="CLS"></ProjectItem>
-    <ProjectItem name="KB.Topic" type="CLS"></ProjectItem>
-    <ProjectItem name="KB.UpdateHistory" type="CLS"></ProjectItem>
-    <ProjectItem name="KB.User" type="CLS"></ProjectItem>
-    <ProjectItem name="KB.UsersVoice" type="CLS"></ProjectItem>
-    <ProjectItem name="KB.Utility" type="CLS"></ProjectItem>
-    <ProjectItem name="KB.Version" type="CLS"></ProjectItem>
-    <ProjectItem name="Test.Test1" type="CLS"></ProjectItem>
     <ProjectItem name="Text.MecabJapanese2" type="CLS"></ProjectItem>
     <ProjectItem name="Utility.MAC" type="MAC"></ProjectItem>
     <ProjectItem name="bitutil.INC" type="MAC"></ProjectItem>
+    <ProjectItem name="FAQ" type="PKG"></ProjectItem>
+    <ProjectItem name="KB" type="PKG"></ProjectItem>
+    <ProjectItem name="csp/faq/images" type="DIR"></ProjectItem>
     <ProjectItem name="csp/faq/complete.CSP" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/edit.CSP" type="CSP"></ProjectItem>
     <ProjectItem name="csp/faq/history.CSP" type="CSP"></ProjectItem>
     <ProjectItem name="csp/faq/howto.CSP" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/howtoforeditors.csp" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images" type="DIR"></ProjectItem>
-    <ProjectItem name="csp/faq/images/background/header-gradient.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/background/headergradation.bmp" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/background/tblheader-gradient1.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/background/title-gradient-bg_blue.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/AttacheDel1.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/AttacheDel2.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/Back1.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/Edit1.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/No1.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/No2.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/No3.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/Save.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/Save1.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/Search.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/Search2.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/Yes1.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/Yes2.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/back.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/back10.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/history.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/mail01-0.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/mail01-b2.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/mail01-g.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/mail01-y.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/modoru1.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/newtopic.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/tojiru1.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/button/tojiru2.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/logo/IntersystemsLogo.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/logo/cachecube.png" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/logo/ensemblecube.png" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/logo/intersys-ja-header-logo_trim.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/others/Question.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/others/cachecube.png" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/images/others/new022_12.gif" type="CSP"></ProjectItem>
-    <ProjectItem name="csp/faq/new.CSP" type="CSP"></ProjectItem>
     <ProjectItem name="csp/faq/result.CSP" type="CSP"></ProjectItem>
     <ProjectItem name="csp/faq/style.css" type="CSP"></ProjectItem>
     <ProjectItem name="csp/faq/styleedit.css" type="CSP"></ProjectItem>
@@ -3537,6 +3864,8 @@ Set %session.EndSession=0
 </Data>
 </Storage>
 </Class>
+
+
 
 
 <Class name="KB.Platform">
@@ -5868,517 +6197,6 @@ set tSC = ##class(KB.Topic).RemoveLink(DocNo,OldList,NewList)
 ]]></CSP>
 
 
-<CSP name="edit.CSP" application="/csp/faq/" default="1"><![CDATA[
-<CSP:PARAMETER name="EXPIRES" value="">
-<html>
-
-<head>
-<meta http-equiv="Content-Type"
-content="text/html; charset=utf-8">
-<META name="GENERATOR" content="IBM HomePage Builder 2001 V5.0.0 for Windows">
-<title>Cach&eacute; FAQ Database Topic Edit</title>
-<LINK REL="stylesheet" TYPE="text/css" HREF="styleedit.css" >
-<!-- Specify that this page is PRIVATE -->
-<csp:CLASS PRIVATE=1>
-</head>
-
-<BODY bgcolor="#FFFFFF" onload="loadEvent();">
-
-<SCRIPT LANGUAGE="cache" RUNAT="Server">
-
-Set DocNo=%request.Get("DocNo")
-Set topic = ##Class(KB.Topic).%OpenId(DocNo)
-Set %session.Data("DocNo")=DocNo
-Set %session.Data("RefTopic") = topic.RefTopic
-
-//添付ファイル名のセット
-set filepath=%session.Data("filepath")
-set fileexists=##class(%File).Exists(filepath)
-
-if fileexists=1 {
-	set filename=%session.Data("filename")
-}else{
-	set filename=""
-}
-
- /*
- //ファイルアップロード処理 グローバルに格納する場合
- set sep = ##class(KB.Config).getDirectorySeparator()
- set dir = ##class(KB.Config).getFTPDirectory()
- set dir = dir_"\"_DocNo
- 
- for i=1:1:3 {
-		
-	Set filenamei = "filename"_i
-	Set property = "FileLoc"_i
-	
-	Set fileloc = $ZOBJPROPERTY(topic,property)
-   	Set filename = fileloc.Filename
-   	Set @filenamei = $piece(filename,sep,$length(filename,sep))
-
-    Set attached = $get(%request.MimeData("AttachedFile"_i,1))
-	    
-   	If (attached'="") {
-    	set st = $ZUTIL(140,9,dir)
-     	set sts = fileloc.Clear()
-       	set file = attached.FileName
-       	// UploadはWindowsから行うことを前提
-       	set file = $piece(file,"\",$length(file,"\"))
-       	set sts = fileloc.LinkToFile(dir_sep_file)
-       	set sts = fileloc.CopyFrom(attached)
-       	Set status = topic.%Save()
-       	If $$$ISERR(status) {
-           	Set err =$System.Status.GetErrorText(status)
-       	}
-    	set filename = dir_sep_file
-        set @filenamei = $piece(filename,sep,$length(filename,sep))
-
-   	}
- }
- */
- 
-//添付ファイルアップロード処理
-set fileupflg = $get(%session.Data("UpFlg"))
-if fileupflg=$$$OK {
-	set attached = $get(%request.MimeData("AttachedFile",1))
-	if attached'="" {
-		set newfile = ##class(%File).%New(filepath)
-		set st = newfile.Open("NWUK\BIN\")
-		set st = newfile.CopyFrom(attached)
-		if st=$$$OK {
-			set fileexists=##class(%File).Exists(filepath)
-			set filename=%session.Data("filename")
-		}else{
-			&js<alert('添付ファイルは保存できませんでした');>
-		}
-	 }else{
-		 &js<alert('指定されたファイルが存在しません');>
-	 }
-}elseif fileupflg=0{
-	  &js<alert('添付ファイルは保存されませんでした');>
-}
-
-set %session.Data("UpFlg") = ""
-
-if topic.OpenDate'="" {
-	set OpenDate=$ZDATE(topic.OpenDate)
-}else{
-	set OpenDate="未公開"
-}
-
-</SCRIPT>
-
-<TABLE width="100%">
-  <TBODY>
-  <TR>
-    <TD class="title" valign="top" align="center" >FAQトピック 編集</TD>
-  </TR>
-  <TR>
-    <TD align=center>
-      <csp:object NAME="topic" CLASSNAME="KB.Topic" OBJID="#(DocNo)#">
-      <table width=95% style="margin-top:10px;">
-      <tbody>
-        <!--<form name="form" cspbind="topic" cspjs="All" action="edit.CSP?DocNo=#(DocNo)#" enctype="multipart/form-data" method="POST">-->
-        <form name="form" cspbind="topic" cspjs="All" onsubmit="return saveTopic()" action="edit.CSP?DocNo=#(DocNo)#" enctype="multipart/form-data" method="POST">
-        <tr align=right>
-          <td colspan=2 class="readonlytitle" style="color:#666666;">作成者：<input type="text" name="Creator" cspbind="Creator" readonly size="10" class="readonly">  最終更新者：<input type="text" name="Updater" cspbind="Updater" readonly size="10" class="readonly" ></td>
-        </tr>
-        <tr>
-          <td width="13%" class="coltitle" style="color:#666666;">ID：</td>
-          <td><input type="text" name="TID" cspbind="%Id()" size="10" style="font-family:ＭＳ ゴシック" readonly></td>
-        </tr>
-        <tr>
-          <td width="13%" class="coltitle">一般トピック用ID：</td>
-          <td>G-<input type="text" name="SubID" cspbind="TopicSubID" size="10" class="textbox"></td>
-		</tr>
-        <tr>
-          <td class="coltitle">タイトル：</td>
-          <td ><input type="text" name="Title" cspbind="Title" size="70" class="textbox"></td>
-        </tr>
-          <td class="coltitle">内容：</td>
-          <td ><textarea onkeydown="insertTab(this, event);" name="Description" cspbind="Description" cols="50" rows="20"></textarea></td>
-		  <!--<td><textarea name="Description" cspbind="Description" cols="85" rows="30" style="font-size:100%;font-family:'ＭＳ ゴシック';line-height:1.5em;"></textarea></td>-->
-		</tr>
-   		<tr>
-          <td class="coltitle">プロダクト：</td>
-          <td><select name="Product" cspbind="Product" classname="KB.Product" query="ListProduct" field="ProductName" onchange="javascript:disableFacility()"></select></td>
-        </tr>
-        <tr>
-          <td class="coltitle">機能名：</td>
-          <td ><select name="FacilityDescription" cspbind="Facility" classname="KB.Facility" query="ListDescription" field="Description"></select></td>
-        </tr>
-        <tr>
-          <td class="coltitle">プラットフォーム：</td>
-          <td ><select name="PlatformName" cspbind="Platform" classname="KB.Platform" query="ListDescription" field="Name"></select></td>
-        </tr>
-        <tr>
-          <td class="coltitle">バージョン：</td>
-          <td ><select name="StartVersion" cspbind="StartVersion" classname="KB.Version" query="ListDescription" field="ExternalVersion"></select> ～ 
-              <select name="EndVersion" cspbind="EndVersion" classname="KB.Version" query="ListDescription" field="ExternalVersion"></select>
-              <input type="hidden" name="VersionRange" cspbind="VersionRange"/>
-          </td>       
-        </tr>
-        <tr>
-          <td class="coltitle">関連トピック：</td>
-          <td ><input type="text" name="RefTopic" cspbind="RefTopic" size="30" class="textbox"></td>
-        </tr>
-		<tr>
-          <td class="coltitle">添付ファイル：</td>
-          <td ><input type="text" name="AttachedFileName" value="#($Get(filename))#" size="30" class="textbox">
-              <input type="image" name="AttacheDel" src="./images/button/AttacheDel1.gif" onmousedown="this.src='./images/button/AttacheDel2.gif'" onmouseout="this.src='./images/button/AttacheDel1.gif'" border="0" height="17" width="17" onclick="delAttachedFile(#(fileexists)#)"></td>
-        </tr>
-        <tr>
-          <td class="coltitle">Upload：</td>
-          <td ><input type="file" name="AttachedFile" size="30" style="font-family:ＭＳ Ｐゴシック"></td>
-        </tr>
-        <tr valign="center">
-          <td class="coltitle">ステータス：</td>
-          <td>
-            <table width="100%" style="padding:0;">
-              <tr>
-                <td width="25%" class="childcoltitle">作成完了<input type="checkbox" name="Completed" cspbind="Completed"></td>
-                <td width="25%" class="childcoltitle">削除可<input type="checkbox" name="DeleteFlg" cspbind="DeleteFlg"></td>
-                <td width="20%" class="childcoltitle">公開[管理用]
-                <csp:if condition='%session.Data("roles")=1'>
-                  <input type="checkbox" name="Visible1" cspbind="Visible">
-                <csp:else>
-                  <input type="checkbox" name="Visible2" cspbind="Visible" disabled>
-		        </csp:if>
-		        </td>
-		        <td width="30%" style="font-size:90%;">※公開日：#(OpenDate)#</td>
-		      </tr>
-		    </table>
-		  </td>
-		</tr>
-        <tr>
-          <td class="coltitle">*社内用メモ*：</td>
-          <td ><textarea name="Note" cspbind="Note" cols="65" rows="3" ></textarea></td>
-        </tr>
-	    <tr>
-         <td class="coltitle">*更新履歴*：</td>
-         <td>
-            <table width="100%" border=1>
-              <tr class="childcoltitle">
-                <th width="18%" class="coltitle">更新日付</th>
-  				<th width="18%" class="coltitle">更新者</th>
-  				<th width="64%" class="coltitle">更新内容</th>
-			  </tr>
-			  <script language="sql" name=historyquery P1=#(DocNo)#>
-				SELECT UpdateDate,Updater,Description
-				FROM KB.UpdateHistory
-				WHERE Topic = ?
-			 </script>
-			  <csp:while condition="historyquery.Next()">
-				<tr>
-	  			  <td>#(historyquery.GetData(1))#</td>
-	  			  <td>#(historyquery.GetData(2))#</td>
-	  			  <td><textarea rows="1" readonly>#(historyquery.GetData(3))#</textarea></td>
-				</tr>
-			  </csp:while>
-			  <tr>
-  				<td class="newline">#($zdatetime($h,3,2))#</td>
-  				<td class="newline">#($username)#</td>
-  				<td><textarea name="UpdateDescription" rows="2"></textarea></td>
-			  </tr>
-            </table>
-          </td>
-        </tr>
-        <tr height=40>
-          <td colspan=6 align="center">
-            <input type="image" name="btnSave" src="./images/button/Save1.gif" border="0" onclick="formValidate(#(fileexists)#)">
-          </td>
-        </tr>
-        </tbody>
-     </table>
-     </TD>
-  </TR>
-  </form>
-</TBODY>
-</TABLE>
-<HR align="center" width="95%">
-<div align="center" style="margin:20px;font-weight:bold;font-style:italic"><a href="javascript:cancelConfirm();">&lt;&lt;&lt;中止</a></div>
-
-<csp:IF CONDITION='$Get(err)=""'>
-<csp:ELSE>
-<p><font color="#FF0000"> 保存エラー: #($Get(err))# </p>
-</csp:IF>
-
-
-<SCRIPT LANGUAGE="javascript">
-
-function loadEvent() {
-	this.disableFacility();	
-}
-
-function disableFacility() {
-	if (document.form.Product.value == 1) {
-		document.form.FacilityDescription.value = 1;
-		document.form.FacilityDescription.disabled = true;
-	}else{
-		document.form.FacilityDescription.disabled = false;
-	}
-}
-
-function roleChk() {
-	if (#(%session.Data("roles"))#==1) {
-		document.form.Visible.readonly=null;
-	}
-}
-
-function delAttachedFile(exist) {
-	if (exist==1) {
-		var delfile = confirm('添付ファイルを削除します。よろしいですか？');
-		if (delfile==1) {
-			var delst=#server(..AttachedFileBkup())#;
- 		 	if (delst==1) {
-	 			 document.form.AttachedFileName.value='';
- 		 	}else{
-	 			 alert('添付ファイルを削除できませんでした。');
- 		 	}
-		}
-	}
-}
-
-function formValidate(fileexistsflg) {
-	
-	//Titleのチェック
-	var topictitle=document.form.Title.value;
-	if (topictitle=='') {
-		alert('トピックのタイトルが入力されていません。');
-		return;
-	}
-
-	var product = document.form.Product.value;
-	if (product=='') {
-		alert('プロダクトが選択されていません。');
-		return;
-	}
-	
-	//関連トピックのチェック
-	var reflist = document.form.RefTopic.value;
-	var refchk = #server(..RefListChk(reflist))#;
-	if (reflist) {
-	  if (refchk==0) {
-		  alert('関連トピックの指定が不正です。指定されたIDのトピックは存在しません。');
-		  document.form.RefTopic.value='';
-		  return;
-	  } 
-	  else {
-		  document.form.RefTopic.value=refchk;
-	  }
-	}
-	
-	//添付ファイルのチェック
-	var atfile = document.form.AttachedFile.value;
-	if (atfile) {
-		if (atfile.match(/\.zip$/i)) {
-			if (fileexistsflg) {
-				var fileconf = confirm('このトピックの添付ファイルは既に存在します。上書きしますか？');
-				#server(..SetFileUpFlg(fileconf))#;
-			} else {
-				#server(..SetFileUpFlg(1))#;	
-			}				
-		}else{
-			alert('添付ファイルの形式が不正です。ファイルはzipフォルダに格納して保存してください。');
-		}
-	}
-	
-	//バージョン指定のチェック
-	var start = document.form.StartVersion.value;
-	var end = document.form.EndVersion.value;
-	        
-	var vrange = #server(..SetVersionRange(start,end))#;
-	
-	if (vrange=='0') {
-		alert('バージョン指定が不正です。');
-		return;
-	}else{
-		document.form.VersionRange.value = vrange;
-	}	
-	
-	//更新履歴入力有無
-	var updatedescription =document.form.UpdateDescription.value;
-		
-	//トピック保存
-	var del=document.form.DeleteFlg.checked;
-	if (del==1) {
-		var msg='このトピックは削除対象に指定されています。保存しますか？';
-	}else {
-		var msg='変更を保存します。よろしいですか？';
-	}
-	
-	var saveconf = confirm(msg)
-	if (saveconf) {
-		#server(..SaveUpdateHistory(updatedescription))#
-		form_save(this);
-		form.action="complete.CSP";	
-	}
-				
-}
-
-function cancelConfirm() {
-	cancelconf = confirm('変更を保存せずに終了します。よろしいですか？');
-	if (cancelconf) {
-		window.history.back();
-	}
-}
-
-function insertTab(o, e)
-{
-	var kC = e.keyCode ? e.keyCode : e.charCode ? e.charCode : e.which;
-	if (kC == 9 && !e.shiftKey && !e.ctrlKey && !e.altKey)
-	{
-		var oS = o.scrollTop;
-		if (o.setSelectionRange)
-		{
-			var sS = o.selectionStart;
-			var sE = o.selectionEnd;
-			o.value = o.value.substring(0, sS) + "\t" + o.value.substr(sE);
-			o.setSelectionRange(sS + 1, sS + 1);
-			o.focus();
-		}
-		else if (o.createTextRange)
-		{
-			document.selection.createRange().text = "\t";
-			e.returnValue = false;
-		}
-		o.scrollTop = oS;
-		if (e.preventDefault)
-		{
-			e.preventDefault();
-		}
-		return false;
-	}
-	return true;
-}
-
-</SCRIPT>
-
-<SCRIPT language="cache" method="AttachedFileBkup" returntype="%String" runat="server">
-
- set dir=%session.Data("dir")
- set sep=%session.Data("sep")
- set filename=%session.Data("filename")
- set filepath=%session.Data("filepath")
-
-set bkupdir=dir_sep_"bkup"
-set bkuppath=bkupdir_"\"_$piece(filename,".",1)_"_bk"_$zdate($horolog,8)_".zip"
-
-set bkupst=##class(%File).CopyFile(filepath,bkuppath)
-if bkupst=1 {
-	set delst=##class(%File).Delete(filepath)
-}else{
-	set delst=0
-}
-
-quit delst
-
-</SCRIPT>
-
-<SCRIPT language="cache" method="RefListChk" arguments="rlist:%String" returntype="%String" runat="server">
-
-set rlist = $REPLACE(rlist," ","")
-set rlist = $REPLACE(rlist,"　","")
-
-set refchk=rlist
-If refchk = "" Quit refchk
-set rlen=$LENGTH(rlist,",")
-if rlen=1 {
-	set reftopic=##class(KB.Topic).%OpenId(rlist)
-	if '$IsObject(reftopic) {
-		set refchk='$$$OK
-	}
-}else{
-	for i=1:1:rlen {
-		set refid=$PIECE(rlist,",",i)
-		set reftopic=##class(KB.Topic).%OpenId(refid)
-		if '$IsObject(reftopic) {
-			set refchk='$$$OK
-		}
-	}
-}
-
-//チェックNGの場合は「0」、チェックOKの場合は、スペースを抜いた文字列を返す
-quit refchk
-
-</SCRIPT>
-
-<SCRIPT language="cache" method="SetFileUpFlg" arguments="upflg:%Boolean" runat="server">
-
-	set %session.Data("UpFlg")=upflg
-    
-</SCRIPT>
-
-<SCRIPT language="cache" method="SetVersionRange" arguments="startid:%String, endid:%String" runat="server">
-
-if startid'= "" {
-	set startver=##class(KB.Version).%OpenId(startid)
-	set startname=startver.ExternalVersion
-	set startorder=startver.OrderId
-}else{
-	set startver="",startname="",startorder=""
-}
-
-if endid'= "" {
-	set endver=##class(KB.Version).%OpenId(endid)
-	set endname=endver.ExternalVersion
-	set endorder=endver.OrderId
-}else{
-	set endver="",endname="",endorder=""
-}
-
-if startid'="" {
-	if endid'="" {
-		if startorder > endorder {
-			set vrange="0"
-		}
-		elseif startid=endid {
-			set vrange=startname
-		}else{
-			set vrange=startname_" ～ "_endname
-		}
-	}else{
-		set vrange=startname_" ～"
-	}
- }elseif endid'="" {
-	set vrange=" ～ "_endname
- }else {
-	set vrange=""
- }
- 
- quit vrange	
-	
-</SCRIPT>
-
-<SCRIPT language="cache" method="SaveUpdateHistory" arguments="description=%String"runat="server">
-
-Set DocNo=%session.Data("DocNo")
-Set topic = ##Class(KB.Topic).%OpenId(DocNo)
-set uhistory=##class(KB.UpdateHistory).%New()
-set uhistory.UpdateDate=$zdatetime($h,3,2)
-set uhistory.Updater=$username
-set uhistory.Description=description
-set uhistory.Topic=topic
-set st=uhistory.%Save()
-
-</SCRIPT>
-
-<!--
-<SCRIPT LANGUAGE=CACHE METHOD="OnPreHTTP" RETURNTYPE="%Boolean">
-if ($Data(%session.Data("Login")) = 0) {
-	set %response.ServerSideRedirect="FAQ.FAQApp.cls"
-	 
-	 Quit $$$OK
-}
-Quit $$$OK
-
-</SCRIPT>
--->
-
-</BODY>
-</HTML>]]></CSP>
-
-
 <CSP name="history.CSP" application="/csp/faq/" default="1"><![CDATA[
 <CSP:PARAMETER name="EXPIRES" value="">
 <html>
@@ -6695,831 +6513,6 @@ FAQトピック検索システム・バージョン #(##class(KB.Utility).ShowVe
 </table>
 </body>
 </html>
-]]></CSP>
-
-
-<CSP name="howtoforeditors.csp" application="/csp/faq/" default="1"><![CDATA[
-<html>
-
-<head>
-<!--<meta http-equiv="Refresh" content="600; URL=#url(search.csp)#">-->
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta http-equiv="Pragma" content="no-cache">
-<meta name="GENERATOR" content="IBM HomePage Builder 2001 V5.0.0 for Windows">
-<title>FAQトピック検索サイト ご使用方法 for ISJ Editors</title>
-<LINK REL="stylesheet" TYPE="text/css" HREF="stylehowto.css" >
-<!-- Specify that this page is PRIVATE -->
-</head>
-
-<body>
-<table class="howtouse" width="900" align="center" >
-<tr>
-<td align="center" colspan=2>
-<span class="topline" align="center">FAQサイトの使用方法について</span><br>
-</td>
-</tr>
-<tr>
-<td colspan=2>
-<br>
-FAQサイトをご利用いただきありがとうございます。
-<br>
-<br>
-<br>
-※編集者向けの利用ガイドを記載orリンクする予定・・・※
-<br>
-<br>
-FAQトピック検索システム・バージョン #(##class(KB.Utility).ShowVersion())# 
-<br>
-<br>
-<br>
-<br>
-</td>
-</tr>
-<tr>
-<td colspan=2 align="center">
-<br>
-↓↓↓トピックの新規作成、および、更新履歴の表示は、こちらから↓↓↓
-<br>
-</td>
-</tr>
-<tr height=70px">
-<td width="50%" align="center">
-<!-- <a href="javascript:window.open('new.CSP','new','width=1000,height=600,left='+(window.screen.width-1000)/2+',top='+(window.screen.height-600)/2+''),scrollbars=yes;void(0);" style="font-style:bold; font-size:80%; color:#00CC00"><IMG src="images/button/newtopic.gif"></A> -->
-<a href="javascript:openWindow('new.CSP');" style="font-style:bold; font-size:80%; color:#00CC00"><IMG src="images/button/newtopic.gif"></A>
-</td>
-<td width="50%" align="center">
-<a href="javascript:openWindow('history.CSP');" style="font-style:bold; font-size:80%; color:#00CC00"/><IMG src="images/button/history.gif"></A>
-</td>
-</tr>
-</table>
-</body>
-</html>
-
-<script language="javascript">
-function openWindow(cspname) {
-	window.open(cspname,'new',"width=1000,height=600,left='+(window.screen.width-1000)/2+',top='+(window.screen.height-600)/2+''),scrollbars=1;void(0)");
-}
-</script>
-
-]]></CSP>
-
-
-<CSPBase64 name="images/background/header-gradient.gif" application="/csp/faq/" default="1">
-R0lGODlhDQBBAGAAACH5BAAAAAAALAAAAAANAEEAh/T4/f/+/fvVpN7p+f/69P/9+/3iwPX4/fzc
-s+Tu/f3ozeTv/eXv/f3kxv726/zWp/zYrPzbsefx/fzasPH2/vzXqPzYqv/8+f3jwv/79//79vzZ
-rf/8+Obw/f7z5vzXqfL3/v/58/X4/Pb5/tTg7/P4/v3s1f7y4vzgvfzgu+ry/f716fvVpezs7P3q
-0fX5/f748P737uz0/vzarvzdtu/1/s3Y5/3s1/7v3fvUo/7u2/7t2f3r0/705//9/P3kxP727P3n
-zPzhv/zfuf7y5P758fHx8f7w3v3myf7x4Pzet/3lyPzdtfzWpvr6+v3pz/vWpvzctP3p0P3myPze
-uP7x4f/+/Pv7+/Dw8P3myv758v7z5P7w3/727f/+/v3ny/zfuvzhvv3jxP706P3q0/3t2f7u2v/9
-+v///vn5+ePu/f///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAj/AHMIHChQAEEBCBMqTMiiocOHDps0gUIRykSJFx9o3MhxY4WPIEOC/ECypMmSFlKqXKkSgsuX
-MF9umEmzJs0ZOHPqzDmhp8+fPiMIHUp0KIKjSJMijRKFiVOmTJo2ZUKjqtWrVpUooaKVK5WvWpWA
-GUK27JCxY4ekWMu2LVsUcOPKjSukbhghd+vaFWKgr9+/fjEIHkx48I/DiMUg/qG4gePHkB9PWTJl
-8uQlmDFPQZIFiefOn0EHGR3kyxfSpUcrWM26NesnUqQ8gT1bNmwpLnLr3q2bh+/fwMn4NkG8uPHi
-N5IrX658h/Pn0J2X0UG9unUz1HFo3859+5EjXMB/sf8eHnyS81XQp6+SPsmJ9/DjwydCf0t9+0Tw
-e9jPvz//HgAGKGAPY/SwwoEIJoigAww26GCDQEQoYYRdANFFhTFkqOGGGsLg4YcgfqhFESSSqMWI
-JhYRwoostsgiATDGKGOMGtRo4402ZqDjjjzuyMGPQAYJ5AVEFmlkkQUkeUaSTDbpQwE+RCnllD4E
-YEUAWF5pxZZYYulFl2AG4MWXa5RZJhpmpqnmmmy26eabcLoZEAA7
-</CSPBase64>
-
-
-<CSPBase64 name="images/background/tblheader-gradient1.gif" application="/csp/faq/" default="1">
-R0lGODlhEwArALsAAODr+vL2++nx+/P4/ufw+9nk9NPf7t/q+dTg7wAAAAAAAAAAAAAAAAAAAAAA
-AAAAACH5BAAAAAAALAAAAAATACsAAARmcIQg6az4zs17z1YIDmRpnqenruw6aiLczvT2xnit77Xg
-/8CgcEgsGo9HAkGgZC6b0KdySq1SAdisdsvter/gsHhMLpvP6LR6zW673/A4+3AA0O31u75e6Pv/
-gH8IBgaDhYSGiYgRADs=
-</CSPBase64>
-
-
-<CSPBase64 name="images/background/title-gradient-bg_blue.gif" application="/csp/faq/" default="1">
-R0lGODlhFAA9AMwAAP////7+//3+//r8/vT4/fn7/vb5/vf6/vH2/fz9//v8/vP3/fL2/fj7/vj6
-/vL3/fX5/vX4/f7///39//v9/vz9/vP4/QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAA
-AAAALAAAAAAUAD0AAAXzICKOZGmeaKqWTOu+cCzP72PfeJ4vN8/bP91iSCwaj8ik0bJgMouWKNG5
-IFiv2Kx2y+16s5GweEwmQ84RtDoMSbPP8Lh8DjHY7/i8fs/v+/MHgYKDhIWGh4iJhA6MjY6PkJGS
-jg2VlpeYmZqblwWen6ChoqOkpaahA6mqq6ytrq+wsawKtLW2tQO3uru8vb4KFMHCw8TEFcfIycrK
-Cc3Oz9DR0tPU1dAT2Nna29sC3t/g4eLj5OXm4wHeAenrAunf6/Hy8/T19vf4+esSAfzy/hIC9usX
-sKDBgwcBKFzIsKHDhxAjSpxIsaLFixgzatzIUWIIADs=
-</CSPBase64>
-
-
-<CSPBase64 name="images/button/AttacheDel1.gif" application="/csp/faq/" default="1">
-R0lGODlhMgAyAPYAAP4AAP4LC/0QD/4UFPYcHP4bG/0kH/YlJf0kI/wsJ/UsLP4sLP8wL/MzM/0y
-MfU7O/w7OvNERP1EQ/JNTfxNS/1UT+9VVfFUVPpTU/RdXfhaWvpgX/RkZPFra+N8fIWFhYyMjJWV
-lZqamqGhn6Ojo6qqp6urq7KyrrS0tLq6try8vNuMjNeUlN+RkdKbm9uamuCCguGIiO2MjO2Rke2a
-msukpMWrq8utrdajo9GoqMuyss+4uNO0tNK9ve2kpO2oqO6wsO65ufC7u8TEs8nJtsTEu8vLvO/A
-v8PDw8vLw8vLy9LExNXMzNLSxdPTzNnZzdTU1NvV1dvb1Nzc2+rLy/HGxfDJxvLNy/HQy+TT0+3V
-1eTc3Ona2vPT0fPa1PHd2+Hh1uPj3Onp3vXi3OPj4+zs5ezs6/Pz5fT07fn57fT08vv79P7++gAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5
-BAEAAG0ALAAAAAAyADIAAAf+gG2CbISFhoeIiYqKgoOIa4uRhpBsa5aXl2qWbGqOlZSQm6Gbn5Wf
-mJZpmJqqqGudkpOEoKa1p66rl5xQiqGFlLKzvqKtxWuqrWpmSrepuM6orcdp1MjV19eWZEjTqqzO
-1JmvyKxq1ObUZ9jq1GjuampkKt3naeb36Glo1ff7+2nq1KE5M5DgwIPw4Mlbc0agu4fvxnxRg4Yi
-xYoX3RE06M6LF45mlIUMOWVeQzQhL8JD8wUDBS9mICrLiDKmGTNnsBhIoAXnSHgjp6BQczLhSJYY
-GDCQ0CUhSpEjb5a5aaUAAAA8p97celMo0TJPj3KhoFQphCs3RVLkuvXIgKv+Vw/0ZHsTylCAP7dm
-WFDWbBW6dIMEgAv3wU0ybIUO1MpWiwQGC/hChvAXsBkyQAYTBoCAyuHLoKGYWGxZCwW+kSM7CMIV
-MRkyPzQTRpDFNWLQZESTLn06tWogri+T8bH5Ku3XyJOTUYICzdTXW28j5oLBd2oftmkUB6CgtnLl
-SkyYYSy8/GsuF6wvQEDj9YztDbJsQT7ldX374cuUsf0d+RYNkSEgoIAzyCBbYVvcV9+C9pExRX5i
-QNdfcltkgMB6AhYwgADFRRDFFCCCmGCIIS5nQhkRTtggGVtswQGGBWh4IAAekmjjjUqQUEYY9Dno
-o4I+btHBgDISNsGHIUL+cWOSUyBBAhlhhDHfjw7eWOWQGr4F1wVTfKgkiFB8GIWSUJD5IAlihMGg
-lUt2EOOGhFlQ5hRlzlknnWAq6WQYYEyh5pI3RsEBAlnOOEGdiCaaqJNgNGrjl16SGYWFMRa5WQSK
-ZlonEiJIIQWJYZppZhQXEPqmlsU9oAQUq2raKqdS9EnnqIpOUOmpMHgAHxOrKtGqr6yWqYQKnT6R
-pKZMRHBrljH4CgN8S/QKrK/UQgHrE6EquuoSDyw7QAEtUKvECtsp0IO46PpKLBTYJroqE1D0AIG3
-BbyQLgvbHbBDuuKqEIITTgjLqrQ9NDDAtwcPgIC96SLBwowAEKCDEkj+iFsxEsQC3C66OihwcJYK
-40AtEiRTXLELAcxIwA0lV0zxsCE00YQT/EaQcMIIiPzyxSaTjHJxDfRMMskoxDwzvzoYnPABOfh6
-8dBQk1wDh3CtHPXQRSfRhNM7U7yDAgIIcADLV5eNcQ0EXGX10CpAnfXWQkPd8dhXt902xmy3fQMB
-BNhA8t0q2I0ECiAkYUQSSZiNxA1+s/134IFjbDfkN9wA+eWTmwCCEYcnXjfgeWMu+uikq6B5EUZA
-jbnkkkde+uuln05EEY/DLjoKKuBeOgq648577iqUAMIQsxcxegqQ6w48773nzvzzvkf/O+8kgFDE
-EEMUkcL2KqQgvfSzzkMv/vjjn0DCBykMsb335I9vAu/voxC//MzPb8L79+dvggjob3+CCf/Dn/4G
-mD8SEPCA9zOgAU1AAgWSgH8pOEEJJkiCEjTwghjMoAZH0MAReNCDInggBkVAwhKCAH0lAGEJV8jC
-EoaAhS8UQQxjKMMVhuCGOATBCdvwQRvW8IVAxKEQh0hEIYIghyHQoQ4F8cAW/pCEQJQhDqUYxCoW
-MYlKXGIjQujELnqxizeE4hAbEQgAOw==
-</CSPBase64>
-
-
-<CSPBase64 name="images/button/AttacheDel2.gif" application="/csp/faq/" default="1">
-R0lGODlhMgAyAPcAAH9NTW5aWm5bW29cXHNWVnNXV3ZVVXlSUnlTU3xQUHFYWHBZWXNbW3RaWnBc
-XHJdXWJiYmNjY2RkZGVlZWZmZmdnZ2hoaGlpaWpqamtra29paW9ra2xsbG1tbW9tbW5ubm9vb3Fg
-YHBjY3FjY3BlZXBnZ3BtbXBubnBvb3Jvb3Nvb3ZtbXVubnRvb3Zubn5paXxqanxra3htbXpsbH9s
-bHBwcHFxcXJycnNzc3R0dHV1dXZ2dnd3d3h4eHl5eXp6ent7e3x8fH19fX5+fn9/f7cHB7sDA70A
-AL0BAb4AALwCArwDA7kFBboEBLsEBLkHB7oGBrYJCbQLC7INDbMNDbAPD7EPD7YMDLcMDLUODrUP
-D7gJCbgKCq8SEq0VFa8WFq8XF6YfH6sYGKgaGqkbG60ZGa0aGqgcHKodHasfH6weHrEQELMREbMS
-ErMTE7EUFJ8rK54sLJ8sLKQjI6EnJ6InJ6UkJKggIKIoKIZHR41AQIlERIpERIJLS49JSY1NTYxO
-TpFERItSUolWVodbW4ZeXohaWoViYoBnZ4RmZoNpaYBtbYJsbIJtbYBuboFvb4CAgIGBgYKCgoOD
-g4SEhIWFhYaGhoeHhwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAJgALAAAAAAyADIA
-AAj+ADEJtESwoMGDCC9dOrhQoUOCDhdauiRwIMKLGDNqvGgR4ySCHw9+DLmxIMmDmCxNGhmSpcmV
-L1uubKlyJsmZNWva3Mmzp8+fQIMKHUp0JZGgR20mnbmUadKmUJkaPUqEKlWnU41mvTrp6lOvXbtW
-DcsV7NiqaMmqPVtWLNq3cOPKnfvWLV27dPPq3ZsXCFy/fPUCJjL4L+DDVQcD8auYsOPFaBnLlZwY
-MeTFjCVnrvyY8GXPmDVfxgx6tOnQpFOrzoy6tevXsGPLds0DSG3Ujxphvm17diMai3m/ri2cOBAa
-bK4oCh6ah/HbzoEkuvIGOHPi0KP3hn78TZIkVxL+Xbet3bj0K9/f6DYfPLrz9+6Rf/8e5RB89/d5
-HNoyPwkb4PlhF6BzaPT33ROE4BcgIfwZKMaAEL73QhYGJvGEIREa0mB/V7wQIQ7OgZjfC2xU+MQg
-POTgXA4q8jDIExWy4WGEIYYIIg43wuCdgUoI0mKLglSYxBszrMjikSziiCMPSjK5JIszfFGhEn+k
-yOIfSlT4hQxO3ngjk2Aq6aWYOeCwghhT+lGmH1kaaIYMYsYp55xzrlBghYEEIiQaK9DpJw4o/Inj
-CnMIKWQYgQoaZw0gAFoDDo/iAMKjjOKIQqGGzmdHojg22minkoYaKqU4Vvpoo48GikIdmSaBBwr+
-jaIAa6gg1EqrpLVOymiuNfS6q6+yoiCHoXCgsKunueKabK7MNutsrrLCQeyz1FKbAQjXMstBrtuC
-sAGrmdbB7bjOdkturdd2u222G2Da6hwb1LrtvBzUC4K62M4rL7bXZuAvuu222l8YG6R77wb03msv
-v/427C8H/UJcApo86qGHkGOUkEG9D9cLsccOhyxyBiRQbGAeEO/RZn9iaDzyyzD7O4KUPObhcB4r
-z+fFCDGPbEEGPwMN9AhdTNlH0A33kfN3XfDsMNL+/lxBBUL/HPQAFBr4BABWW+C11wDAaGAVDgDd
-9dcZTA202hZU4DUDWaycZRFcf2032E1UmAXcA3d7nXbabU8deNtj8FjEAW73/bUEBxTB4xhfJz71
-5JRXPkAV/UlxgNduJ06BBZ9TMLUBUfRXxQCVp6765AJgnoQUDFAggegSVCCBBbN/XvvUBUjxXRUC
-UL676hFMHUHtEhTfehYC3O486BI4L3oFxU+tQBbAIz+59tRHUHzytlMfvgQCCHB89OinH7333Scf
-QPDpn49+997Ln7z89auv//3e87+/+tTDRP0GSMD6QUB9B4xfARe4QIEQEAIQjKAEJ0jBCXoPghGo
-IAYhEIGKCDCDGgyhCEeIwYoEBAA7
-</CSPBase64>
-
-
-<CSPBase64 name="images/button/No1.gif" application="/csp/faq/" default="1">
-R0lGODlhMgAUAPYAALl3Gbt6Hrx+Jc9+CtJ/CMh8EbyBLL2ENL6HOb+JPdaABt2DA9WCDdqECdeH
-FOKGA+OIBeSKCvSUDPiWCviYD+GOF+WRFuyREOaUHOmVHfeZEfycEvufGP6hG+qXIuyaJOqbLOme
-M/6kI/+nKf6oLOmhO/6rNP+uPP6zNf+xPsCMQ8KQSemkQuqpTP+yRf+4RP+1TP+6TeqtVv63Uf+4
-VP68XOy2aP++Yv/AX//AZf/CbP7Fc/7IdvPBev7KfP7Ng//Oif/Rhv7Sjf7Uk/7Zl//Wnf7anP/X
-oP7bpP7dqf/fsv7hrv/hsv7ku//lwv/pw/7ry/7t1f/v2P/x3f/04//26//47//69P7+/gAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5
-BAEAAFkALAAAAAAyABQAAAf+gFmCRENChkBAQ4lAho2OQoxCQUE+lT48lzw8OzuanJ+CglRUU1NR
-UVCpqqusT1BPsE2yTLRLtktGuES7jUE/PYJPsrNMSsZKtEy3yspKSUlI0Ua7Q4WGk5SWlpw2WU1E
-2Ng/40A/leOU5uaYmjo5OPA1OTU18Pb29PQyK01C2pc/bowTeMPHp4M7biisQWOGwxk0aNSgAsXZ
-Eh4PI9JooYKJEE08gmBpUlChD4I6Uv7AokThwnovYMSAMQPGjSlYcmIhAqOnT45IgnwCgoWJS4VW
-otzIkUPHypY1btSYIQVKTxcwXGjVOoMejaxZtbJIMMSHDk5DsBQ5eiMJy4X+RIt47ZkWyVYXNxAV
-SaKEYtitLBAE4dH0Rtoh+ejdkIJFag2iQBxmPXEiChYalE+kzWklZxMYmSmXOMDDXY68WCJnnEFU
-ScOVP65SNrEDS5ITJkzgrXGCaBITuIOfCHHgXTzYNWv6vHKlpg8sP1zgzp37ShXq1Fc6cUGdRG4S
-IQzEa1gbiAsgN+5CaexCB/QTO2qMmD/CCZYZJEiMILEyZ5T5+uVHAggGxIBDQzRhYdcUVnCHmw9A
-gOYCFkeYQMUVI4gwn0AmzCfCc0m44IQVGmqY4QgfCPBCClmlUFkV9v2GHXZRVNGEWiJ0IMKOPH6I
-owhJkMhjBzp6IAAKL6zNmNsNOVVxAn30lcgkFlOQQGQHHGSZJZNKaFkEFqk4McSVGQSAQgopoKDf
-CHiZ0OObOZ6Qwwha1qmlD1hmeYISp0TxwwZEYhAACSioOeSViOapJQUUbNDoBpBGSkEHjzY6KaOY
-QmoBAFnkl6MGHGggKgUaZIopBROkquqqrLYqwQQUXCCBBBc4IMgHHljQwAUR9OorBMAGGwEEDxQL
-bLHIEmvssQ9AsMACDTTAwLQOMBBKFr0uoCyy3HbrbbcLPPCsuM8uoIC5CgxgrSCBAAA7
-</CSPBase64>
-
-
-<CSPBase64 name="images/button/No2.gif" application="/csp/faq/" default="1">
-R0lGODlhMgAUAPcAAP+WAP+YBf+aC/+cEP6eFf6fFv+fFv6fGP+hG/6iH/+jIf6kJP+lJv6lJ/+o
-LP6oLf2oL/6oL/6pMP6pMf+qMf2pMv6qM/+sN/6sOP6tOP6tO/+uPP2vQf2wQv+xQv6xQ/6xRP6y
-Rf+zR/yzSf60Sv+1Tf62Tv62T/u1Uf22UP62UP62Ufy2U/23U/+3Uvy3VP64Vfu5W/25WP25Wf+6
-WPq6X/27Xf+8Xfy8Yf++Y/u9ZPu+Z/y+Zfu/afu/avy/afvAa//BafvBbvnBcvrCc/rCdPrDdfvE
-dfrEd/zEdvrFevnGfvrGfvrIf/rIgfrJhPnKh/rKhvjLi/nMjPnNjvnOj/jNkfjOkfjPlfjQlvfT
-n/nRmvjSm/jTnfjTn/fToPjToPjUofjVovjWpfbXqvfZr/basfbasvbbtPfctfbctvbdufXfv/bg
-wvXhxPbhxPXix/XiyPXky/XkzPXkzfXn0/Tn1PXn1PTo1/Tp2fTq2/Tq3fPt4/Ts4fTs4vPt5fPv
-6PPw6vPw7PPx7fPx7vPx7/Py8vPz8wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAIgALAAAAAAyABQA
-AAj+ABEJDEKwoMGDCBMqVChQYI6HEB/yiEhRIsUgFTNGnPhQ4I2PIEOKHElypI2SIhHRWMmyJQ0Y
-LmPCgOmSZsybNF3o3Mmzp8+fQIP2LEG0qIuiSEuQQHo0qVOiMPK0MTNGTJKnJURoFUHCBiAxW7WW
-cBH2xlcSYYmG1UrDDqFDcKms3eqhbl0eh7bY9SDCzhsRdvHqtSuiThzAe+2ScEHDRWK7GyJH7nHo
-ieTIVA51kQyk8uUNmbdcxuHkCRUtaPK88fA58oXXFzb4OFQE9usNcwiVeC3kEJLYsDfIIeTigoUN
-T+Ae+gPokBrWr4+/lkCdOuUe1alb6K2Femfs2bf+H+pO3UMPFxuWHPqSvb2D9+91HOoB/30DCYD4
-xD+ko/57/PrV14ATh6yxgX/1MaCggi4cMkQDPbCwIANrHDICAy84yIAOEi5YIQkTKqHcHBOWqMCJ
-J0pwyBUM2MEHAyjqgIQDCqhohQJ4/AEjAgrISOOJRazHgRl8oGjkiQgkqWQce5hxCBZKRpkkk05m
-IWWUQzyZpBZ/XKlkAWCGecJbeDAQ5plgskCmmWiCGcMhZIR5xSFvsMGGFGgOoOeeA1RQQwJ86ikA
-nxXgoECgfBYwRAF7OmAGHXTMsUSgiAhg6aWYZqrpppx2eqlAAYQq6qiklmrqqaiK2hAiALTq6qsJ
-sMYq66yzNhQQADs=
-</CSPBase64>
-
-
-<CSPBase64 name="images/button/Save1.gif" application="/csp/faq/" default="1">
-R0lGODlhUAAZAPcAAD5XrzxVsT5ZvENaq0leq0Rcsk1iq1Nmq1dpq1ttq0titlZrt1pvt1FnuF5x
-t2NzrGx7rmJ1t2d5t2x9uDxZwzpazjpb00Bf0ERhxkVizUNi1Ehm0k1q0kNl3Udo3ktr3VFv2lRz
-3V163GF920tt5Utt6k9x61Rz5Fx54lJ07Fd47Vt77GJ/5GF/7HOAr3eEsXOCuXmHuX+MvGOA3nSM
-33WQ3nyU32SB5GuG4m6K4WSC7GmG7G6J7HON7HWQ5HyV43aQ63yU7HiS8H+Y8I2axoOX34ea34ud
-3puo1ZCh34Ob4oif4oSb7Imf7oOb8Yif8Iyi5Iyh7JGm5ZWp5Zqs5ZGl65Wo7Zut7Z+w5Z6w7o+k
-8pKn8pWp8pir8J+x86W15qm35ay65KO07ai37q276rG+5LK/6aO186e486y787C/9LXC3bzI3bTB
-5LnF5b7J5bbC6bnF6r7J6LPC9LnG9b7K9L/L+MPN5sPO6sbQ58zV5sbQ68vU6tTb7Nnf7sPO9MPP
-+MfR98zV9c/Y98bR+MzW+c/Y+dXc9dXd+Njf+dzi793i8d7k+eLn8uPo8+nt9eDm+uTp++vu/O7x
-9e7x/PDy9fP1/Pb4/f7+/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAJkALAAAAABQABkA
-AAj+ADMJjEOwYEE4ceAgTKiwocOHEBWaaWOmYkUyZMKEAaOxI8eNIDmCGUmypECBjh6pfOSo5aJF
-jF6+VERzUSNFi3DmbPTy5kycOP0s8nPIj58+SPUk7aOHj9OneaJGvUO1apkydyyGQSLwUqVKkyap
-bEm2LNlGaFumddSILdq3aGXSpHkUqV27fJjq0ZOHj9Q8d9hUvRMnqxkwRDIJmrS36dOneyJL3oNn
-suXIlTPj2by5qhw3buCEbnO1tOnSHTWW/PJFjJgvWGS8EOSIDZs2bQgqxN2GjBmMvi9ivCgRuHEy
-JFuzbk2lufPn0KFboTKFupUp06skiQFhT6M1uI3+j0kzZowY8+Zduy6v/hCmQ2QhkRWkvvmVKlQw
-OZIipUoV/vwl8d9//Pnnn4AGGihFEkdwF4giZYSBUXlosKfehRiqFwkmf2CCySUfepjIFST+YeIf
-gmDCyB91yFEHi3I0EUUUSUQBhRQy1kjjjDzWWEUURkwAwR9+aHSeGGeklwWJS5Lo5JNXiIGJJHNg
-IoiTY7x33xUedunll0xEwUSYY5YpZplolqmEkHTwEUZr5p2RhRdOdnGFFXdewUWeVuDZYSBVIpIG
-eVUmMiOeTl4iCZRXdNGFE2MWUaakaTJBKZo2TPAAHHh80aQXdvbJhah9btHnqX1eYQkmdKTxpYj+
-MzZRZpWBOMIII5AwEkkWlloKhBNOACEpEL4SG+kPZdogwQNpxPEFiaGeymMUfUaxBY9VaKHFIB7O
-MQYljASCSSSBSPKHrEwEAQQjllBiRbuUUPKhJEwAIeyvPTjRg72+1luEvQD7QEMED3jRBhXQcsHF
-tVpEoUUTDcso48NPRFFlt412cQYmiVhhqpj2BuHhGT3s28UglwxSLxD77gswywCX7PLLAydwxRdU
-WLGwFVE00cQTPgPNhNBAA8tEF5YkouKrXm6xLyOYUCJzD2qwyvLUWGetdQ80MJBAFFhM8aMWQkM6
-ZhBMDBHEEGqjvXYQWtCBCSF22FEHJB4SUkf+HXQE0cSGUdcRyeDyUjJ4JFaUzEIPPPDQAwuNRy55
-5D3MwAACUUwhRRRPPAGs2kMI0bYQQQRBuumlk17lGaZ3AaKKQPCwww5NYFLHlIJHAsmqkkgyuBUt
-tMC448LLvgMPLTQ+O/Kyz7DAAUNAAYWYkKotBBDX9yCE9iVvz33JVXoBBBqvrxrJEzqk34QOU6af
-PhqYcBF88D3M3wILwe9wv/4s8M+/Dix4XhCkxza1Yc9xQpicAiNXJTogAhOW8MLcLmYI9KUvau5r
-Afy4oAP72a+DLQAhCOc3QhQ04ABBsAEUfmA95c1udumDoQ5eCEP4QS0SoZubDrawKi6sYAX+KpiS
-CoboBEBgQgst+KESk6jEJq4ABU5UIgoUYAAf/MAGoUvgDtw3Qy56kYsb88Ic0tcDTABiiDo4AxCB
-KMQhFsJDTlABEIcoxyjOsY5OVMEUCcADG9jgB41znwq4OMj0DTEFOhjkEKNAByEoUQd04EIKJknJ
-SdphDilQQQqc0AUtVDKTnwxlJk8QyhAUYAA6qIEqeUBIRdLxlZmE5SEPmQITmKAEJbBlLW2JS1ya
-YJeTzGUtU1CCYBJzlyfgZSVPwIFT6iAHNcgBDnRwgxOgQJOUtKU2d3lLbXqTl70MpzjHSU4ShJME
-6EynOdVJgmYOIBM3mIE8Q/CBetbTAx+K8AAJPMDPfHbAnB3g5z87QNCCkoCgJLCAQTugUAtYIKEJ
-LahECaqBiVZUAxbQgEY1mgEMAEAgJwABBzawAQ1c4KQovYAFTurQljr0AhV4qUtjOtOYVoCmDr2p
-S3NqgZv69KYU8CkFhkpUARj1oyfxQElV6lKG7vSpUI2qVKVqU53+tAJBJSpRTxIQADs=
-</CSPBase64>
-
-
-<CSPBase64 name="images/button/Search.gif" application="/csp/faq/" default="1">
-R0lGODlhUAAZAPcAAD5XrzxVsT5ZvENaq0leq0Rcsk1iq1Nmq1dpq1ttq0titlZrt1pvt1FnuF5x
-t2NzrGx7rmJ1t2d5t2x9uDxZwzpazjpb00Bf0ERhxkVizUNi1Ehm0k1q0kNl3Udo3ktr3VFv2lRz
-3V163GF920tt5Utt6k9x61Rz5Fx54lJ07Fd47Vt77GJ/5GF/7HOAr3eEsXOCuXmHuX+MvGOA3nSM
-33WQ3nyU32SB5GuG4m6K4WSC7GmG7G6J7HON7HWQ5HyV43aQ7HyV7H2W8I2axoOX34ea34ud3puo
-1ZCh34Ob4oif4oSb7Iif7YSb8Iyi5Iyh7JGm5ZWp5Zqs5ZGl6pWp7Zut7Z+w5Z6w7o2j8ZKn8ZWq
-8puu8p6x86W15qm35ay65KO07ai37qy76rG+5LK/6aO086i38Ku787C/8rXC3bzI3bTB5LnF5b7J
-5bbC6bnF6r7J6LTC87rH9b7K9cPN5sPO68bQ58zV5sbQ68vU6tTb7Nnf7sLN9MbQ9cvU9c/Y98bR
-+MvV+M/Y+NLa9tjf9dXd+djf+dzi793i8dvh+eHm8uTo8unt9eHm+ubq++nt++7x9e3w+/Dy9fP1
-/ff4/f39/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAJYALAAAAABQABkA
-AAj+AC0JfEOwoME3bhIqXMiwIUMyEMmMkTjmi5cvGDNi9HJR40WOID9yFChwEaOTjBapRMSypcuX
-MF8eQrSHJiFChw7t2aOnp548eu7cyUO0KB48dugkpcNUDR02bMawgfjliEBKkiRBgoQyZUqVYMOK
-HQsW0SKzLA/hzLmTp0+fQofesUOXLlOmbApC9DLE0h9IcY0eHUy4sGE8dRAjrsO4zt27EtmkkUhx
-8pjLmL9U3CiSIxgvXazIeOFHkRqoeREyFCOGTGvXEN3UcdO6NR7XY8TkFuOFN8cuoa1IEe7FjRcp
-yJMrVx4lOZXnz6MgiQEBj6I0azCyDiOGOxgwYb7+ixfPpxIfMF3ADKpEaHx6MFWuWKlCJcoUKPih
-lA+Df4r//Pf959+ABPpnBHV8HJLGF92F4aCDYFzxnYTjfVeeHN+9UQkl5n1XxYcg1gfFE3xEYmIk
-HJ6oFRpPtNgiEy4iAeMTRsRoRBITQJCgRQ+CUUaEV1wRn5AfCgkGH4ZUUkgcc1AyiRmPVJIIfB8+
-l4V/TDCBhiGEJEJIlI0YIqYhYBixBBNmLmEmE0u06aYRbDJBRI5y5OGFeGUEGWSIVWpBHxqVBCpo
-JYP0AQiHlcRBxYAtuokGH5AiWUkgkfJhhptLEJFpE25q6mYSbc75QBx2hMaFnlzQpwUVWWTx3Kr+
-r5ax3hyNJDJoJYY0UkUWT2CRJaZRTiJsoMIO68cSQPzQJhDLLgtEE8wi+4MNEjwQBhtdCLlFFbBS
-8QQVWLg4xRNXYjFFI4lqEQeTUq5bxhNZsrlEED4EEcQjjgTBhBaVOMLEH1MsUYkf0QJhMBEGL9ED
-sgj/wCwQNETwwBVuWEHFqq72Gm6L4TKxMYxbBEpJebdWAgim9hrcQ7RxBJoIE0meYfDMK89MMxA1
-1wxxBAlU0UUUF4MbbhNPNEH0EkYjnbStG6IrBxeV9PGEyULMqzIPPvSg9cp+4PoIJWWMjLPWPGxt
-9tk9YN0DDQwkMIUVUfCKxdCcVi1E1UtUHcT+Ei1HUskZUFOCKId8CKFy2jzskDYThRSSJLF+SwkE
-DzzgQPnlll+OOOU9zMAAAk9EMSIWSd9tuhD2om56Fo+cUUkZTDQSCNNIyoz4DjjsoPsOAgtrSJSB
-oIHGGWBTzgIPx1PeAvLK89DC8TvMsMABQTjhxBNKox6E4SqPvbLWQphRyRZac0HJ145gcfkOOrTv
-fvs9ZEEJIK43UUgkTADRwvL87++888/73/50wILpVc96pvPe1i7HQMpBjQtcKES/hAA1KWXhfSt4
-nxAAUYlHCKEMlWgCFjgEiCboYID7S6EKV/i8BhzgBz9wwt0MljjdJc59umvf7swXODnwoH3+QghE
-CFewAhWogIhEVIEcpMSDFYCwCSvogSD+hkQksgCJLSBiFrNIRBQogABAsAEMhZA29r3vjGcUQhyE
-kAUzui+DRTSiEYtYRB1oQY5NkMMO5AiEOPqRjnOUYxJVEIIv8kCMP0gbGt2ngvYZMQXva6QOjnjE
-OKYgBXJUwSU3yUlNqsAEcsTkJTXJyRScwJSj3GQhB6CDGrjyh+27QSPjmElIXlIHoMxkKFNggl76
-kpe9LIEwS3DJX/YSmMTkZQqImcxlNvMEJ/hAAViZgxrkgH03OIERjwlMEyzTl+AsgS+FaYJhmvOc
-6ExnCUhwTnaS4J3whOcHODBNS9xgBviZDMEH9rlPD3zAAyTogAcG6oEOCFOgBC1BBxa60IB2wAIM
-7UBAIWoBC5DAohi9aEQ7oIGNclQDENWASDWQAQwAQCAnAAEHNrABDVzgpTB9qQUuUNGaVrQCNK1A
-BWyqU51aYKc/9WlNhTrUnfb0qBWgAAWSqlSlCoACAhBAAEhiiQ+IVKYUtalWt8rVrnqVq0YNKlKb
-ylSlkiQgADs=
-</CSPBase64>
-
-
-<CSPBase64 name="images/button/Yes1.gif" application="/csp/faq/" default="1">
-R0lGODlhMgAUAPYAALl3Gbt6Hrx+Jc9+CtJ/CMh8EbyBLL2ENL6HOb+JPdaABt2DA9WCDdqECdeH
-FOKGA+OIBeSKCvSUDPiWCviYD+GOF+WRFuyREOaUHOmVHfeZEf2cE/ufGP6hG+qXIuyaJOqbLOme
-M/6kI/+nKv6oLOmhO/6rNP+uPP6zNf+xPsCMQ8KQSemkQuqpTP+yRP+4RP+1TP+6TeqtVv63Uv+4
-U/69XOy2aP++Y//AX//BZf/CbP7Fc/7IdvPBev/HeP7Ke/7Ngf/Piv/Rhv7SjP7Uk/7Zl//Vm/7a
-nP/XoP7bpP7eqv/fsv7hrv/isv/ku//nxP/pw//sy//t0//u2P/x3f/04//26v/68//+/gAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5
-BAEAAFkALAAAAAAyABQAAAf+gFmCRUVDhodEQYdDiYuGQUKRQj+UlDs8PDuXmZo7OoKCVVVUVFKm
-UaipqqtPrU6vTk1Ms7RHTEeEhUSGQD2CULBNskvES01KwrLHskxKs0m3ubuGkpWUmDs9NllORZKS
-QOHiQJTiP+SYmTo6OO3uN+7xODX0NTIrTkM85Nc+PjtAfCxB8k/TEyw/POm4wTAGDRoxZkicKBHH
-i4c0ZmRsoaKJPh4/OPlgeAMIFic31ulwgsXHQoY6riiBQZPmw5o0Y+CEMYOjEiGdFJK8QQSLkRua
-fLBEYiTJjRo7sCBxAcMF1SlSaFJ9YbWrVRYJivzQIXToDSQtjWBZy3btDRj+UYN4daF2atcUc12A
-BZrj5dN6NZZgueFDSRIjLI0snOEiqo8TkCGnmIKFRuTLkkscUJjjKUaMgj/TCNKyqosTUXdANsEa
-NZYkrVnHNlHCQA53NSbypMmyak2TPqyyvjGYNQkSsq9YkY1ctgkSIQy0q5HRtFfBVmkgWcJStYkR
-JGpgAUJiB43jxw/OQA9+BHgSIAy8wFHdKmbsJyhXuYKlShASIoxwglEk7Aegezr8YIIIDAbooAgf
-CJDCC1Wl4NxzJiSBhVVYBGGCSVZgQYULInAghRWCISFCBx00uKKLL4rggQAovMCVcc8dN0JRNIxg
-BYrKmbADFSRwwIF4/ZG1wOKSTBrJAZMZ0JhCCiiQMAKMItAAxIIwODHFEjB04CQHG2xwwg0ilNnB
-BmO2ueaTGABAAgpVMtgik006WSYFG/BJAZ9l7tlnB34GqoEGZWpgAQBZHFciB4ceSoEGf04aKQUT
-ZKrpppx2OoEEoIJ6gQOCfICBBRFUEMGqq0IAQQSuxgrBAw/IOqustNZ66wMLNOCrAgwEywAoWcDq
-aq7I5kpAsswmu8ACvD77rAIKEDDAsIIEAgA7
-</CSPBase64>
-
-
-<CSPBase64 name="images/button/Yes2.gif" application="/csp/faq/" default="1">
-R0lGODlhMgAUAPcAAP+WAP+YBf+aC/+cEP6dE/+fFv6gGP+hG/6iH/6jIf+jIf2kJf6kJP6lJv+l
-Jv6lJ/+oLP6oLf6oL/2pMP6pMP6pMf+qMf2pMv6qM/6sN/+sN/ysOf6sOP6tOPytPP2tPP+uPPyv
-QfywQ/+xQv6xRf6yRf6yRv+zR/yzSf60TP61TP+1Tf61Tv62Tv62T/u1Uf22UP22Uf62UP62Ufy2
-U/23U/+3Uvy3VP24Vfy5Wf25Wf+6WP26Wvu7Xvq6X/27Xf+8Xf28X/u8Yvu8Y/++Y/u9ZPu+Z/y+
-Zfu/afu/avy/afvAa//BafrAbvvBbvrBcPvCcPnBcvrCc/rDdfvEdfnEd/vEdvnFevvGevrGe/vG
-fPrHgPrIgfnIg/rJgvrJhPrKhfnLi/nMivnMi/nNjvnNj/jNkfjQlvfTn/nRmvjSm/nTnfjTn/fV
-o/fVpPfWpvjVovjVo/jWpffXqPbXqvbYrffYrfbZr/fasPbasfbdufXix/XiyPXjyfXkzfTm0vXn
-0/Tn1PTo1/Tp2fTq3fTr3vTs4fPt5PPt5fPu5vPv6PPv6vPw6vPx7vPx7/Py8fPy8vPz8wAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAJIALAAAAAAyABQA
-AAj+ACUJZEKwoMGDCBMqVChQIJGHEB8yiQiEIJCKFZlc1GgRY0eOGj1yFHixpMmTKFOqXGlS0o6X
-MGPuwEETCA6ZOGzK3Mmzp42fQIMKHUq0qFGhK5IqVZpCqZorTZPeiQRkqdWrWK+e2Mq164kUQCC9
-6QqHalcgjOB4Teq1LdcRcOPKhVsF0pWvK3DIiQSGC5kVI5hESiP3hKA9J+YqhguisePHjcNAynEl
-kuXLlml8WBKJy4cPID6XGRwaNOTGnzWoXs1a9RlIJ3KcGcPFTSQtNFCo5lyldQc/kVZo6NC6tYXj
-yJMfdwMp+YUmkYpAQM55iXIL0NFcPz6dO4Tv4MPyQ5gDSbxg6eCLRGIifjqiQxHai3dAv759+m8g
-0dcQBk2dSD7YR0MkUTjABA326RFJCgzcd58CEEYoIYT5OaCAH40EwkgkglzhAAMIXBCJGQwEcggD
-ICLARBQQIJAiiDCCeMCMNNY4oxmRHBdJFQdAV0gkgXhwgAF9EJJHJGfYOKQBTCo5ZAFQRikllF9E
-EkIBgxRSx3sPNOHHAky+0AiHDwzApJlMpnmmmgYM4OabcLopQhRlelAHH3R4EKebFxSBgAB7Bhqn
-JAIUauihiCaq6KKMGipQAJBGKumklFZq6aWRNiQJAJx26umnoIYqqqgNBQQAOw==
-</CSPBase64>
-
-
-<CSPBase64 name="images/button/history.gif" application="/csp/faq/" default="1">
-R0lGODlhZAAZAPUAABfXGxfYHB7ZIybaKinbLSzbMDDcNTbdOjrePj7fQkLfRkTfSEPgR0XgSUng
-TU7hUlDiVFXjWVnjXF/kYmTlZ2blaWnmbW/ncnLndXTod3XoeHrpfX7qgYHqhIXriInsjI/tkpLt
-lJfumZnum5/voaDvoqLwpKbxqKrxrK7ysLLytLfzubv0vb/0wMP1xMf2yMv2zc/30NH30tT41df4
-2Nv53N/64OP64+f76Ov86+/88PP99P7//gAAAAAAAAAAACH5BAEAAD0ALAAAAABkABkAAAb+wJ7w
-Qyx+PMZkEnlUOp/QqHSaFApHp6x2y+16v+CweEzmjoSolXrNbrvf8Lh8Tq+3UT3OScXv+/+AgYKD
-hIWGh38nHBskKI6PkJGSk5SVlpeYKCmZjyQbGSImoqOkpaMqPKmqq6omJaIuPC2mLCmvMqy5MyUl
-NLm5rq68r6+moyIZFyAjzM3Oz80mMjEx0zU8N9TVMcwvMTc8NjMsMzc4Ozw6JCMwPDMw8PHVPNwj
-M+4xOTnaOzgxMNACQgNxwYIHEAgTKly4EIWLh7hqPHShIiEOVjOuzXCRIgTCF79WvUAYg8cIEDpq
-JKTHUKHHlgg9WKDAwYPNmzhz5gQZsgb+Thw3PJjz4OsIzlgpVuxYcW/Gi6cqbIK0scqXqhoddGrN
-uYGChAwbwoodS5ZsrBEhUvBYgZBHjbAgUtjQgaoGCly8SJAAsYHF2h05QqxCpyMs0lg7ZvFsgaKs
-47IZJkSwcKGy5cuYMfsNSaNyiVw7Sq5icWEFjx03ZlyUAS/GC8steHC4lsoEuHAdMuvObCEChAkU
-ggsfTjx4heCmQXQwwUNFhw47ZgS3EBYFjxKfQH645kFDBVQkmIOrQa3GDgoVKvi9SK+dDnfoOhSf
-T3zCAwcRJOSXwL+////8oXKaKujwIEN/BariAkgRyKBDf2oJdqAOOdxwQw4P8meaDiL+5OCCBDZ0
-sBYGHwJo4n8ROMDAAyy26OKLMKqVQgsgqbCODi+0OIIJ6MRgQgc14PBADDu0qFZtEPiyQw021ADB
-AxCgUoEEHVQwgSwTSPZki1tC0OWXLKqYQANklmnmmQ6kycACbC5gmg1FLuDAAgyomCZzqbyAAQ8u
-MBCDDiouEMsGOpTwgHXpyFKnmzw44AEPHUSwyg1zymnpnA40kGmZm5KZAAIKnClqmQysWSmbEbzH
-YQVzlrqiaSChcMM1GSwAgw5sOqDDDQyktMOuu+aAwZoL2HDDAo9uIOkuJITQ5rNtutqAtNMygACo
-ZKap7bbcpvlABR+wgA45quBAwwz+FjzgAhKQxsZCmremKZgJui6YAm04uICCBSLGgAJIHLkFCQbd
-FrzttAgcoACLW8LoMAWqvLCBlxaU4MIN6FwAJQQgQDpCCk9C8IKQv70QwQM6UHWDChxcgAINOlQA
-3QghqTKCwy6G7CIDBxywopdAhxx00FCO8IEEQyc99MZJMw00w057OYHSVFe99AM8GzAmzlx37fXX
-YHv5tQNdk+2iAwkYUAACnHJ7n8Fwxy333HTXXXADCBQwgM9nulrqtA1AK/jghBdu+OGII85AAgcQ
-0EMBB1wr+eSUV2755ZhnrvnmnE/euBACDEDA6AOIPvrpqKeu+uqst+7667C/PoAcAFb0EMDtuOeu
-++68BwDA78D3LvzwxBcvvBVBAAA7
-</CSPBase64>
-
-
-<CSPBase64 name="images/button/mail01-y.gif" application="/csp/faq/" default="1">
-R0lGODlhFQAMAOYAAPvppvnggPfGSPjpt++cJfS2NPvvxPrehvbDPvGoK/3xxv316fjVWPjXqvfp
-vf3z0/fpv/vmuv311vnbbv3uwfjmpfnVY/O1SvnUYfzuv/jfgPz36PnjkPvtuPzqu/zqvf312ffK
-VvfMW/346P334fjlovrfsv3yy/rcgP3yz/ncsvz35/jOS/322/312PW+TfOzRfrgnP324PjPTfnb
-cP3wxPrvzfGrRPvppPGoP/vtufnij/rvy/vktfnarPfilv345/rgtPXAUvjMRPjUU/bBN/jefvfh
-lPOzLfbkqPjaaO+YHfGlJPjTovbmtQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5
-BAAAAAAALAAAAAAVAAwAAAejgBsQToSFhoeEDisDQDZJj5CRkjwjA0dHBjIVl5ydlyUkBj9HRqU7
-IDoapaurHS0cq0qysjgSAbOyAS4AuEpEv78TCgoADEQMACc1NMC/Q89DGBQzQwcpKA8HQywZFtBD
-ReEhHwjhRQIxAuYIHiLmSEgvEQXw9fbwBT1C8EwwQQlMAgocKDCBiQtMcqggsKShw4cQCfi4saBB
-k4sYM2q82GBBIAA7
-</CSPBase64>
-
-
-<CSPBase64 name="images/button/newtopic.gif" application="/csp/faq/" default="1">
-R0lGODlhZAAZAPUAABfXGxfYHB7ZIybaKinbLSzbMDDcNTbdOjrePj7fQkLfRkTfSEPgR0XgSUng
-TU7hUlDiVFXjWVnjXF7kYWPlZ2flamnmbG/ncnDnc3PodnboeXrpfX7qgYLqhIXriInsjI/tkpLt
-lJbumZnunJ/voaHvo6LwpKbxqKrxrK/ysbLztLfzubz0vb/0wML1xMf2yMv2zM/30ND30dT41df4
-2Nv53OP64+z87O/88PP99P7//gAAAAAAAAAAAAAAAAAAACH5BAEAADsALAAAAABkABkAAAb+wJ3w
-Qywaj0gPcslsFpXOqNQoFI5O2Kx2y+16v6aveEz2joSolXrNbrvf8Lh8Tq+3UTvOScXv+/+AgYKD
-hIWGfSmBiX8nHBskKJGSk5SVliguNzUql52eli4pKC0wop8oJ50kGxoiJq+wrzY6KbG2t68nOSw0
-M7i/tjA0KLclxiYqOjUlNbQlJs/AOjY0MbciGRcgI9zd3M0l3uIimSveJDkkvOLs7dw3OSbu3DA6
-KiQ6OO0i7Do0LjpciANxoYIHEAgTImwmQqFDEPVQOHSR4waJhxgfrtBxY4bHGhIVhsCRI0SyHDFk
-qJQxIsQIHTlg6phJM2ZDhB4sUNjgoaf+z540dID4SdQDQBM/SbQ4UbQnihA9QUAl+uEGzZoffqLw
-52HW1ZkiPIjgSKNssxxly2btyYGChAwb4sqNO0MHixBz87awywJGs5kv5nJIMeKDv7gl7Oatp6JD
-Bw4glAm2SiMZtRysMm8w7GKuDhkbiG1wFDeDBAkWLqherToGTRsmsrG+wOLqjRgpQHS4IDvDjRsZ
-6hHcOoL1CX8YVpvQsQJD8gsvZs7K0SFonxDJO0xzwb1DjhkZbGBmbUEChAkVKKhPT6FCPREtYtoA
-0X59ssYX2qdnr57C8lU6oEABQBvsZ9gNBa1X1wb6heCPDi/kRkFdNLGgngYzxaSDBzT+2OCBDifs
-l94EEDhw2oko1lOBBBOYAByKEqSgAwcw1sjifBKsKMFvEkRwogoX+HiaYS/AiEIFAZ0oAw4TNDnB
-aRfQIsFYG9RWDwVCnlYiAw44AMEDYIYJkARhQvBlmA9stQGaaH7p5plgaodCm3A+YEEOOVDAppl2
-PfCla9CUAMKXFID4wEsWRGYomG46wEACDDQg6aQONABQBA1UWukCDnC6wHEZeNrlApM2EGmpDVgA
-D6aoSupABjFxUGqnXdrV6QL10ERDAwtgoMMIFOnw1kwPLFAiqZImgAADp54qKUAQTLrAtNQukNgL
-10zqbKbo5KBBq9MeCpMHqFZrF7X+MeCA5rT4bOCCDSx4oCEJEOTgAakMKIDAsplq2qUDY/4r8L8U
-WPWVPwM7EAEKMdVAQcJdbmBVDhxA3OUDtnaZ7sAPwFOiBq7ZUIFrMYHQZQMKHHAAl36aeeYGIUTA
-5swQVGBBBTbjPMGeENRwwwgyz+znnS7oKTSjfYKZLpsZ6GCCn820QGYEG9kg85cMqMxAyy5z3bLX
-fnLt8thkm4ll2W+aSSKjZnqNNtktZ+DyBRp0/UAEZGdtQAIO+Oll30cHLvjghBduuOBdJmBAAQj0
-a/HjkFvseOSUV275vw0gUMAAB0DKrKnVThtp6KSXbvrpqKeuuurMHjDADgUcsO9L7LTXbvvtuOeu
-++689077AQUIIcAABBRv/PHIJ6/88sw37zwBBRTw/PQDCFDFDgAEoP323Hfv/ffghy9+9wCUb/75
-6KdvPvgAVBEEADs=
-</CSPBase64>
-
-
-<CSPBase64 name="images/button/tojiru1.gif" application="/csp/faq/" default="1">
-R0lGODlhUAAZAPcAAD5XrzxVsT5ZvENaq0leq0Rcsk1iq1Nmq1dpq1ttq0titlZrt1pvt1FnuF5x
-t2NzrGx7rmJ1t2d5t2x9uDxZwzpazjpb00Bf0ERhxkVizUNi1Ehm0k1q0kNl3Udo3ktr3VFv2lRz
-3V163GF920tt5Utt6k9x61Rz5Fx54lJ07Fd47Vt77GJ/5GF/7HOAr3eEsXOCuXmHuX+MvGOA3nSM
-33WQ3nyU32SB5GuG4m6K4WSC7GmG7G6J7HKN7HWQ5HyV43aQ63yV7HqU8I2axoOX34ea34ud3puo
-1ZCh34Ob4oif4oCX64Sb7Imf7oWc8Iyi5Iyh7JGm5ZWp5Zqs5ZGl65Wp7Zut7p+w5Z6w7o2j8JCl
-8JWp8Zqt8p+x8qW15qm35ay65KO07ai37q276rG+5LK/6qO08qe49Ky887C/9LXC3bzI3bTB5LnF
-5b7J5bbC6bnF677J6LLB87nG873K9cPN5sPO6sbQ58zV5sbQ68vU6tTb7Nnf7sLN9cbQ9czV9cnT
-+NPb9tTc+dzi793i8dzj+uHm8uTo8unt9eHn++Xq++ru++7x9e7x/PDy9fP1/ff4/f3+/gAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAJIALAAAAABQABkA
-AAj+ACUJhPMGDsE3BQ8iXIhQYUGGEBeWmUixDBkyY8Bo3MgRzJeNH7+IHEnyi0CBhxCpVHmoJaGX
-MGPKfDmoJsxBhGwO4sOTEE+ee/boGaoHD9Ghd5LWqXNnaZ01ddxIJdNmIpgjAiE5csSoK8uWYMOK
-HTt2kEuYPX8CDbrHaFujRpM2dRq1Thk4E78MkfSHEZ6/evIEJio4j+HDhu3kUYwYsZ3HkO3QpXqx
-DZkyli9qvgiGs8aQJMN88XJFxos/h9asYcMm4psxsDFmzFgGTJnZt2/D3i0GtkgvwK9MGT5cOPHj
-yI9XGV5lOZUqSGJA0ENIDevdY8T0FhNGe5gwjSL+iRcPZ7x4R93DeBFT5o0XK1jgzLFSRUqU+1Kk
-/NHzJ1AiSHMgQUUUA1JBhYAGGoiggkZI5wchZICRnXYUfvcdFt81AgkgfygSyRyRLPLHH4888p0V
-YVjhSCRWoPhHJIVU0UQTUNQIxSPmRdIHFE/USOOPUDTxxIwz+ljEBBD0wYdG3GlnRhhYYNFilFKG
-Z54cOT7SYotVPAJJc4os0ociViihRBNKMMGElFT0EckfTDTBRJpzPhGnEXIOyYSdRjBxJARz6DFa
-GGaYQaWUVdBnBRdVaAgIIB5iqcijGjZnqZcGVhFIJFUssQQTnqqpJhqRBKLmp6CC6umnrIa6qg3+
-Ezwgxx1eHColo1tsUYUWllo5HqnmPWKpFlQsAkmQclYRxKrMLmEFJIWo2uy01C5hgwQPiNFGrYsu
-WoWuUGgBRRU1arHII3Kkm4YchMyRbiOPZFEjFVAYK6enQQDxQ778BqEFJONBiwUQQCzxA8GeFqzw
-EgUfTEMED3TBxhRW6LqFFuJCIe/GTWSxyCJVoCFyIZHIgYYZiTSCbBNOGMtEvgT3QDAQMgNBBcCC
-0EHHi5GYMfPPQPhAsNA/P5yAFV5M0RzGWWzMRBZMOBE1Ex9jmSOMhRwrNajGBtHD12CD7UMTkECi
-RdhMPNIIzWG37fYMESRAxRVSUNG0vE44EYT+3nwzIcQiijCB8RaLRMKFFlkU8ogQSwQRxN+QfM1D
-D5MDwcPkPXjZBBqJCNLE5W4ywQMOl49e+umm08AAAlDYp3HeLwshxOOyPx4E4LN3UXgksSsuu+w9
-GMvDDsTvwIQjaBDPAxdNmBEJIOcO7+YSw+9weQs8YD+69cXPsMABQTzRY9RO1A6EEASj34MQiiiC
-hoePkCzE14U0AvblgkTihA467CAGwHLgXwv4R4dI6EALkdhCDxrRiBbsoAUQzF72WPBAB0JQByz4
-Xvh6RLv5te107ZsDJOggB2MJgQeJa0T1iLeFSEBLEDiCRBf4pwMItgCBgkhDJFLWswFe0Ib+LLCh
-EFvAggYYIAg/+AEUHkez4VWPhsRTRCIupwM5QIt4OFJE/3bAvxVswUORaMQceLCCFahABStoQRrT
-ADDxLIILZYyjHOeoxjKiQAEG6IENkii74dHwjzTswgwByb8uoEEIXTTjGdGoyEU6cpEt6OMiy8hI
-NDJyjmYMgQIIwAMb7JGKf1QBDUXJvzOmYJSiLKMOLGnKR6ogBaZMASxnOctXvlKWuMzlCXKJS00O
-YAc1CCYP/qhKV7bSmI40gTJNUIJlKjMFJYimCVLATFk2c5nQpCY1n+nMEuiSAwUYgA5yUIMc7OAG
-KbjBCVaQgl3K0pnwjOcyo0nPetrznvimtCcJ9snPEvCTBB8A5wAkcYMZGDQEH0ioQhPqgYY6tAMk
-KEEHGgrRDlj0oiS4aAcsYNGMctQCHMXoBUgQ0otqQKMW1YAGLKDSlmYAAwEQyAlAwIENbEADF8hp
-TkHK0QpcwAIXqABPfSpUnoK0qEO1QAWQmtSlCtWpUHUqBZZKgapaVQAUEIAAYnqSDXRApSw1qljH
-StaymvWsSlVqVKlaAata9SQBAQA7
-</CSPBase64>
-
-
-<CSPBase64 name="images/logo/cachecube.png" application="/csp/faq/" default="1">
-iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAA
-fklEQVR4nMWTUQ7EIAhE5/DvbHMt9gOha3W77VcNMRMyIM+oopbErYgIkITGYq+pguGGKXXStHXn
-hmMA5sYjadt21gC2WfRRQBUAKkeaUtv+mgdlJ04jVdc+uejpq/gX1wyr3jM0Zc59xfCr64sM654M
-mhki4gFDPep7DP0LPgwnDr7EIWAgAAAAAElFTkSuQmCC
-</CSPBase64>
-
-
-<CSPBase64 name="images/logo/ensemblecube.png" application="/csp/faq/" default="1">
-iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAALHRFWHRDcmVhdGlvbiBUaW1lAFRo
-dSAxNSBOb3YgMjAwNyAxNDoxNTo0NiAtMDUwMGNUMZsAAAAHdElNRQfXCw8TEQJP6/hlAAAACXBI
-WXMAAA7CAAAOwgEVKEqAAAAABGdBTUEAALGPC/xhBQAAAJtJREFUeNqNkrERgCAMRQPHOBaOQOlY
-GcjC0pLS0sKBDMEoqAE4CP8gP+admGPfAGBeVqgOxEtYWsPYyM49Jgps51FMwtHmvdeyQwhAeQhS
-E91zoX2Bpywx5Fi6kVv6PVVgIm2vgaGzlohbo/DMjVKuG1pkN7Rcu7JW3fKGrhruP12HJjYsS9l0
-mqC/MYr0cNhz7JNptn4PyqZ4AgQqRqBUMuHhAAAAAElFTkSuQmCC
-</CSPBase64>
-
-
-<CSPBase64 name="images/others/Question.gif" application="/csp/faq/" default="1">
-R0lGODlhIAAgAOYAAGaZzKq+1e/x9YOq1uDm7ZO23bjT8cbT4nyx7ZK+76nJ7W6l5G6p65zE8Mbd
-9////4yx2Wef3q3K6aC62OLu+7rU8Yq469Dj+KfK8Wec13et6Z683rzO4q/P9PX3+c/b6LPF2Xqw
-7aTG7XCf1Ie05e30/Ont8Zy/54y25szY5Y2qyrPS9Wui4Jq42rTR8ePu+9no+rbU9Y2874S27rDF
-3bXO3nml1cTR4KK82H2p23So473Y9py973Gr67PG3KXO95S15sXV5qzN8qS+242v1brQ6Iy13tTc
-5rPK5P///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5
-BAUUAEkALAAAAAAgACAAAAf/gEmCg4RJMEIyPQwRPTJCMIWRkoIOITMNKzuaOzEJCCEOk5MUMzOZ
-m6iaKwgzFKKEDhoiqbSbDRqhrw4MQrW+O0IMuZIUPb20FQYGMZwxzs4YPa6Sl8/OLhI0SDU+NAou
-K+ErHR0yM5IOPeLhCjQpHg/xHilDCkL3+MKRIQnkHULtTMQbGM/EEBEYEiaUEaLQBQYKMYgYIvDB
-ERA0QBAouKFBglIJEjC4QEhICIk/Gpw4EM9HCx4nThS4EY8DCwY4I+AUQshcg58NCgh4QKBFAo8e
-IWw0kWFRTgYyCDFAgDRBi5YoQoaUoWNCvBE3cTqVOmOrjCHxcFiQYYEEiQUR7ojEM6KzLk6pERCs
-tXD1wRASM1AUQTIEgNcHNsTqXERI0QIGGmbkgJcihwYWSOIFOPLAQ9PFOnv0dJrTR7wJGVhk+EDQ
-B+icUQd1eKpzRMUgAwCogPdAwAi7TlcQeqE45wDeBOMRAOB0MYNpg2Q418liRJDkKWpOhxoJRnPF
-qiEQgTACwPUHJ27WhRRJ5Ovv1CNkyAC8gagZYkmTdk4bwSviwL1n12I9lPCKIPg9VZx+i0B3YDDb
-6WeXcAcOUkIDCiqYIAMNVVgIDCs0IIMMDXTAHoY6keThihgyYN+KK+6AkwcwrnjhCgbWqGMSgQAA
-Ow==
-</CSPBase64>
-
-
-<CSP name="new.CSP" application="/csp/faq/" default="1"><![CDATA[
-<CSP:PARAMETER name="EXPIRES" value="">
-<html style="height:100%;margin-bottom:1px;">
-
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta http-equiv="Pragma" content="no-cache">
-<meta name="GENERATOR" content="IBM HomePage Builder 2001 V5.0.0 for Windows">
-<title>Cach&eacute; FAQ Database New Topic Input</title>
-<LINK REL="stylesheet" TYPE="text/css" HREF="styleedit.css" >
-<!-- Specify that this page is PRIVATE -->
-<!--<csp:CLASS PRIVATE=1>-->
-</head>
-
-<BODY bgcolor="#FFFFFF">
-
-<TABLE width="100%" >
-  <TBODY>
-  <TR>
-    <TD class="title" valign="top" align="center" >FAQ新規トピック作成</TD>
-  </TR>
-  <TR>
-    <TD align=center>
-    <csp:object NAME="topic" CLASSNAME="KB.Topic" OBJID=#(%request.Get("OBJID"))#>
-      <table width=95% >
-      <tbody>
-        <form name="form" cspbind="topic" cspjs="All" enctype="multipart/form-data" method="POST">
-        <tr>
-          <td width="15%" class="coltitle" style="color:#666666;">ID：</div></b></font></td>
-          <td><input type="text" name="TID" cspbind="%Id()" size="10" style="font-family:ＭＳ ゴシック" readonly></td>
-        </tr>
-        <!--<tr>
-          <td width="13%" class="coltitle">一般トピック用ID：</td>
-          <td>G-<input type="text" name="SubID" cspbind="TopicSubID" size="10" class="textbox"></td>
-		</tr> -->
-        <tr>
-          <td class="coltitle">タイトル：</td>
-          <td><input type="text" name="Title" cspbind="Title" size="70" class="textbox"></td>
-        </tr>
-          <td class="coltitle">内容：</td>
-          <td><textarea onkeydown="insertTab(this, event);" name="Description" cspbind="Description" cols="50" rows="15"></textarea></td>
-		  <!--<td><textarea name="Description" cspbind="Description" cols="85" rows="30" style="font-size:100%;font-family:'ＭＳ ゴシック';line-height:1.5em;"></textarea></td>-->
-		</tr>
-		<tr>
-          <td class="coltitle">プロダクト：</td>
-          <td><select name="Product" cspbind="Product" classname="KB.Product" query="ListProduct" field="ProductName" onchange="javascript:disableFacility()"></select></td>
-        </tr>
-        <tr>
-          <td class="coltitle">機能名：</td>
-          <td><select name="FacilityDescription" cspbind="Facility" classname="KB.Facility" query="ListDescription" field="Description"></select></td>
-        </tr>
-        <tr>
-          <td class="coltitle">プラットフォーム名：</td>
-          <td><select name="PlatformName" cspbind="Platform" classname="KB.Platform" query="ListDescription" field="Name" onchange=></select></td>
-        </tr>
-        <tr>
-          <td class="coltitle">バージョン：</td>
-          <td><select name="StartVersion" cspbind="StartVersion" classname="KB.Version" query="ListDescription" field="ExternalVersion"></select> ～ 
-              <select name="EndVersion" cspbind="EndVersion" classname="KB.Version" query="ListDescription" field="ExternalVersion"></select>
-              <input type="hidden" name="VersionRange" cspbind="VersionRange"/>
-          </td>       
-        </tr>
-        <tr>
-          <td class="coltitle">関連トピック：</td>
-          <td><input type="text" name="RefTopic" cspbind="RefTopic" size="30" class="textbox"></td>
-        </tr>
-        <tr>
-          <td class="coltitle">添付ファイルUpload：</td>
-          <td><input type="file" name="AttachedFile" size="30" style="font-family:ＭＳ Ｐゴシック"></td>
-        </tr>
-        <tr>
-        <tr valign="center">
-          <td class="coltitle">ステータス：</td>
-          <td>
-            <table style="padding:0;">
-              <tr>
-                <td class="childcoltitle">作成完了<input type="checkbox" name="Completed" cspbind="Completed"></td>
-		      </tr>
-		    </table>
-		  </td>
-		</tr>
-        <tr>
-          <td class="coltitle">*社内用メモ*：</td>
-          <td ><textarea name="Note" cspbind="Note" cols="65" rows="3" ></textarea></td>
-        </tr>
-        <tr height=40>
-          <td colspan=2 align="center">
-            <input type="image" name="btnSave" src="./images/button/Save1.gif" border="0" onclick="formValidate()">
-          </td>
-        </tr>
-        </tbody>
-     </table>
-     </TD>
-  </TR>
-  </form>
-</TBODY>
-</TABLE>
-<HR align="center" width="95%">
-<div align="center" style="margin:20px;font-weight:bold;"><a href="javascript:window.close();">&lt;&lt;戻る</a></div>
-<csp:IF CONDITION='$Get(err)=""'>
-<csp:ELSE>
-<p><font color="#FF0000"> 保存エラー: #($Get(err))# </p>
-</csp:IF>
-
-
-<SCRIPT LANGUAGE="javascript">
-
-function loadEvent() {
-	this.disableFacility();	
-}
-
-function disableFacility() {
-	if (document.form.Product.value == 1) {
-		document.form.FacilityDescription.value = 1;
-		document.form.FacilityDescription.disabled = true;
-	}else{
-		document.form.FacilityDescription.disabled = false;
-	}
-}
-
-function formValidate() {
-	
-	//Titleのチェック
-	var topictitle = document.form.Title.value;
-	if (topictitle=='') {
-		alert('トピックのタイトルが入力されていません。');
-		return;
-	}
-	
-	//Productのチェック
-	var product = document.form.Product.value;
-	if (product=='') {
-		alert('プロダクトが選択されていません。');
-		return;
-	}
-	
-	//関連トピックのチェック
-	var reflist = document.form.RefTopic.value;
-	if (reflist) {
-		var refchk = #server(..RefListChk(reflist))#;
-		if (refchk==0) {
-			alert('関連トピックの指定が不正です。指定されたIDのトピックは存在しません。');
-			document.form.RefTopic.value='';
-		}else {
-			document.form.RefTopic.value=refchk;
-		}
-	}
-		
-	//添付ファイルのチェック
-	var upflg=''
-	var atfile = document.form.AttachedFile.value;
-	if (atfile) {
-		if (atfile.match(/\.zip$/i)) {
-			#server(..SetFileUpFlg())#;	
-		}else{
-			alert('添付ファイルの形式が不正です。ファイルはzipフォルダに格納して保存してください。');
-			return;
-		}
-	}
-	
-	//バージョン指定のチェック
-	var start = document.form.StartVersion.value;
-	var end = document.form.EndVersion.value;
-	
-	var vrange = #server(..SetVersionRange(start,end))#;
-
-	if (vrange=='0') {
-		alert('バージョン指定が不正です。');
-		return;
-	}else{
-		document.form.VersionRange.value = vrange;
-	}	
-	
-	//トピック保存
-	var saveconf = confirm('このトピックを追加します。よろしいですか？')
-	if (saveconf) {
-		//#server(..CreateUsersVoice())#;
-		form_save(this);
-		form.action="complete.CSP";	
-	}
-}
-
-function formClear() {
-	var clearconf=confirm('記入されたすべての内容をクリアします。よろしいですか？')
-	if (clearconf) {
-		form_new();
-	}
-}
-
-function insertTab(o, e)
-{
-	var kC = e.keyCode ? e.keyCode : e.charCode ? e.charCode : e.which;
-	if (kC == 9 && !e.shiftKey && !e.ctrlKey && !e.altKey)
-	{
-		var oS = o.scrollTop;
-		if (o.setSelectionRange)
-		{
-			var sS = o.selectionStart;
-			var sE = o.selectionEnd;
-			o.value = o.value.substring(0, sS) + "\t" + o.value.substr(sE);
-			o.setSelectionRange(sS + 1, sS + 1);
-			o.focus();
-		}
-		else if (o.createTextRange)
-		{
-			document.selection.createRange().text = "\t";
-			e.returnValue = false;
-		}
-		o.scrollTop = oS;
-		if (e.preventDefault)
-		{
-			e.preventDefault();
-		}
-		return false;
-	}
-	return true;
-}
-
-</SCRIPT>
-
-
-<SCRIPT language="cache" method="RefListChk" arguments="rlist:%String" returntype="%String" runat="server">
-
-set rlist = $REPLACE(rlist," ","")
-set rlist = $REPLACE(rlist,"　","")
-
-set refchk=rlist
-If refchk = "" Quit refchk
-set rlen=$LENGTH(rlist,",")
-if rlen=1 {
-	set reftopic=##class(KB.Topic).%OpenId(rlist)
-	if '$IsObject(reftopic) {
-		set refchk='$$$OK
-	}
-}else{
-	for i=1:1:rlen {
-		set refid=$PIECE(rlist,",",i)
-		set reftopic=##class(KB.Topic).%OpenId(refid)
-		if '$IsObject(reftopic) {
-			set refchk='$$$OK
-		}
-	}
-}
-
-//チェックNGの場合は「0」、チェックOKの場合は、スペースを抜いた文字列を返す
-quit refchk
-
-</SCRIPT>
-
-<SCRIPT language="cache" method="SetVersionRange" arguments="startid:%String, endid:%String" runat="server">
-
-if startid'= "" {
-	set startver=##class(KB.Version).%OpenId(startid)
-	set startname=startver.ExternalVersion
-	set startorder=startver.OrderId
-}else{
-	set startver="",startname="",startorder=""
-}
-
-if endid'= "" {
-	set endver=##class(KB.Version).%OpenId(endid)
-	set endname=endver.ExternalVersion
-	set endorder=endver.OrderId
-}else{
-	set endver="",endname="",endorder=""
-}
-
-if startid'="" {
-	if endid'="" {
-		if startorder > endorder {
-			set vrange="0"
-		}
-		elseif startid=endid {
-			set vrange=startname
-		}else{
-			set vrange=startname_" ～ "_endname
-		}
-	}else{
-		set vrange=startname_" ～"
-	}
- }elseif endid'="" {
-	set vrange=" ～ "_endname
- }else {
-	set vrange=""
- }
- 
- quit vrange	
-	
-</SCRIPT>
-
-<SCRIPT language="cache" method="SetFileUpFlg" runat="server">
-
-set %session.Data("UpFlg")=1
-    
-</SCRIPT>
-
-</BODY>
-</HTML>
-
 ]]></CSP>
 
 

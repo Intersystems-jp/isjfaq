@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2014.2 (Build 253U)" ts="2014-07-28 18:27:03">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.2 (Build 599U)" ts="2015-04-16 18:09:15">
 <Class name="FAQ.Installer">
 <Description>
 %Installer Manifest FAQ.Installer</Description>
 <IncludeCode>%occInclude</IncludeCode>
-<TimeChanged>63396,61384.882615</TimeChanged>
+<TimeChanged>63658,65318.696235</TimeChanged>
 <TimeCreated>63393,40515.581067</TimeCreated>
 
 <XData name="FAQManifest">
@@ -16,6 +16,17 @@
 
 <Namespace Name="${NAMESPACE}" 
            Create="no">
+<CSPApplication 
+    Url="${CSPUrl}"
+    Description=""
+    Directory="${CSPDirectory}"
+    Resource=""
+    Grant="%DB_%DEFAULT"
+    Recurse="true"
+    LoginClass=""
+    CookiePath="${CSPUrl}"
+    AuthenticationMethods="${AuthenticationMethods}"
+     CustomErrorPage="${CustomErrorPage}"/>
 <If Condition='$L("${ClassFileName}")>0'>
 <Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
     <Arg Value="${ClassFileName}"/>
@@ -27,11 +38,19 @@
     <Arg Value="${GlobalFileName}"/>
 </Invoke>
 </If>
+<If Condition='$L("${KatakanaWordsFileName}")>0'>
+<Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
+    <Arg Value="${KatakanaWordsFileName}"/>
+</Invoke>
+</If>
+<Invoke Class="KB.Text" Method="ExcludeCommonTerms" CheckStatus="0" Return="RetVal"> 
+    <Arg Value="100"/>
+</Invoke>
 <Invoke Class="KB.Topic" Method="%BuildIndices" CheckStatus="0" Return="RetVal"> 
 </Invoke>
-<Invoke Class="KB.Utility" Method="CreateUsersVoice" CheckStatus="0" Return="RetVal"> 
-</Invoke>
 <Invoke Class="KB.Setup" Method="masterSetup" CheckStatus="0" Return="RetVal"> 
+</Invoke>
+<Invoke Class="KB.Setup" Method="setConfigParams" CheckStatus="0" Return="RetVal"> 
 </Invoke>
 <If Condition='$L("${ResetTopicSubID}")>0'>
 <Invoke Class="KB.Topic" Method="ResetTopicSubID" CheckStatus="0" Return="RetVal"> 
@@ -61,14 +80,38 @@
 <Implementation><![CDATA[
 	//以下は毎回インストールの条件により書き換え必要
 	
-	set vars("NAMESPACE") = "USER" //test
-	//set vars("NAMESPACE") = "KNOWLEDGE"　//JPNFILESRV用
-	//set vars("NAMESPACE") = "FAQ"　　　　//Cloud用
 	//set vars("ClassFileName") = "F:\test\faq\FAQAllFunc_20140725.xml"
 	set vars("ClassFileName") = "" //プログラムの変更がない場合
 	//set vars("GlobalFileName") = "F:\test\faq\Topic_20140725.xml"
 	set vars("GlobalFileName") = ""  //データの変更がない場合
-	set vars("ResetTopicSubID") = ""
+	//set vars("KatakanaWordsFileName") = "F:\test\faq\KatakanaWords_20150225.xml"
+	set vars("KatakanaWordsFileName") = ""  //カタカナ語の登録に変更がない場合
+	set vars("ResetTopicSubID") = "" //TopicSubIDをリセットする場合。通常は必要ない
+
+    // テスト環境
+	set vars("NAMESPACE") = "USER" //test
+	set vars("CSPUrl") = "/csp/user" 
+	set vars("CSPDirectory") = "c:\InterSystems/Ensemble/csp/user/" 
+	set vars("CustomErrorPage") = "/csp/user/FAQ.FAQError.cls" 
+	set vars("AuthenticationMethods") = "64"  //認証なし 
+
+    //  JPNFILESRV用
+    /*
+	set vars("NAMESPACE") = "KNOWLEDGE"　//JPNFILESRV用
+	set vars("CSPUrl") = "/csp/knowledge" 
+	set vars("CSPDirectory") = "c:\InterSystems/Ensemble/csp/knowledge/" 
+	set vars("CustomErrorPage") = "/csp/knowledge/FAQ.FAQError.cls" 
+	set vars("AuthenticationMethods") = "32" //パスワード認証
+    */
+    
+    //  本番用
+    /*
+	set vars("NAMESPACE") = "FAQ"　　　　//Cloud用
+	set vars("CSPUrl") = "/csp/faq" 
+	set vars("CSPDirectory") = "/usr/InterSystems/Cache20122/csp/faq/" 
+	set vars("CustomErrorPage") = "/csp/faq/FAQ.FAQError.cls" 
+	set vars("AuthenticationMethods") = "64"  //認証なし
+	*/ 
 	do ..setup(.vars,3)
 ]]></Implementation>
 </Method>
@@ -76,7 +119,7 @@
 <Method name="getVersion">
 <ClassMethod>1</ClassMethod>
 <ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	quit "1.0.001"
+<Implementation><![CDATA[	quit "1.0.004"
 ]]></Implementation>
 </Method>
 </Class>

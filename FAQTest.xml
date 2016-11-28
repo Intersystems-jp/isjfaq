@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2014.2 (Build 253U)" ts="2014-07-30 12:31:49">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.2 (Build 553U)" ts="2015-03-19 12:02:56">
 <Class name="FAQ.UnitTests">
 <Super>%UnitTest.TestCase</Super>
-<TimeChanged>63398,45096.126283</TimeChanged>
+<TimeChanged>63624,56688.813789</TimeChanged>
 <TimeCreated>63393,60278.340983</TimeCreated>
 
 <Method name="TestExceptionError">
@@ -31,6 +31,12 @@
 
 <Method name="TestReflink">
 <Implementation><![CDATA[
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ set tTopic1.RefTopic = ""
+ set tTopic2.RefTopic = ""
+ set tSC = tTopic1.%Save()
+ set tSC = tTopic2.%Save()
  set tResult = "2;1"	
  do $$$AssertEquals(##class(FAQ.Test).Reflink2(1,2),tResult, "Linking RefTopic 1 & 2")
  do $$$AssertEquals(##class(FAQ.Test).Reflink2(1,2),tResult, "Linking RefTopic 1 & 2 (already linked)")
@@ -66,6 +72,138 @@
  set tSC = tTopic1.%Save()
  set tSC = tTopic2.%Save()
  set tSC = tTopic3.%Save()
+]]></Implementation>
+</Method>
+
+<Method name="TestRemoveLink">
+<Implementation><![CDATA[
+
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic1.RefTopic = "2,3"
+ set tSC = tTopic1.%Save()
+ do tTopic1.RefCheckLink(0)
+ Set tSC = ##class(KB.Topic).RemoveLink(1,"2,3","3")
+ Set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ Set tResult = tTopic2.RefTopic
+ do $$$AssertEquals("",tResult, "Remove id 2 of the id 1")
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ set tTopic3 = ##class(KB.Topic).%OpenId(3)
+ set tTopic1.RefTopic = ""
+ set tTopic2.RefTopic = ""
+ set tTopic3.RefTopic = ""
+ set tSC = tTopic1.%Save()
+ set tSC = tTopic2.%Save()
+ set tSC = tTopic3.%Save()
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic1.RefTopic = "3,2"
+ set tSC = tTopic1.%Save()
+ do tTopic1.RefCheckLink(0)
+ Set tSC = ##class(KB.Topic).RemoveLink(1,"3,2","3")
+ Set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ Set tResult = tTopic2.RefTopic
+ do $$$AssertEquals("",tResult, "Remove id 2 of the id 1")
+
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ set tTopic3 = ##class(KB.Topic).%OpenId(3)
+ set tTopic1.RefTopic = ""
+ set tTopic2.RefTopic = ""
+ set tTopic3.RefTopic = ""
+ set tSC = tTopic1.%Save()
+ set tSC = tTopic2.%Save()
+ set tSC = tTopic3.%Save()
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic1.RefTopic = "3,2"
+ set tSC = tTopic1.%Save()
+ do tTopic1.RefCheckLink(0)
+ Set tSC = ##class(KB.Topic).RemoveLink(1,"3,2","3,2")
+ Set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ Set tResult = tTopic2.RefTopic
+ do $$$AssertEquals("1",tResult, "No Change")
+
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ set tTopic3 = ##class(KB.Topic).%OpenId(3)
+ set tTopic1.RefTopic = ""
+ set tTopic2.RefTopic = ""
+ set tTopic3.RefTopic = ""
+ set tSC = tTopic1.%Save()
+ set tSC = tTopic2.%Save()
+ set tSC = tTopic3.%Save()
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic1.RefTopic = "3,2"
+ set tSC = tTopic1.%Save()
+ do tTopic1.RefCheckLink(0)
+ Set tSC = ##class(KB.Topic).RemoveLink(1,"3,2","")
+ Set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ Set tResult = tTopic2.RefTopic
+ do $$$AssertEquals("",tResult, "Remove id 2 of the id 1")
+ Set tTopic3 = ##class(KB.Topic).%OpenId(2)
+ Set tResult = tTopic3.RefTopic
+ do $$$AssertEquals("",tResult, "Remove id 3 of the id 1")
+
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic2 = ##class(KB.Topic).%OpenId(2)
+ set tTopic3 = ##class(KB.Topic).%OpenId(3)
+ set tTopic1.RefTopic = ""
+ set tTopic2.RefTopic = ""
+ set tTopic3.RefTopic = ""
+ set tSC = tTopic1.%Save()
+ set tSC = tTopic2.%Save()
+ set tSC = tTopic3.%Save()
+ set tTopic1 = ##class(KB.Topic).%OpenId(1)
+ set tTopic1.RefTopic = "3,2"
+ set tSC = tTopic1.%Save()
+ do tTopic1.RefCheckLink(0)
+ Set tSC = ##class(KB.Topic).RemoveLink(1,"3,2","3;2")
+ do $$$AssertStatusNotOK(tSC, "Format Error")
+]]></Implementation>
+</Method>
+
+<Method name="TestFindKatakanaWord">
+<Implementation><![CDATA[
+ set tString = "カタカナ"	
+ set tResult = 1
+ do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Found a Katakana Word")
+ set tString = "カタカナ"	
+ set tResult = 0
+ do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString),tResult, "The length is short")
+ set tString = "abcカタカナ"	
+ set tResult = 1
+ do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Found a Katakana Word")
+ set tString = "カタカナabc"	
+ set tResult = 1
+ do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Found a Katakana Word")
+ set tString = "カタabcカタカナ"	
+ set tResult = 1
+ do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Found a Katakana Word")
+ set tString = "かたかな"	
+ set tResult = 0
+ do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Not Found a Katakana Word")
+]]></Implementation>
+</Method>
+
+<Method name="TestSpritKatakanaKeyWord">
+<Implementation><![CDATA[
+ set tString = "アンインストール"	
+ set tResult = "アン インストール "
+ do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found a Katakana KeyWord")
+ set tString = "アンインストール"	
+ set tResult = "アンインストール"
+ do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,7),tResult, "The length is long")
+ set tString = "アンインストールレポート"	
+ set tResult = "アン インストール レポート "
+ do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found Katakana KeyWords")
+ set tString = "アンインストールレポ"	
+ set tResult = "アン インストール レポ"
+ do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found a Katakana KeyWord")
+ set tString = "abcアンインストールレポ"	
+ set tResult = "abcアン インストール レポ"
+ do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found a Katakana KeyWords")
+ set tString = "アンインストールレポabc"	
+ set tResult = "アン インストール レポabc"
+ do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found a Katakana KeyWord")
 ]]></Implementation>
 </Method>
 </Class>
