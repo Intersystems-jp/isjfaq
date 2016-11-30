@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2015.2 (Build 599U)" ts="2015-04-16 18:09:15">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2016.2.1 (Build 803U)" ts="2016-11-17 19:28:59">
 <Class name="FAQ.Installer">
 <Description>
 %Installer Manifest FAQ.Installer</Description>
 <IncludeCode>%occInclude</IncludeCode>
-<TimeChanged>63658,65318.696235</TimeChanged>
+<TimeChanged>64239,70112.038302</TimeChanged>
 <TimeCreated>63393,40515.581067</TimeCreated>
 
 <XData name="FAQManifest">
@@ -27,10 +27,14 @@
     CookiePath="${CSPUrl}"
     AuthenticationMethods="${AuthenticationMethods}"
      CustomErrorPage="${CustomErrorPage}"/>
-<If Condition='$L("${ClassFileName}")>0'>
+ <If Condition='$L("${ClassFileName}")>0'>
 <Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
     <Arg Value="${ClassFileName}"/>
     <Arg Value="ck"/>
+</Invoke>
+</If>
+<If Condition='$L("${SetupType}")=1'>
+<Invoke Class="KB.Setup" Method="masterSetup" CheckStatus="0" Return="RetVal"> 
 </Invoke>
 </If>
 <If Condition='$L("${GlobalFileName}")>0'>
@@ -48,14 +52,12 @@
 </Invoke>
 <Invoke Class="KB.Topic" Method="%BuildIndices" CheckStatus="0" Return="RetVal"> 
 </Invoke>
-<Invoke Class="KB.Setup" Method="masterSetup" CheckStatus="0" Return="RetVal"> 
-</Invoke>
-<Invoke Class="KB.Setup" Method="setConfigParams" CheckStatus="0" Return="RetVal"> 
-</Invoke>
+<!--
 <If Condition='$L("${ResetTopicSubID}")>0'>
 <Invoke Class="KB.Topic" Method="ResetTopicSubID" CheckStatus="0" Return="RetVal"> 
 </Invoke>
 </If>
+-->
 </Namespace>
 </Manifest>
 ]]></Data>
@@ -75,44 +77,113 @@
 ]]></Implementation>
 </Method>
 
+<UDLText name="T">
+<Content><![CDATA[
+// envID(環境ID)：クラウド(本番)環境＝1、jpnfilesrv＝2、クラウド(テスト)環境＝3、その他＝4
+
+]]></Content>
+</UDLText>
+
+<UDLText name="T">
+<Content><![CDATA[
+// setuptype：初期セットアップ＝1、更新＝2
+
+]]></Content>
+</UDLText>
+
+<UDLText name="T">
+<Content><![CDATA[
+// datestr：セットアップキットのディレクトリ名に使った日付(YYYYMMDD)　※ディレクトリ名が今日の日付の場合は空でOK
+
+]]></Content>
+</UDLText>
+
 <Method name="runInstaller">
 <ClassMethod>1</ClassMethod>
+<FormalSpec>datestr:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-	//以下は毎回インストールの条件により書き換え必要
+	write "★実行する対象のenvIDを入力してください。",!,"  [クラウド(本番)環境＝1、jpnfilesrv＝2、クラウド(テスト)環境＝3、その他＝4]：",!
+	read envID,!
 	
-	//set vars("ClassFileName") = "F:\test\faq\FAQAllFunc_20140725.xml"
-	set vars("ClassFileName") = "" //プログラムの変更がない場合
-	//set vars("GlobalFileName") = "F:\test\faq\Topic_20140725.xml"
-	set vars("GlobalFileName") = ""  //データの変更がない場合
-	//set vars("KatakanaWordsFileName") = "F:\test\faq\KatakanaWords_20150225.xml"
-	set vars("KatakanaWordsFileName") = ""  //カタカナ語の登録に変更がない場合
-	set vars("ResetTopicSubID") = "" //TopicSubIDをリセットする場合。通常は必要ない
-
-    // テスト環境
-	set vars("NAMESPACE") = "USER" //test
-	set vars("CSPUrl") = "/csp/user" 
-	set vars("CSPDirectory") = "c:\InterSystems/Ensemble/csp/user/" 
-	set vars("CustomErrorPage") = "/csp/user/FAQ.FAQError.cls" 
-	set vars("AuthenticationMethods") = "64"  //認証なし 
-
-    //  JPNFILESRV用
-    /*
-	set vars("NAMESPACE") = "KNOWLEDGE"　//JPNFILESRV用
-	set vars("CSPUrl") = "/csp/knowledge" 
-	set vars("CSPDirectory") = "c:\InterSystems/Ensemble/csp/knowledge/" 
-	set vars("CustomErrorPage") = "/csp/knowledge/FAQ.FAQError.cls" 
-	set vars("AuthenticationMethods") = "32" //パスワード認証
-    */
+	write "★setuptypeを入力してください。[setuptype：初期セットアップ＝1、データとソースの更新＝2、データのみ更新＝3、アプリケーションソースのみ更新＝4]：",!
+	read setuptype,!
+	
+	if envID=1 {
+		set envname="クラウド(本番)環境"
+	}elseif envID=2 {
+		set envname="jpnfilesrv"
+	}elseif envID=3 {
+		set envname="クラウド(テスト)環境"
+	}else {
+		set envname="その他環境"
+	}
+	
+	if setuptype=1 {
+		set setuptypename="初期セットアップ"
+	} elseif setuptype=2 {
+		set setuptypename="データとソースの更新"
+	} elseif setuptype=3 {
+		set setuptypename="データのみ更新"
+	} elseif setuptype=4 {
+		set setuptypename="アプリケーションソースのみ更新"
+	}
+	
+	write envname_" の "_setuptypename_" を実行します。よろしいですか？(Y/N)："
+	read answer,!
+	
+	if $zconvert(answer,"U") = "Y" {
+		
+		if setuptype=1 {
+			do ##class(KB.Setup).setConfigParams(envID)
+		}
+		
+		if $get(datestr)="" {
+			set datestr=$zdate($h,8)
+		}
+		
+		set setupdir = ^Techinfo("SetupDirectory")_^Techinfo("DirectorySeparator")_datestr_^Techinfo("DirectorySeparator")
+		
+		if setuptype=1 {
+			set vars("ClassFileName") = setupdir_^Techinfo("ClassFileName")
+			set vars("GlobalFileName") = setupdir_^Techinfo("GlobalFileName")
+		}elseif setuptype=2 {
+			set vars("ClassFileName") = setupdir_^Techinfo("ClassFileName")
+			set vars("GlobalFileName") = setupdir_^Techinfo("GlobalFileName")
+		}elseif setuptype=3 {
+			set vars("ClassFileName") = ""
+			set vars("GlobalFileName") = setupdir_^Techinfo("GlobalFileName")
+		}elseif setuptype=4 {
+			set vars("ClassFileName") = setupdir_^Techinfo("ClassFileName")
+			set vars("GlobalFileName") = ""
+		}			
+				
+		set vars("SetupType")			  = setuptype
+		set vars("NAMESPACE")			  = ^Techinfo("Namespace")
+		set vars("CSPUrl")				  = ^Techinfo("CSPUrl") 
+		set vars("CSPDirectory") 		  = ^Techinfo("CSPDirectory") 
+		set vars("CustomErrorPage") 	  = ^Techinfo("ErrorPage")
+		set vars("AuthenticationMethods") = ^Techinfo("AuthenticationMethods")
+		set vars("KatakanaWordsFileName") = ^Techinfo("KatakanaWordsFileName")
+		//set vars("ResetTopicSubID") 	  = ^Techinfo("ResetTopicSubID") 
     
-    //  本番用
-    /*
-	set vars("NAMESPACE") = "FAQ"　　　　//Cloud用
-	set vars("CSPUrl") = "/csp/faq" 
-	set vars("CSPDirectory") = "/usr/InterSystems/Cache20122/csp/faq/" 
-	set vars("CustomErrorPage") = "/csp/faq/FAQ.FAQError.cls" 
-	set vars("AuthenticationMethods") = "64"  //認証なし
-	*/ 
-	do ..setup(.vars,3)
+    	if (vars("ClassFileName")'="") && (##class(%File).Exists(vars("ClassFileName"))'=1) {
+	    	w vars("ClassFileName"),"は存在しません。ファイルを確認してください。",!
+	    	quit 0
+    	}
+    	
+    	if (vars("GlobalFileName")'="") && (##class(%File).Exists(vars("GlobalFileName"))'= 1) {
+    		w vars("GlobalFileName"),"は存在しません。ファイルを確認してください。",!
+	    	quit 0
+    	}
+    
+		do ..setup(.vars,3)
+		
+	}else{
+		w !,"Installerの実行を中止しました"
+	}
+	
+	w "Installerの実行が完了しました",!
 ]]></Implementation>
 </Method>
 
@@ -120,6 +191,482 @@
 <ClassMethod>1</ClassMethod>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[	quit "1.0.004"
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Project name="Installer" LastModified="2016-11-17 18:48:22.169051">
+  <Items>
+    <ProjectItem name="FAQ.Installer" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Config" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Setup" type="CLS"></ProjectItem>
+  </Items>
+</Project>
+
+
+<Class name="KB.Config">
+<Description>
+構成情報</Description>
+<TimeChanged>64190,40545.395334</TimeChanged>
+<TimeCreated>59953,69516.676658</TimeCreated>
+
+<Method name="getAttachedFileName">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("AttachedFileName"))
+]]></Implementation>
+</Method>
+
+<Method name="getAuthenticationMethods">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("AuthenticationMethods"))
+]]></Implementation>
+</Method>
+
+<Method name="getClassFileName">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("ClassFileName"))
+]]></Implementation>
+</Method>
+
+<Method name="getCSPDirectory">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("CSPDirectory"))
+]]></Implementation>
+</Method>
+
+<Method name="getCSPUrl">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("CSPUrl"))
+]]></Implementation>
+</Method>
+
+<Method name="getDirectorySeparator">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("DirectorySeparator"))
+]]></Implementation>
+</Method>
+
+<Method name="getErrorPage">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("ErrorPage"))
+]]></Implementation>
+</Method>
+
+<Method name="getFTPDirectory">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("FTPDirectory"))
+]]></Implementation>
+</Method>
+
+<Method name="getGlobalFileName">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("GlobalFileName"))
+]]></Implementation>
+</Method>
+
+<Method name="getKatakanaWordsFileName">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("KatakanaWordsFileName"))
+]]></Implementation>
+</Method>
+
+<Method name="getMailSender">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("MailSender"))
+]]></Implementation>
+</Method>
+
+<Method name="getNamespace">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("Namespace"))
+]]></Implementation>
+</Method>
+
+<Method name="getSMTPServer">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("SMTPServer"))
+]]></Implementation>
+</Method>
+
+<Method name="getStartYear">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("StartYear"))
+]]></Implementation>
+</Method>
+
+<Method name="getXMLExportDirectory">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("XMLExportDirectory"))
+]]></Implementation>
+</Method>
+
+<Method name="getSetupDirectory">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	quit $get(^Techinfo("SetupDirectory"))
+]]></Implementation>
+</Method>
+
+<Method name="setAttachedFileName">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>afile:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("AttachedFileName") = afile
+]]></Implementation>
+</Method>
+
+<Method name="setAuthenticationMethods">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>auth:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("AuthenticationMethods") = auth
+]]></Implementation>
+</Method>
+
+<Method name="setClassFileName">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>cfile:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("ClassFileName") = cfile
+]]></Implementation>
+</Method>
+
+<Method name="setCSPDirectory">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>cspdir:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("CSPDirectory") = cspdir
+]]></Implementation>
+</Method>
+
+<Method name="setCSPUrl">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>url:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("CSPUrl") = url
+]]></Implementation>
+</Method>
+
+<Method name="setDirectorySeparator">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>separator:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("DirectorySeparator") = separator
+]]></Implementation>
+</Method>
+
+<Method name="setErrorPage">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>errorpage:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("ErrorPage") = errorpage
+]]></Implementation>
+</Method>
+
+<Method name="setFTPDirectory">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>ftpdir:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("FTPDirectory") = ftpdir
+]]></Implementation>
+</Method>
+
+<Method name="setGlobalFileName">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>gfile:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("GlobalFileName") = gfile
+]]></Implementation>
+</Method>
+
+<Method name="setKatakanaWordsFileName">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>katakanafile:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("KatakanaWordsFileName") = katakanafile
+]]></Implementation>
+</Method>
+
+<Method name="setMailSender">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>mailsender:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("MailSender") = mailsender
+]]></Implementation>
+</Method>
+
+<Method name="setNamespace">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>ns:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("Namespace") = ns
+]]></Implementation>
+</Method>
+
+<Method name="setSMTPServer">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>smtp:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("SMTPServer") = smtp
+]]></Implementation>
+</Method>
+
+<Method name="setStartYear">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>syear:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("StartYear") = syear
+]]></Implementation>
+</Method>
+
+<Method name="setXMLExportDirectory">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>xmldir:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("XMLExportDirectory") = xmldir
+]]></Implementation>
+</Method>
+
+<Method name="setSetupDirectory">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>setupdir:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	set ^Techinfo("SetupDirectory") = setupdir
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^KB.ConfigD</DataLocation>
+<DefaultData>ConfigDefaultData</DefaultData>
+<IdLocation>^KB.ConfigD</IdLocation>
+<IndexLocation>^KB.ConfigI</IndexLocation>
+<StreamLocation>^KB.ConfigS</StreamLocation>
+<Data name="ConfigDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>DirectorySeparator</Value>
+</Value>
+<Value name="3">
+<Value>FTPDirectory</Value>
+</Value>
+<Value name="4">
+<Value>MailSender</Value>
+</Value>
+<Value name="5">
+<Value>SMTPServer</Value>
+</Value>
+<Value name="6">
+<Value>WebServer</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="KB.Setup">
+<Description>
+</Description>
+<IncludeCode>%occInclude</IncludeCode>
+<TimeChanged>64239,68675.527229</TimeChanged>
+<TimeCreated>60910,3246.496269</TimeCreated>
+
+<Method name="createAccentTable">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	kill ^KB.accent
+	set ^KB.accent("é") = "&eacute;"
+	set ^KB.accent("à") = "&agrave;"
+	set ^KB.accent("è") = "&egrave;"
+	set ^KB.accent("ù") = "&ugrave;"
+	set ^KB.accent("â") = "&acirc;"
+	set ^KB.accent("ê") = "&ecirc;"
+	set ^KB.accent("î") = "&icirc;"
+	set ^KB.accent("ô") = "&ocirc;"
+	set ^KB.accent("û") = "&ucirc;"
+	set ^KB.accent("ë") = "&euml;"
+	set ^KB.accent("ï") = "&iuml;"
+	set ^KB.accent("ü") = "&uuml;"
+	set ^KB.accent("ç") = "&ccedil;"
+	set ^KB.accent("œ") = "&oelig;"
+	set ^KB.accent("æ") = "&aelig;"
+	set ^KB.accent("É") = "&Eacute;"
+	set ^KB.accent("À") = "&Agrave;"
+	set ^KB.accent("È") = "&Egrave;"
+	set ^KB.accent("Ù") = "&Ugrave;"
+	set ^KB.accent("Â") = "&Acirc;"
+	set ^KB.accent("Ê") = "&Ecirc;"
+	set ^KB.accent("Î") = "&Icirc;"
+	set ^KB.accent("Ô") = "&Ocirc;"
+	set ^KB.accent("Û") = "&Ucirc;"
+	set ^KB.accent("Ë") = "&Euml;"
+	set ^KB.accent("Ï") = "&Iuml;"
+	set ^KB.accent("Ü") = "&Uuml;"
+	set ^KB.accent("Ç") = "&Ccedil;"
+	set ^KB.accent("Œ") = "&OElig;"
+	set ^KB.accent("Æ") = "&AElig;"
+]]></Implementation>
+</Method>
+
+<Method name="setConfigParams">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>envID:%Integer</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	//運用パラメータ設定
+	// envID(環境ID)：クラウド(本番)環境＝1、jpnfilesrv＝2、クラウド(テスト)環境＝3
+
+	//クラウド(本番)環境
+	if envID=1 {
+		set ns = "FAQ"
+		set auth = "64"		//認証なし
+		set separator = "/"
+		set cspdir = "/intersystems/cache/csp/faq"
+		set cspurl = "/csp/faq"
+		set ftpdir = "/intersystems/cache/csp/faq/downloads"
+		set setupdir = "/usr/FAQsetup/"
+		set classfilename = "FAQRefOnly.xml"
+		set globalfilename = "TopicD.xml"
+		
+	//jpnfilesrv
+	} elseif envID=2 {
+		set ns = "Knowledge"
+		set auth = "32"		//パスワード認証
+		set separator = "\"
+		set cspdir = "D:\InterSystems\Ensemble\CSP\knowledge"
+		set cspurl = "/csp/knowledge"
+		set ftpdir = "D:\InterSystems\Ensemble\CSP\knowledge\downloads"
+		set setupdir = "P:\Public\Tech\FAQ\NewKB\FAQsetup"
+		set classfilename = "FAQAllFunc.xml"
+		set globalfilename = "TopicD.xml"
+		
+	//クラウド(テスト)環境
+	} elseif envID=3 {
+		set ns = "FAQ"
+		set auth = "64"
+		set separator = "/"
+		set cspdir = "/intersystems/cache/csp/user"
+		set cspurl = "/csp/user"
+		set ftpdir = "/intersystems/cache/csp/user/downloads"
+		set setupdir = "/usr/FAQsetup"
+		set classfilename = "FAQRefOnly.xml"
+		set globalfilename = "TopicD.xml"
+		
+	//その他、ローカルに環境を作りたいときなどに使用(上の3つの内容を変更せずにここを利用)
+	} else {
+		set ns = "KnowledgeTest"
+		set auth = "32"		//パスワード認証
+		set separator = "\"
+		set cspdir = "D:\InterSystems\Ensemble\CSP\knowledgetest"
+		set cspurl = "/csp/knowledgetest"
+		set ftpdir = "D:\InterSystems\Ensemble\CSP\knowledgetest\downloads"
+		set setupdir = "P:\Public\Tech\FAQ\NewKB\FAQsetup"
+		set classfilename = "FAQAllFunc.xml"
+		set globalfilename = "TopicD.xml"
+	}
+	
+	do ##class(KB.Config).setAttachedFileName("Attached")
+	do ##class(KB.Config).setMailSender("jpnsup@intersystems.com")
+	do ##class(KB.Config).setSMTPServer("xxx.intersystems.com")
+	do ##class(KB.Config).setStartYear("2003")
+	do ##class(KB.Config).setNamespace(ns)
+	do ##class(KB.Config).setAuthenticationMethods(auth)
+	do ##class(KB.Config).setDirectorySeparator(separator)
+	do ##class(KB.Config).setCSPDirectory(cspdir)
+	do ##class(KB.Config).setCSPUrl(cspurl)
+	do ##class(KB.Config).setErrorPage(cspurl_"/FAQ.FAQError.cls")
+	do ##class(KB.Config).setFTPDirectory(ftpdir)
+	do ##class(KB.Config).setSetupDirectory(setupdir)
+	do ##class(KB.Config).setClassFileName(classfilename)
+	do ##class(KB.Config).setGlobalFileName(globalfilename)
+	do ##class(KB.Config).setKatakanaWordsFileName(setupdir_separator_"KatakanaWords.xml")
+
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="masterSetup">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	//マスタ初期化
+	do ##class(KB.Facility).Init()
+	do ##class(KB.Version).Init()
+	do ##class(KB.Platform).Init()
+	do ##class(KB.Category).Init()
+	do ##class(KB.Product).Init()
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="attachedRebuild">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	//添付ファイル情報は、％FileBinaryObjectとして実装されているため、他環境からデータベースを
+	//移行してきた場合には、ファイル名のディレクトリ情報を調整する必要あり
+	set nooftopic = $get(^KB.TopicD)
+	set ftpdir = ##class(KB.Config).getFTPDirectory()
+	set sep = ##class(KB.Config).getDirectorySeparator()
+	for i = 1:1:nooftopic {
+		set toref = ##class(KB.Topic).%OpenId(i)
+		quit:'$isobject(toref)
+		set fileloc = toref.FileLoc
+		if fileloc'="" {
+			set filename = fileloc.Filename
+			set filename = $piece(filename,sep,$length(filename,sep))
+			set fileloc.Filename = ftpdir_sep_filename
+			set sts = toref.%Save()
+	        If $$$ISERR(sts) Do $system.OBJ.DisplayError(sts) Quit  
+		}
+	}
+]]></Implementation>
+</Method>
+
+<Method name="attachedRebuild2">
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	//添付ファイル情報は、％FileBinaryObjectとして実装されているため、他環境からデータベースを
+	//移行してきた場合には、ファイル名のディレクトリ情報を調整する必要あり
+	// KB.Topic クラス変更に伴い修正 by A.Tanaka 2009/10/15
+	
+	set ftpdir = ##class(KB.Config).getFTPDirectory()
+	set sep = ##class(KB.Config).getDirectorySeparator()
+
+	Set rs=##class(%ResultSet).%New("KB.Topic:Extent")
+	Do rs.Execute()
+	while rs.Next() {
+		set i=rs.GetData(1)
+		set toref = ##class(KB.Topic).%OpenId(i)
+		quit:'$isobject(toref)
+		for filenum=1:1:3 {
+			set fileloc = $zobjproperty(toref,"FileLoc"_filenum)
+			if fileloc'="" {
+				set filename = fileloc.Filename
+				set filename = $piece(filename,sep,$length(filename,sep))
+				set fileloc.Filename = ftpdir_sep_i_sep_filename
+				set sts = toref.%Save()
+		        If $$$ISERR(sts) Do $system.OBJ.DisplayError(sts) Quit  
+			}
+		}
+	}
 ]]></Implementation>
 </Method>
 </Class>

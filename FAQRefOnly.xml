@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2016.1 (Build 656U)" ts="2016-08-05 12:46:45">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2016.2.1 (Build 803U)" ts="2016-11-17 18:25:47">
 <CSPBase64 name="images/background/header-gradient.gif" application="/csp/faq/" default="1">
 R0lGODlhDQBBAGAAACH5BAAAAAAALAAAAAANAEEAh/T4/f/+/fvVpN7p+f/69P/9+/3iwPX4/fzc
 s+Tu/f3ozeTv/eXv/f3kxv726/zWp/zYrPzbsefx/fzasPH2/vzXqPzYqv/8+f3jwv/79//79vzZ
@@ -2740,131 +2740,6 @@ for controls.]]></Description>
 ]]></Routine>
 
 
-<Class name="FAQ.Installer">
-<Description>
-%Installer Manifest FAQ.Installer</Description>
-<IncludeCode>%occInclude</IncludeCode>
-<TimeChanged>63658,65318.696235</TimeChanged>
-<TimeCreated>63393,40515.581067</TimeCreated>
-
-<XData name="FAQManifest">
-<Description>
-マニフェスト定義.</Description>
-<XMLNamespace>INSTALLER</XMLNamespace>
-<Data><![CDATA[
-<Manifest>
-
-<Namespace Name="${NAMESPACE}" 
-           Create="no">
-<CSPApplication 
-    Url="${CSPUrl}"
-    Description=""
-    Directory="${CSPDirectory}"
-    Resource=""
-    Grant="%DB_%DEFAULT"
-    Recurse="true"
-    LoginClass=""
-    CookiePath="${CSPUrl}"
-    AuthenticationMethods="${AuthenticationMethods}"
-     CustomErrorPage="${CustomErrorPage}"/>
-<If Condition='$L("${ClassFileName}")>0'>
-<Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
-    <Arg Value="${ClassFileName}"/>
-    <Arg Value="ck"/>
-</Invoke>
-</If>
-<If Condition='$L("${GlobalFileName}")>0'>
-<Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
-    <Arg Value="${GlobalFileName}"/>
-</Invoke>
-</If>
-<If Condition='$L("${KatakanaWordsFileName}")>0'>
-<Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
-    <Arg Value="${KatakanaWordsFileName}"/>
-</Invoke>
-</If>
-<Invoke Class="KB.Text" Method="ExcludeCommonTerms" CheckStatus="0" Return="RetVal"> 
-    <Arg Value="100"/>
-</Invoke>
-<Invoke Class="KB.Topic" Method="%BuildIndices" CheckStatus="0" Return="RetVal"> 
-</Invoke>
-<Invoke Class="KB.Setup" Method="masterSetup" CheckStatus="0" Return="RetVal"> 
-</Invoke>
-<Invoke Class="KB.Setup" Method="setConfigParams" CheckStatus="0" Return="RetVal"> 
-</Invoke>
-<If Condition='$L("${ResetTopicSubID}")>0'>
-<Invoke Class="KB.Topic" Method="ResetTopicSubID" CheckStatus="0" Return="RetVal"> 
-</Invoke>
-</If>
-</Namespace>
-</Manifest>
-]]></Data>
-</XData>
-
-<Method name="setup">
-<Description>
-これは XGL により生成されたメソッド・ジェネレーターです。.</Description>
-<Internal>1</Internal>
-<ClassMethod>1</ClassMethod>
-<CodeMode>objectgenerator</CodeMode>
-<FormalSpec><![CDATA[&pVars,pLogLevel:%Integer=3,pInstaller:%Installer.Installer,pLogger:%Installer.AbstractLogger]]></FormalSpec>
-<ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[
- #; XGL ドキュメントでこのメソッドのコードを生成する.
- Quit ##class(%Installer.Manifest).%Generate(%compiledclass, %code, "FAQManifest")
-]]></Implementation>
-</Method>
-
-<Method name="runInstaller">
-<ClassMethod>1</ClassMethod>
-<Implementation><![CDATA[
-	//以下は毎回インストールの条件により書き換え必要
-	
-	//set vars("ClassFileName") = "F:\test\faq\FAQAllFunc_20140725.xml"
-	set vars("ClassFileName") = "" //プログラムの変更がない場合
-	//set vars("GlobalFileName") = "F:\test\faq\Topic_20140725.xml"
-	set vars("GlobalFileName") = ""  //データの変更がない場合
-	//set vars("KatakanaWordsFileName") = "F:\test\faq\KatakanaWords_20150225.xml"
-	set vars("KatakanaWordsFileName") = ""  //カタカナ語の登録に変更がない場合
-	set vars("ResetTopicSubID") = "" //TopicSubIDをリセットする場合。通常は必要ない
-
-    // テスト環境
-	set vars("NAMESPACE") = "USER" //test
-	set vars("CSPUrl") = "/csp/user" 
-	set vars("CSPDirectory") = "c:\InterSystems/Ensemble/csp/user/" 
-	set vars("CustomErrorPage") = "/csp/user/FAQ.FAQError.cls" 
-	set vars("AuthenticationMethods") = "64"  //認証なし 
-
-    //  JPNFILESRV用
-    /*
-	set vars("NAMESPACE") = "KNOWLEDGE"　//JPNFILESRV用
-	set vars("CSPUrl") = "/csp/knowledge" 
-	set vars("CSPDirectory") = "c:\InterSystems/Ensemble/csp/knowledge/" 
-	set vars("CustomErrorPage") = "/csp/knowledge/FAQ.FAQError.cls" 
-	set vars("AuthenticationMethods") = "32" //パスワード認証
-    */
-    
-    //  本番用
-    /*
-	set vars("NAMESPACE") = "FAQ"　　　　//Cloud用
-	set vars("CSPUrl") = "/csp/faq" 
-	set vars("CSPDirectory") = "/usr/InterSystems/Cache20122/csp/faq/" 
-	set vars("CustomErrorPage") = "/csp/faq/FAQ.FAQError.cls" 
-	set vars("AuthenticationMethods") = "64"  //認証なし
-	*/ 
-	do ..setup(.vars,3)
-]]></Implementation>
-</Method>
-
-<Method name="getVersion">
-<ClassMethod>1</ClassMethod>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	quit "1.0.004"
-]]></Implementation>
-</Method>
-</Class>
-
-
 <Class name="FAQ.KeyWords">
 <Super>%Persistent</Super>
 <TimeChanged>62753,44902.027114</TimeChanged>
@@ -2910,8 +2785,6 @@ for controls.]]></Description>
 </Class>
 
 
-
-
 <Class name="FAQ.SessionEvents">
 <Super>%CSP.SessionEvents</Super>
 <TimeChanged>62469,67023.095644</TimeChanged>
@@ -2936,60 +2809,6 @@ Set %session.EndSession=1
 	set ^AccessCountTest(today) = $Get(^AccessCountTest(today))+1
     
     q $$$OK
-]]></Implementation>
-</Method>
-</Class>
-
-
-<Class name="FAQ.SourceTest">
-<Super>%RegisteredObject,%CSP.Page</Super>
-<TimeChanged>63888,43597.739887</TimeChanged>
-<TimeCreated>63888,42828.697853</TimeCreated>
-
-<Method name="ChkDisplay">
-<ClassMethod>1</ClassMethod>
-<FormalSpec>tid</FormalSpec>
-<ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[
-	set topic=##class(KB.Topic).%OpenId(tid)
-	set description=topic.Description
-   //コード部分
-   set cmdstart="<DIV class=divcommand><PRE><CODE>"
-   set cmdfin="</CODE></PRE></DIV>"
-                   
-   //コード部分、URLのリンク処理
-   set crlf = $c(13,10)
-   set lineno = $length(description,crlf)
-   for i = 1:1:lineno {
-	   set line(i)=$piece(description,crlf,i)
-	   set tLine =$ZCVT(line(i),"U")
-	   if $Extract(tLine,1,9)="<COMMAND>" {
-		   set cmdflg=1
-		   write cmdstart
-	   }
-	   elseif $Extract(tLine,1,10)="</COMMAND>" {
-		   set cmdflg=0
-		   write cmdfin
-	   }
-       elseif $Extract(tLine,1,5)="<URL>" {
-	       set llen=$Length(line(i))
-		   set url=$Extract(line(i),6,llen-6)
-		   write "<A href="_url_" target=""blank"">"_url_"</A><br>" 
-   	   }
-	   elseif $Extract(tLine,1,10)="<REFTOPIC>" {
-		   	set refid1=$Extract(line(i),11,13)
-			set refid2=$NUMBER($Extract(line(i),11,13))
-			set ref=##class(KB.Topic).%OpenId(refid2)
-			set reft=ref.Title
-			set refurl="http://www.intersystems.co.jp/faq.php?id="_refid1
-			write "<br><img src=""./images/button/arrow1.gif""><A href="_refurl_">Q："_reft_"</A><br>"
-	   }
-	   else{
-		   write ..EscapeHTML(line(i))_"<br>"
-	   }         
-   }
-   
-   w !,!,url,!
 ]]></Implementation>
 </Method>
 </Class>
@@ -3283,19 +3102,43 @@ UnitTest用クラス</Description>
 </Class>
 
 
-<Project name="FAQRefOnly" LastModified="2016-08-05 12:46:28.89406">
+<Project name="FAQRefOnly" LastModified="2016-11-17 18:25:34.193735">
   <Items>
+    <ProjectItem name="FAQ.Error" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQApp" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQError" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQTopicNotFound" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQTopicSearch" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQTopicSearchBodyCache" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQTopicSearchBodyEnsemble" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQTopicSearchBodyGeneral" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.FAQTopicSearchBodyTemplate" type="CLS"></ProjectItem>
     <ProjectItem name="FAQ.FAQTopicSearchTest" type="CLS"></ProjectItem>
     <ProjectItem name="FAQ.INC" type="MAC"></ProjectItem>
+    <ProjectItem name="FAQ.KeyWords" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.SessionEvents" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.Test" type="CLS"></ProjectItem>
+    <ProjectItem name="FAQ.UnitTests" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.BitOperation" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Category" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Event" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Facility" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Platform" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Product" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Text" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Topic" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.UpdateHistory" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.User" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.UsersVoice" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Utility" type="CLS"></ProjectItem>
+    <ProjectItem name="KB.Version" type="CLS"></ProjectItem>
     <ProjectItem name="Text.MecabJapanese2" type="CLS"></ProjectItem>
     <ProjectItem name="Utility.MAC" type="MAC"></ProjectItem>
     <ProjectItem name="bitutil.INC" type="MAC"></ProjectItem>
-    <ProjectItem name="FAQ" type="PKG"></ProjectItem>
-    <ProjectItem name="KB" type="PKG"></ProjectItem>
-    <ProjectItem name="csp/faq/images" type="DIR"></ProjectItem>
     <ProjectItem name="csp/faq/complete.CSP" type="CSP"></ProjectItem>
     <ProjectItem name="csp/faq/history.CSP" type="CSP"></ProjectItem>
     <ProjectItem name="csp/faq/howto.CSP" type="CSP"></ProjectItem>
+    <ProjectItem name="csp/faq/images" type="DIR"></ProjectItem>
     <ProjectItem name="csp/faq/result.CSP" type="CSP"></ProjectItem>
     <ProjectItem name="csp/faq/style.css" type="CSP"></ProjectItem>
     <ProjectItem name="csp/faq/styleedit.css" type="CSP"></ProjectItem>
@@ -3629,144 +3472,6 @@ error	quit 0
 </Class>
 
 
-<Class name="KB.Config">
-<Description>
-構成情報</Description>
-<TimeChanged>62237,41667.372886</TimeChanged>
-<TimeCreated>59953,69516.676658</TimeCreated>
-
-<Method name="getWebServer">
-<ClassMethod>1</ClassMethod>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	quit $get(^Techinfo("Web Server"))
-]]></Implementation>
-</Method>
-
-<Method name="getSMTPServer">
-<ClassMethod>1</ClassMethod>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	quit $get(^Techinfo("SMTP Server"))
-]]></Implementation>
-</Method>
-
-<Method name="getMailSender">
-<ClassMethod>1</ClassMethod>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	quit $get(^Techinfo("Mail Sender"))
-]]></Implementation>
-</Method>
-
-<Method name="getFTPDirectory">
-<ClassMethod>1</ClassMethod>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	quit $get(^Techinfo("FTP Directory"))
-]]></Implementation>
-</Method>
-
-<Method name="getDirectorySeparator">
-<ClassMethod>1</ClassMethod>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	quit $get(^Techinfo("Directory Separator"))
-]]></Implementation>
-</Method>
-
-<Method name="getAttachedFileName">
-<ClassMethod>1</ClassMethod>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	quit $get(^Techinfo("Attached FileName"))
-]]></Implementation>
-</Method>
-
-<Method name="getStartYear">
-<ClassMethod>1</ClassMethod>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	quit $get(^Techinfo("Start Year"))
-]]></Implementation>
-</Method>
-
-<Method name="setWebServer">
-<ClassMethod>1</ClassMethod>
-<FormalSpec>server:%String</FormalSpec>
-<Implementation><![CDATA[	set ^Techinfo("Web Server") = server
-]]></Implementation>
-</Method>
-
-<Method name="setSMTPServer">
-<ClassMethod>1</ClassMethod>
-<FormalSpec>server:%String</FormalSpec>
-<Implementation><![CDATA[	set ^Techinfo("SMTP Server") = server
-]]></Implementation>
-</Method>
-
-<Method name="setMailSender">
-<ClassMethod>1</ClassMethod>
-<FormalSpec>sender:%String</FormalSpec>
-<Implementation><![CDATA[	set ^Techinfo("Mail Sender") = sender
-]]></Implementation>
-</Method>
-
-<Method name="setFTPDirectory">
-<ClassMethod>1</ClassMethod>
-<FormalSpec>dir:%String</FormalSpec>
-<Implementation><![CDATA[	set ^Techinfo("FTP Directory") = dir
-]]></Implementation>
-</Method>
-
-<Method name="setDirectorySeparator">
-<ClassMethod>1</ClassMethod>
-<FormalSpec>sep:%String</FormalSpec>
-<Implementation><![CDATA[	set ^Techinfo("Directory Separator") = sep
-]]></Implementation>
-</Method>
-
-<Method name="setAttachedFileName">
-<ClassMethod>1</ClassMethod>
-<FormalSpec>afile:%String</FormalSpec>
-<Implementation><![CDATA[	set ^Techinfo("Attached FileName") = afile
-]]></Implementation>
-</Method>
-
-<Method name="setStartYear">
-<ClassMethod>1</ClassMethod>
-<FormalSpec>year:%String</FormalSpec>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	set ^Techinfo("Start Year") = year
-]]></Implementation>
-</Method>
-
-<Storage name="Default">
-<Type>%Library.CacheStorage</Type>
-<DataLocation>^KB.ConfigD</DataLocation>
-<DefaultData>ConfigDefaultData</DefaultData>
-<IdLocation>^KB.ConfigD</IdLocation>
-<IndexLocation>^KB.ConfigI</IndexLocation>
-<StreamLocation>^KB.ConfigS</StreamLocation>
-<Data name="ConfigDefaultData">
-<Structure>listnode</Structure>
-<Subscript/>
-<Value name="1">
-<Value>%%CLASSNAME</Value>
-</Value>
-<Value name="2">
-<Value>DirectorySeparator</Value>
-</Value>
-<Value name="3">
-<Value>FTPDirectory</Value>
-</Value>
-<Value name="4">
-<Value>MailSender</Value>
-</Value>
-<Value name="5">
-<Value>SMTPServer</Value>
-</Value>
-<Value name="6">
-<Value>WebServer</Value>
-</Value>
-</Data>
-</Storage>
-</Class>
-
-
 <Class name="KB.Event">
 <Super>%CSP.SessionEvents</Super>
 <TimeChanged>61047,42713</TimeChanged>
@@ -3864,8 +3569,6 @@ Set %session.EndSession=0
 </Data>
 </Storage>
 </Class>
-
-
 
 
 <Class name="KB.Platform">
@@ -3998,136 +3701,6 @@ Set %session.EndSession=0
 </Class>
 
 
-<Class name="KB.Setup">
-<Description>
-</Description>
-<IncludeCode>%occInclude</IncludeCode>
-<TimeChanged>63523,62345.848561</TimeChanged>
-<TimeCreated>60910,3246.496269</TimeCreated>
-
-<Method name="createAccentTable">
-<ClassMethod>1</ClassMethod>
-<Implementation><![CDATA[
-	kill ^KB.accent
-	set ^KB.accent("é") = "&eacute;"
-	set ^KB.accent("à") = "&agrave;"
-	set ^KB.accent("è") = "&egrave;"
-	set ^KB.accent("ù") = "&ugrave;"
-	set ^KB.accent("â") = "&acirc;"
-	set ^KB.accent("ê") = "&ecirc;"
-	set ^KB.accent("î") = "&icirc;"
-	set ^KB.accent("ô") = "&ocirc;"
-	set ^KB.accent("û") = "&ucirc;"
-	set ^KB.accent("ë") = "&euml;"
-	set ^KB.accent("ï") = "&iuml;"
-	set ^KB.accent("ü") = "&uuml;"
-	set ^KB.accent("ç") = "&ccedil;"
-	set ^KB.accent("œ") = "&oelig;"
-	set ^KB.accent("æ") = "&aelig;"
-	set ^KB.accent("É") = "&Eacute;"
-	set ^KB.accent("À") = "&Agrave;"
-	set ^KB.accent("È") = "&Egrave;"
-	set ^KB.accent("Ù") = "&Ugrave;"
-	set ^KB.accent("Â") = "&Acirc;"
-	set ^KB.accent("Ê") = "&Ecirc;"
-	set ^KB.accent("Î") = "&Icirc;"
-	set ^KB.accent("Ô") = "&Ocirc;"
-	set ^KB.accent("Û") = "&Ucirc;"
-	set ^KB.accent("Ë") = "&Euml;"
-	set ^KB.accent("Ï") = "&Iuml;"
-	set ^KB.accent("Ü") = "&Uuml;"
-	set ^KB.accent("Ç") = "&Ccedil;"
-	set ^KB.accent("Œ") = "&OElig;"
-	set ^KB.accent("Æ") = "&AElig;"
-]]></Implementation>
-</Method>
-
-<Method name="setConfigParams">
-<ClassMethod>1</ClassMethod>
-<ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[
-	//運用パラメータ設定
-	do ##class(KB.Config).setAttachedFileName("Attached")
-	do ##class(KB.Config).setDirectorySeparator("\")
-    //do ##class(KB.Config).setFTPDirectory("c:\InterSystems\Cache\CSP\KB\downloads")
-    do ##class(KB.Config).setFTPDirectory("D:\Cache200713\CSP\kb\downloads")
-    do ##class(KB.Config).setMailSender("jpnsup@intersystems.com")
-    do ##class(KB.Config).setSMTPServer("xxx.intersystems.com")
-    do ##class(KB.Config).setMailSender("jpnsup@intersystems.com")
-    do ##class(KB.Config).setStartYear("2003")
-	quit $$$OK
-]]></Implementation>
-</Method>
-
-<Method name="masterSetup">
-<ClassMethod>1</ClassMethod>
-<ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[
-	//マスタ初期化
-	do ##class(KB.Facility).Init()
-	do ##class(KB.Version).Init()
-	do ##class(KB.Platform).Init()
-	do ##class(KB.Category).Init()
-	do ##class(KB.Product).Init()
-	quit $$$OK
-]]></Implementation>
-</Method>
-
-<Method name="attachedRebuild">
-<ClassMethod>1</ClassMethod>
-<Implementation><![CDATA[
-	//添付ファイル情報は、％FileBinaryObjectとして実装されているため、他環境からデータベースを
-	//移行してきた場合には、ファイル名のディレクトリ情報を調整する必要あり
-	set nooftopic = $get(^KB.TopicD)
-	set ftpdir = ##class(KB.Config).getFTPDirectory()
-	set sep = ##class(KB.Config).getDirectorySeparator()
-	for i = 1:1:nooftopic {
-		set toref = ##class(KB.Topic).%OpenId(i)
-		quit:'$isobject(toref)
-		set fileloc = toref.FileLoc
-		if fileloc'="" {
-			set filename = fileloc.Filename
-			set filename = $piece(filename,sep,$length(filename,sep))
-			set fileloc.Filename = ftpdir_sep_filename
-			set sts = toref.%Save()
-	        If $$$ISERR(sts) Do $system.OBJ.DisplayError(sts) Quit  
-		}
-	}
-]]></Implementation>
-</Method>
-
-<Method name="attachedRebuild2">
-<ClassMethod>1</ClassMethod>
-<Implementation><![CDATA[
-	//添付ファイル情報は、％FileBinaryObjectとして実装されているため、他環境からデータベースを
-	//移行してきた場合には、ファイル名のディレクトリ情報を調整する必要あり
-	// KB.Topic クラス変更に伴い修正 by A.Tanaka 2009/10/15
-	
-	set ftpdir = ##class(KB.Config).getFTPDirectory()
-	set sep = ##class(KB.Config).getDirectorySeparator()
-
-	Set rs=##class(%ResultSet).%New("KB.Topic:Extent")
-	Do rs.Execute()
-	while rs.Next() {
-		set i=rs.GetData(1)
-		set toref = ##class(KB.Topic).%OpenId(i)
-		quit:'$isobject(toref)
-		for filenum=1:1:3 {
-			set fileloc = $zobjproperty(toref,"FileLoc"_filenum)
-			if fileloc'="" {
-				set filename = fileloc.Filename
-				set filename = $piece(filename,sep,$length(filename,sep))
-				set fileloc.Filename = ftpdir_sep_i_sep_filename
-				set sts = toref.%Save()
-		        If $$$ISERR(sts) Do $system.OBJ.DisplayError(sts) Quit  
-			}
-		}
-	}
-]]></Implementation>
-</Method>
-</Class>
-
-
 <Class name="KB.Text">
 <Description>
 
@@ -4163,7 +3736,7 @@ index, in addition to single words.  Consecutive words exclude noise words.
 ナレッジベースのトピック</Description>
 <IncludeCode>FAQ</IncludeCode>
 <Super>%Persistent,%XML.Adaptor</Super>
-<TimeChanged>64120,38824</TimeChanged>
+<TimeChanged>64230,40109.138969</TimeChanged>
 <TimeCreated>59953,69195.756844</TimeCreated>
 <Inheritance>right</Inheritance>
 
@@ -5041,7 +4614,7 @@ emailアドレス</Description>
 <Description>
 </Description>
 <IncludeCode>%occInclude</IncludeCode>
-<TimeChanged>63706,69633.145779</TimeChanged>
+<TimeChanged>64161,59077.617773</TimeChanged>
 <TimeCreated>60909,32153.415513</TimeCreated>
 
 <Method name="xmlImport">
@@ -5074,7 +4647,7 @@ xmlインポートおよびxmlエクスポートでは、TopicのFileLoc(FileStr
 <Implementation><![CDATA[
 	set fileInfors = ##class(%ResultSet).%New("%File:FileSet")
 	set count = 0
-	set dirname=^Techinfo("XmlExport Directory")_"\"_dir
+	set dirname=^Techinfo("XmlExportDirectory")_"\"_dir
 	
 	do fileInfors.Execute(dirname)
 	while(fileInfors.Next()) {
@@ -5115,7 +4688,7 @@ xmlインポートおよびxmlエクスポートでは、TopicのFileLoc(FileStr
 <FormalSpec>startid,endid</FormalSpec>
 <Implementation><![CDATA[
 	
-	set exportdir=^Techinfo("XmlExport Directory")_"\"_$zdate($h,8)
+	set exportdir=^Techinfo("XmlExportDirectory")_"\"_$zdate($h,8)
 	
 	set st1=##class(%File).DirectoryExists(exportdir)
 	if st1=0 {
