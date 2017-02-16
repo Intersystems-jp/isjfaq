@@ -41,7 +41,7 @@ function loadEvent()
 
 <script language="cache" method="OnPreHTTP" arguments="" returntype="%Boolean">
 
-//FAQƒAƒvƒŠ‚Ö‚ÌƒAƒNƒZƒXƒJƒEƒ“ƒg(’¼ÚÚ×‚ğQÆ‚³‚ê‚½ê‡+1)
+//FAQã‚¢ãƒ—ãƒªã¸ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚«ã‚¦ãƒ³ãƒˆ(ç›´æ¥è©³ç´°ã‚’å‚ç…§ã•ã‚ŒãŸå ´åˆ+1)
 if $Get(%session.Data("Access"))="" {
 	set ^AccessCount = $Get(^AccessCount)+1
 	set today=$zdate($h,8)
@@ -73,7 +73,7 @@ if $Get(%session.Data("Access"))="" {
 	 set roles=0
  }
   
- //QÆ‰ñ”‚ÌƒZƒbƒg
+ //å‚ç…§å›æ•°ã®ã‚»ãƒƒãƒˆ
  if $Get(%session.Data("RefFreqChk",DocNo)) ="" {
 	
 	//set topic.RefFreq=topic.RefFreq+1
@@ -114,7 +114,7 @@ if $Get(%session.Data("Access"))="" {
  If topic.FileFlg'="" Set fileflg = topic.FileFlg
 */
 
- // ŠÖ˜AƒgƒsƒbƒN‚ÌƒZƒbƒg
+ // é–¢é€£ãƒˆãƒ”ãƒƒã‚¯ã®ã‚»ãƒƒãƒˆ
  set refcount=0
  if topic.RefTopic'="" {
 	 set refcount=$LENGTH(topic.RefTopic,",")
@@ -132,7 +132,7 @@ if $Get(%session.Data("Access"))="" {
  }
  
  
- // “Y•tƒtƒ@ƒCƒ‹–¼‚ÌƒZƒbƒg
+ // æ·»ä»˜ãƒ•ã‚¡ã‚¤ãƒ«åã®ã‚»ãƒƒãƒˆ
  set filename = ##class(KB.Config).getAttachedFileName()_DocNo_".zip"
  set dir = ##class(KB.Config).getFTPDirectory()
  set sep = ##class(KB.Config).getDirectorySeparator()
@@ -146,7 +146,7 @@ if $Get(%session.Data("Access"))="" {
  
  Set tProductId = topic.Product.%Id()
  
- If (tProductId = 1) { //ˆê”Ê
+ If (tProductId = 1) { //ä¸€èˆ¬
 	 Set tLogo = ""
  }
  ElseIf (tProductId = 2) { //Cache
@@ -180,7 +180,7 @@ if $Get(%session.Data("Access"))="" {
    		Set filename = fileloc.Filename
     	set sep = ##class(KB.Config).getDirectorySeparator()
     	If $Length(filename,sep)>1 {
-	    	//ˆê”Ô‰ºˆÊ‚Ìƒtƒ@ƒCƒ‹–¼‚¾‚¯‚ğæ“¾‚·‚é
+	    	//ä¸€ç•ªä¸‹ä½ã®ãƒ•ã‚¡ã‚¤ãƒ«åã ã‘ã‚’å–å¾—ã™ã‚‹
        		Set @filenamei = $Piece(filename,sep,$length(filename,sep))
     	}
 		
@@ -208,9 +208,9 @@ if $Get(%session.Data("Access"))="" {
 	    set contentdisposition ="filename="""_@filenamei_"""" 
     	do fileloc.SetAttribute("ContentDisposition",contentdisposition)
 
-   		//IE‚ÍAˆÈ‰º‚Ìİ’è‚ğs‚È‚í‚È‚¢‚ÆContentType‚Ìİ’è‚ª”½‰f‚³‚ê‚È‚¢
+   		//IEã¯ã€ä»¥ä¸‹ã®è¨­å®šã‚’è¡Œãªã‚ãªã„ã¨ContentTypeã®è¨­å®šãŒåæ˜ ã•ã‚Œãªã„
    		do fileloc.SetAttribute("Expires",600)
-   		//SetAttribute‚ğÀsŒã‚ÉOid‚Ìİ’è‚ğs‚È‚í‚È‚¢‚ÆAContentDisposition‚ª”½‰f‚³‚ê‚È‚¢
+   		//SetAttributeã‚’å®Ÿè¡Œå¾Œã«Oidã®è¨­å®šã‚’è¡Œãªã‚ãªã„ã¨ã€ContentDispositionãŒåæ˜ ã•ã‚Œãªã„
    		set %session.Data("Attached"_i)=fileloc.%Oid()
  	}
  	else {
@@ -239,11 +239,11 @@ if $Get(%session.Data("Access"))="" {
 <DIV class="description" border=1>
   <SCRIPT LANGUAGE="CACHE" runat=server>
    set description=topic.Description
-   //ƒR[ƒh•”•ª
+   //ã‚³ãƒ¼ãƒ‰éƒ¨åˆ†
    set cmdstart="<DIV class=divcommand><PRE><CODE>"
    set cmdfin="</CODE></PRE></DIV>"
                    
-   //ƒR[ƒh•”•ªAURL‚ÌƒŠƒ“ƒNˆ—
+   //ã‚³ãƒ¼ãƒ‰éƒ¨åˆ†ã€URLã®ãƒªãƒ³ã‚¯å‡¦ç†
    set crlf = $c(13,10)
    set lineno = $length(description,crlf)
    for i = 1:1:lineno {
@@ -268,7 +268,7 @@ if $Get(%session.Data("Access"))="" {
 			set ref=##class(KB.Topic).%OpenId(refid2)
 			set reft=ref.Title
 			set refurl="http://www.intersystems.co.jp/faq.php?id="_refid1
-			write "<br><img src=""./images/button/arrow1.gif""><A href="_refurl_">QF"_reft_"</A><br>"
+			write "<br><img src=""./images/button/arrow1.gif""><A href="_refurl_">Qï¼š"_reft_"</A><br>"
 	   }
 	   else{
 		   write ..EscapeHTML(line(i))_"<br>"
@@ -277,16 +277,16 @@ if $Get(%session.Data("Access"))="" {
  </SCRIPT>
 
 </DIV>
-<!--ŠÖ˜AƒgƒsƒbƒN-->
+<!--é–¢é€£ãƒˆãƒ”ãƒƒã‚¯-->
 <DIV>
-  <SPAN class="refhead">ŠÖ˜AƒgƒsƒbƒNF</SPAN>
+  <SPAN class="refhead">é–¢é€£ãƒˆãƒ”ãƒƒã‚¯ï¼š</SPAN>
   <csp:if condition='refcount>0'>
     <SCRIPT LANGUAGE="CACHE" runat=server>
      for i=1:1:refcount {
 	     if i=1 {
 		     write "<SPAN class=""refbody""><A href=result.CSP?DocNo="_refid(i)_">"_reftitle(i)_"</A></SPAN>"
 	     }else{
-		     write "<BR><SPAN style=""visibility:hidden"">ŠÖ˜AƒgƒsƒbƒNF</SPAN>"
+		     write "<BR><SPAN style=""visibility:hidden"">é–¢é€£ãƒˆãƒ”ãƒƒã‚¯ï¼š</SPAN>"
 		     write "<SPAN class=""refbody""><A href=result.CSP?DocNo="_refid(i)_">"_reftitle(i)_"</A></SPAN>"
 	     }   
      }
@@ -294,38 +294,38 @@ if $Get(%session.Data("Access"))="" {
   </csp:if>
   </DIV>
   <DIV>
-  <SPAN class="refhead">“Y•tƒtƒ@ƒCƒ‹F</SPAN>
+  <SPAN class="refhead">æ·»ä»˜ãƒ•ã‚¡ã‚¤ãƒ«ï¼š</SPAN>
   <csp:if condition='fileexists=1'>
-    <SPAN class="refbody"><A href=downloads/#(filename)#>Ql‘—¿(zip)</A></SPAN>
+    <SPAN class="refbody"><A href=downloads/#(filename)#>å‚è€ƒè³‡æ–™(zip)</A></SPAN>
   <csp:else>
   </csp:if>
 </DIV>
 <csp:if condition='roles=0'>
 <csp:else>
-  <DIV class="toedit"><A href="edit.CSP?DocNo=#(DocNo)#" target="_self" style="color:#00CC00;">&gt;&gt;&gt;•ÒW</A></DIV>
+  <DIV class="toedit"><A href="edit.CSP?DocNo=#(DocNo)#" target="_self" style="color:#00CC00;">&gt;&gt;&gt;ç·¨é›†</A></DIV>
 </csp:if>
 <DIV>
   <HR>
 </DIV>
 <P>
 <DIV class=enquete>
-  <SPAN class="enqhead">ƒAƒ“ƒP[ƒg‚É‚²‹¦—Í‚ğ‚¨Šè‚¢‚µ‚Ü‚·</SPAN><BR>
-  <SPAN class="enq">‚±‚ÌƒgƒsƒbƒN‚ÍQl‚É‚È‚è‚Ü‚µ‚½‚©H</SPAN>
+  <SPAN class="enqhead">ã‚¢ãƒ³ã‚±ãƒ¼ãƒˆã«ã”å”åŠ›ã‚’ãŠé¡˜ã„ã—ã¾ã™</SPAN><BR>
+  <SPAN class="enq">ã“ã®ãƒˆãƒ”ãƒƒã‚¯ã¯å‚è€ƒã«ãªã‚Šã¾ã—ãŸã‹ï¼Ÿ</SPAN>
   <input type="image" src="./images/button/Yes1.gif" onmousedown="this.src='./images/button/Yes2.gif'" onmouseout="this.src='./images/button/Yes1.gif'" onclick=#call(..Enquete('Y'))#>
   <input type="image" src="./images/button/No1.gif" onmousedown="this.src='./images/button/No2.gif'" onmouseout="this.src='./images/button/No1.gif'" onclick=#call(..Enquete('N'))#>
 </DIV>
 <DIV class="mailto">
-  <SPAN class="mail"><A href="mailto:jpnsup@intersystems.com?subject=Question>>>FAQ #(TopicID)#"><IMG src="./images/button/mail01-y.gif" border=0> ‚±‚ÌƒgƒsƒbƒN‚ÉŠÖ‚·‚é‚¨–â‚¢‡‚í‚¹</A></SPAN>
+  <SPAN class="mail"><A href="mailto:jpnsup@intersystems.com?subject=Question>>>FAQ #(TopicID)#"><IMG src="./images/button/mail01-y.gif" border=0> ã“ã®ãƒˆãƒ”ãƒƒã‚¯ã«é–¢ã™ã‚‹ãŠå•ã„åˆã‚ã›</A></SPAN>
 </DIV>
 </P>
 <DIV class="closebtn" align="center">
   <Input type="image" id="closebtn" src="./images/button/tojiru1.gif" border="0" onclick="window.close()" style="visibility:hidden;"><br>
-  <A href="FAQ.FAQApp.cls" id="toplink" style="visibility:hidden;">yTopƒy[ƒWz</A>
+  <A href="FAQ.FAQApp.cls" id="toplink" style="visibility:hidden;">ã€Topãƒšãƒ¼ã‚¸ã€‘</A>
 </DIV>
 
 <script language="Cache" method="Enquete" arguments="ans:%String">
 
-&js<alert('‚²‹¦—Í‚ ‚è‚ª‚Æ‚¤‚²‚´‚¢‚Ü‚µ‚½');>
+&js<alert('ã”å”åŠ›ã‚ã‚ŠãŒã¨ã†ã”ã–ã„ã¾ã—ãŸ');>
 
 set DocNo=%session.Data("DocNo")
 

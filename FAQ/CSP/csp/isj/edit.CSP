@@ -20,7 +20,7 @@ Set topic = ##Class(KB.Topic).%OpenId(DocNo)
 Set %session.Data("DocNo")=DocNo
 Set %session.Data("RefTopic") = topic.RefTopic
 
-//“Y•tƒtƒ@ƒCƒ‹–¼‚ÌƒZƒbƒg
+//æ·»ä»˜ãƒ•ã‚¡ã‚¤ãƒ«åã®ã‚»ãƒƒãƒˆ
 set filepath=%session.Data("filepath")
 set fileexists=##class(%File).Exists(filepath)
 
@@ -31,7 +31,7 @@ if fileexists=1 {
 }
 
  /*
- //ƒtƒ@ƒCƒ‹ƒAƒbƒvƒ[ƒhˆ— ƒOƒ[ƒoƒ‹‚ÉŠi”[‚·‚éê‡
+ //ãƒ•ã‚¡ã‚¤ãƒ«ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰å‡¦ç† ã‚°ãƒ­ãƒ¼ãƒãƒ«ã«æ ¼ç´ã™ã‚‹å ´åˆ
  set sep = ##class(KB.Config).getDirectorySeparator()
  set dir = ##class(KB.Config).getFTPDirectory()
  set dir = dir_"\"_DocNo
@@ -51,7 +51,7 @@ if fileexists=1 {
     	set st = $ZUTIL(140,9,dir)
      	set sts = fileloc.Clear()
        	set file = attached.FileName
-       	// Upload‚ÍWindows‚©‚çs‚¤‚±‚Æ‚ğ‘O’ñ
+       	// Uploadã¯Windowsã‹ã‚‰è¡Œã†ã“ã¨ã‚’å‰æ
        	set file = $piece(file,"\",$length(file,"\"))
        	set sts = fileloc.LinkToFile(dir_sep_file)
        	set sts = fileloc.CopyFrom(attached)
@@ -66,7 +66,7 @@ if fileexists=1 {
  }
  */
  
-//“Y•tƒtƒ@ƒCƒ‹ƒAƒbƒvƒ[ƒhˆ—
+//æ·»ä»˜ãƒ•ã‚¡ã‚¤ãƒ«ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰å‡¦ç†
 set fileupflg = $get(%session.Data("UpFlg"))
 if fileupflg=$$$OK {
 	set attached = $get(%request.MimeData("AttachedFile",1))
@@ -78,13 +78,13 @@ if fileupflg=$$$OK {
 			set fileexists=##class(%File).Exists(filepath)
 			set filename=%session.Data("filename")
 		}else{
-			&js<alert('“Y•tƒtƒ@ƒCƒ‹‚Í•Û‘¶‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½');>
+			&js<alert('æ·»ä»˜ãƒ•ã‚¡ã‚¤ãƒ«ã¯ä¿å­˜ã§ãã¾ã›ã‚“ã§ã—ãŸ');>
 		}
 	 }else{
-		 &js<alert('w’è‚³‚ê‚½ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚Ü‚¹‚ñ');>
+		 &js<alert('æŒ‡å®šã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã›ã‚“');>
 	 }
 }elseif fileupflg=0{
-	  &js<alert('“Y•tƒtƒ@ƒCƒ‹‚Í•Û‘¶‚³‚ê‚Ü‚¹‚ñ‚Å‚µ‚½');>
+	  &js<alert('æ·»ä»˜ãƒ•ã‚¡ã‚¤ãƒ«ã¯ä¿å­˜ã•ã‚Œã¾ã›ã‚“ã§ã—ãŸ');>
 }
 
 set %session.Data("UpFlg") = ""
@@ -92,7 +92,7 @@ set %session.Data("UpFlg") = ""
 if topic.OpenDate'="" {
 	set OpenDate=$ZDATE(topic.OpenDate)
 }else{
-	set OpenDate="–¢ŒöŠJ"
+	set OpenDate="æœªå…¬é–‹"
 }
 
 </SCRIPT>
@@ -100,7 +100,7 @@ if topic.OpenDate'="" {
 <TABLE width="100%">
   <TBODY>
   <TR>
-    <TD class="title" valign="top" align="center" >FAQƒgƒsƒbƒN •ÒW</TD>
+    <TD class="title" valign="top" align="center" >FAQãƒˆãƒ”ãƒƒã‚¯ ç·¨é›†</TD>
   </TR>
   <TR>
     <TD align=center>
@@ -110,87 +110,87 @@ if topic.OpenDate'="" {
         <!--<form name="form" cspbind="topic" cspjs="All" action="edit.CSP?DocNo=#(DocNo)#" enctype="multipart/form-data" method="POST">-->
         <form name="form" cspbind="topic" cspjs="All" onsubmit="return saveTopic()" action="edit.CSP?DocNo=#(DocNo)#" enctype="multipart/form-data" method="POST">
         <tr align=right>
-          <td colspan=2 class="readonlytitle" style="color:#666666;">ì¬ÒF<input type="text" name="Creator" cspbind="Creator" readonly size="10" class="readonly">  ÅIXVÒF<input type="text" name="Updater" cspbind="Updater" readonly size="10" class="readonly" ></td>
+          <td colspan=2 class="readonlytitle" style="color:#666666;">ä½œæˆè€…ï¼š<input type="text" name="Creator" cspbind="Creator" readonly size="10" class="readonly">  æœ€çµ‚æ›´æ–°è€…ï¼š<input type="text" name="Updater" cspbind="Updater" readonly size="10" class="readonly" ></td>
         </tr>
         <tr>
-          <td width="13%" class="coltitle" style="color:#666666;">IDF</td>
-          <td><input type="text" name="TID" cspbind="%Id()" size="10" style="font-family:‚l‚r ƒSƒVƒbƒN" readonly></td>
+          <td width="13%" class="coltitle" style="color:#666666;">IDï¼š</td>
+          <td><input type="text" name="TID" cspbind="%Id()" size="10" style="font-family:ï¼­ï¼³ ã‚´ã‚·ãƒƒã‚¯" readonly></td>
         </tr>
         <tr>
-          <td width="13%" class="coltitle">ˆê”ÊƒgƒsƒbƒN—pIDF</td>
+          <td width="13%" class="coltitle">ä¸€èˆ¬ãƒˆãƒ”ãƒƒã‚¯ç”¨IDï¼š</td>
           <td>G-<input type="text" name="SubID" cspbind="TopicSubID" size="10" class="textbox"></td>
 		</tr>
         <tr>
-          <td class="coltitle">ƒ^ƒCƒgƒ‹F</td>
+          <td class="coltitle">ã‚¿ã‚¤ãƒˆãƒ«ï¼š</td>
           <td ><input type="text" name="Title" cspbind="Title" size="70" class="textbox"></td>
         </tr>
-          <td class="coltitle">“à—eF</td>
+          <td class="coltitle">å†…å®¹ï¼š</td>
           <td ><textarea onkeydown="insertTab(this, event);" name="Description" cspbind="Description" cols="50" rows="20"></textarea></td>
-		  <!--<td><textarea name="Description" cspbind="Description" cols="85" rows="30" style="font-size:100%;font-family:'‚l‚r ƒSƒVƒbƒN';line-height:1.5em;"></textarea></td>-->
+		  <!--<td><textarea name="Description" cspbind="Description" cols="85" rows="30" style="font-size:100%;font-family:'ï¼­ï¼³ ã‚´ã‚·ãƒƒã‚¯';line-height:1.5em;"></textarea></td>-->
 		</tr>
    		<tr>
-          <td class="coltitle">ƒvƒƒ_ƒNƒgF</td>
+          <td class="coltitle">ãƒ—ãƒ­ãƒ€ã‚¯ãƒˆï¼š</td>
           <td><select name="Product" cspbind="Product" classname="KB.Product" query="ListProduct" field="ProductName" onchange="javascript:disableFacility()"></select></td>
         </tr>
         <tr>
-          <td class="coltitle">‹@”\–¼F</td>
+          <td class="coltitle">æ©Ÿèƒ½åï¼š</td>
           <td ><select name="FacilityDescription" cspbind="Facility" classname="KB.Facility" query="ListDescription" field="Description"></select></td>
         </tr>
         <tr>
-          <td class="coltitle">ƒvƒ‰ƒbƒgƒtƒH[ƒ€F</td>
+          <td class="coltitle">ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ ï¼š</td>
           <td ><select name="PlatformName" cspbind="Platform" classname="KB.Platform" query="ListDescription" field="Name"></select></td>
         </tr>
         <tr>
-          <td class="coltitle">ƒo[ƒWƒ‡ƒ“F</td>
-          <td ><select name="StartVersion" cspbind="StartVersion" classname="KB.Version" query="ListDescription" field="ExternalVersion"></select> ` 
+          <td class="coltitle">ãƒãƒ¼ã‚¸ãƒ§ãƒ³ï¼š</td>
+          <td ><select name="StartVersion" cspbind="StartVersion" classname="KB.Version" query="ListDescription" field="ExternalVersion"></select> ï½ 
               <select name="EndVersion" cspbind="EndVersion" classname="KB.Version" query="ListDescription" field="ExternalVersion"></select>
               <input type="hidden" name="VersionRange" cspbind="VersionRange"/>
           </td>       
         </tr>
         <tr>
-          <td class="coltitle">ŠÖ˜AƒgƒsƒbƒNF</td>
+          <td class="coltitle">é–¢é€£ãƒˆãƒ”ãƒƒã‚¯ï¼š</td>
           <td ><input type="text" name="RefTopic" cspbind="RefTopic" size="30" class="textbox"></td>
         </tr>
 		<tr>
-          <td class="coltitle">“Y•tƒtƒ@ƒCƒ‹F</td>
+          <td class="coltitle">æ·»ä»˜ãƒ•ã‚¡ã‚¤ãƒ«ï¼š</td>
           <td ><input type="text" name="AttachedFileName" value="#($Get(filename))#" size="30" class="textbox">
               <input type="image" name="AttacheDel" src="./images/button/AttacheDel1.gif" onmousedown="this.src='./images/button/AttacheDel2.gif'" onmouseout="this.src='./images/button/AttacheDel1.gif'" border="0" height="17" width="17" onclick="delAttachedFile(#(fileexists)#)"></td>
         </tr>
         <tr>
-          <td class="coltitle">UploadF</td>
-          <td ><input type="file" name="AttachedFile" size="30" style="font-family:‚l‚r ‚oƒSƒVƒbƒN"></td>
+          <td class="coltitle">Uploadï¼š</td>
+          <td ><input type="file" name="AttachedFile" size="30" style="font-family:ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯"></td>
         </tr>
         <tr valign="center">
-          <td class="coltitle">ƒXƒe[ƒ^ƒXF</td>
+          <td class="coltitle">ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ï¼š</td>
           <td>
             <table width="100%" style="padding:0;">
               <tr>
-                <td width="25%" class="childcoltitle">ì¬Š®—¹<input type="checkbox" name="Completed" cspbind="Completed"></td>
-                <td width="25%" class="childcoltitle">íœ‰Â<input type="checkbox" name="DeleteFlg" cspbind="DeleteFlg"></td>
-                <td width="20%" class="childcoltitle">ŒöŠJ[ŠÇ——p]
+                <td width="25%" class="childcoltitle">ä½œæˆå®Œäº†<input type="checkbox" name="Completed" cspbind="Completed"></td>
+                <td width="25%" class="childcoltitle">å‰Šé™¤å¯<input type="checkbox" name="DeleteFlg" cspbind="DeleteFlg"></td>
+                <td width="20%" class="childcoltitle">å…¬é–‹[ç®¡ç†ç”¨]
                 <csp:if condition='%session.Data("roles")=1'>
                   <input type="checkbox" name="Visible1" cspbind="Visible">
                 <csp:else>
                   <input type="checkbox" name="Visible2" cspbind="Visible" disabled>
 		        </csp:if>
 		        </td>
-		        <td width="30%" style="font-size:90%;">¦ŒöŠJ“úF#(OpenDate)#</td>
+		        <td width="30%" style="font-size:90%;">â€»å…¬é–‹æ—¥ï¼š#(OpenDate)#</td>
 		      </tr>
 		    </table>
 		  </td>
 		</tr>
         <tr>
-          <td class="coltitle">*Ğ“à—pƒƒ‚*F</td>
+          <td class="coltitle">*ç¤¾å†…ç”¨ãƒ¡ãƒ¢*ï¼š</td>
           <td ><textarea name="Note" cspbind="Note" cols="65" rows="3" ></textarea></td>
         </tr>
 	    <tr>
-         <td class="coltitle">*XV—š—ğ*F</td>
+         <td class="coltitle">*æ›´æ–°å±¥æ­´*ï¼š</td>
          <td>
             <table width="100%" border=1>
               <tr class="childcoltitle">
-                <th width="18%" class="coltitle">XV“ú•t</th>
-  				<th width="18%" class="coltitle">XVÒ</th>
-  				<th width="64%" class="coltitle">XV“à—e</th>
+                <th width="18%" class="coltitle">æ›´æ–°æ—¥ä»˜</th>
+  				<th width="18%" class="coltitle">æ›´æ–°è€…</th>
+  				<th width="64%" class="coltitle">æ›´æ–°å†…å®¹</th>
 			  </tr>
 			  <script language="sql" name=historyquery P1=#(DocNo)#>
 				SELECT UpdateDate,Updater,Description
@@ -225,11 +225,11 @@ if topic.OpenDate'="" {
 </TBODY>
 </TABLE>
 <HR align="center" width="95%">
-<div align="center" style="margin:20px;font-weight:bold;font-style:italic"><a href="javascript:cancelConfirm();">&lt;&lt;&lt;’†~</a></div>
+<div align="center" style="margin:20px;font-weight:bold;font-style:italic"><a href="javascript:cancelConfirm();">&lt;&lt;&lt;ä¸­æ­¢</a></div>
 
 <csp:IF CONDITION='$Get(err)=""'>
 <csp:ELSE>
-<p><font color="#FF0000"> •Û‘¶ƒGƒ‰[: #($Get(err))# </p>
+<p><font color="#FF0000"> ä¿å­˜ã‚¨ãƒ©ãƒ¼: #($Get(err))# </p>
 </csp:IF>
 
 
@@ -256,13 +256,13 @@ function roleChk() {
 
 function delAttachedFile(exist) {
 	if (exist==1) {
-		var delfile = confirm('“Y•tƒtƒ@ƒCƒ‹‚ğíœ‚µ‚Ü‚·B‚æ‚ë‚µ‚¢‚Å‚·‚©H');
+		var delfile = confirm('æ·»ä»˜ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‰Šé™¤ã—ã¾ã™ã€‚ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ');
 		if (delfile==1) {
 			var delst=#server(..AttachedFileBkup())#;
  		 	if (delst==1) {
 	 			 document.form.AttachedFileName.value='';
  		 	}else{
-	 			 alert('“Y•tƒtƒ@ƒCƒ‹‚ğíœ‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½B');
+	 			 alert('æ·»ä»˜ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‰Šé™¤ã§ãã¾ã›ã‚“ã§ã—ãŸã€‚');
  		 	}
 		}
 	}
@@ -270,25 +270,25 @@ function delAttachedFile(exist) {
 
 function formValidate(fileexistsflg) {
 	
-	//Title‚Ìƒ`ƒFƒbƒN
+	//Titleã®ãƒã‚§ãƒƒã‚¯
 	var topictitle=document.form.Title.value;
 	if (topictitle=='') {
-		alert('ƒgƒsƒbƒN‚Ìƒ^ƒCƒgƒ‹‚ª“ü—Í‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB');
+		alert('ãƒˆãƒ”ãƒƒã‚¯ã®ã‚¿ã‚¤ãƒˆãƒ«ãŒå…¥åŠ›ã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚');
 		return;
 	}
 
 	var product = document.form.Product.value;
 	if (product=='') {
-		alert('ƒvƒƒ_ƒNƒg‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB');
+		alert('ãƒ—ãƒ­ãƒ€ã‚¯ãƒˆãŒé¸æŠã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚');
 		return;
 	}
 	
-	//ŠÖ˜AƒgƒsƒbƒN‚Ìƒ`ƒFƒbƒN
+	//é–¢é€£ãƒˆãƒ”ãƒƒã‚¯ã®ãƒã‚§ãƒƒã‚¯
 	var reflist = document.form.RefTopic.value;
 	var refchk = #server(..RefListChk(reflist))#;
 	if (reflist) {
 	  if (refchk==0) {
-		  alert('ŠÖ˜AƒgƒsƒbƒN‚Ìw’è‚ª•s³‚Å‚·Bw’è‚³‚ê‚½ID‚ÌƒgƒsƒbƒN‚Í‘¶İ‚µ‚Ü‚¹‚ñB');
+		  alert('é–¢é€£ãƒˆãƒ”ãƒƒã‚¯ã®æŒ‡å®šãŒä¸æ­£ã§ã™ã€‚æŒ‡å®šã•ã‚ŒãŸIDã®ãƒˆãƒ”ãƒƒã‚¯ã¯å­˜åœ¨ã—ã¾ã›ã‚“ã€‚');
 		  document.form.RefTopic.value='';
 		  return;
 	  } 
@@ -297,43 +297,43 @@ function formValidate(fileexistsflg) {
 	  }
 	}
 	
-	//“Y•tƒtƒ@ƒCƒ‹‚Ìƒ`ƒFƒbƒN
+	//æ·»ä»˜ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒã‚§ãƒƒã‚¯
 	var atfile = document.form.AttachedFile.value;
 	if (atfile) {
 		if (atfile.match(/\.zip$/i)) {
 			if (fileexistsflg) {
-				var fileconf = confirm('‚±‚ÌƒgƒsƒbƒN‚Ì“Y•tƒtƒ@ƒCƒ‹‚ÍŠù‚É‘¶İ‚µ‚Ü‚·Bã‘‚«‚µ‚Ü‚·‚©H');
+				var fileconf = confirm('ã“ã®ãƒˆãƒ”ãƒƒã‚¯ã®æ·»ä»˜ãƒ•ã‚¡ã‚¤ãƒ«ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™ã€‚ä¸Šæ›¸ãã—ã¾ã™ã‹ï¼Ÿ');
 				#server(..SetFileUpFlg(fileconf))#;
 			} else {
 				#server(..SetFileUpFlg(1))#;	
 			}				
 		}else{
-			alert('“Y•tƒtƒ@ƒCƒ‹‚ÌŒ`®‚ª•s³‚Å‚·Bƒtƒ@ƒCƒ‹‚ÍzipƒtƒHƒ‹ƒ_‚ÉŠi”[‚µ‚Ä•Û‘¶‚µ‚Ä‚­‚¾‚³‚¢B');
+			alert('æ·»ä»˜ãƒ•ã‚¡ã‚¤ãƒ«ã®å½¢å¼ãŒä¸æ­£ã§ã™ã€‚ãƒ•ã‚¡ã‚¤ãƒ«ã¯zipãƒ•ã‚©ãƒ«ãƒ€ã«æ ¼ç´ã—ã¦ä¿å­˜ã—ã¦ãã ã•ã„ã€‚');
 		}
 	}
 	
-	//ƒo[ƒWƒ‡ƒ“w’è‚Ìƒ`ƒFƒbƒN
+	//ãƒãƒ¼ã‚¸ãƒ§ãƒ³æŒ‡å®šã®ãƒã‚§ãƒƒã‚¯
 	var start = document.form.StartVersion.value;
 	var end = document.form.EndVersion.value;
 	        
 	var vrange = #server(..SetVersionRange(start,end))#;
 	
 	if (vrange=='0') {
-		alert('ƒo[ƒWƒ‡ƒ“w’è‚ª•s³‚Å‚·B');
+		alert('ãƒãƒ¼ã‚¸ãƒ§ãƒ³æŒ‡å®šãŒä¸æ­£ã§ã™ã€‚');
 		return;
 	}else{
 		document.form.VersionRange.value = vrange;
 	}	
 	
-	//XV—š—ğ“ü—Í—L–³
+	//æ›´æ–°å±¥æ­´å…¥åŠ›æœ‰ç„¡
 	var updatedescription =document.form.UpdateDescription.value;
 		
-	//ƒgƒsƒbƒN•Û‘¶
+	//ãƒˆãƒ”ãƒƒã‚¯ä¿å­˜
 	var del=document.form.DeleteFlg.checked;
 	if (del==1) {
-		var msg='‚±‚ÌƒgƒsƒbƒN‚Ííœ‘ÎÛ‚Éw’è‚³‚ê‚Ä‚¢‚Ü‚·B•Û‘¶‚µ‚Ü‚·‚©H';
+		var msg='ã“ã®ãƒˆãƒ”ãƒƒã‚¯ã¯å‰Šé™¤å¯¾è±¡ã«æŒ‡å®šã•ã‚Œã¦ã„ã¾ã™ã€‚ä¿å­˜ã—ã¾ã™ã‹ï¼Ÿ';
 	}else {
-		var msg='•ÏX‚ğ•Û‘¶‚µ‚Ü‚·B‚æ‚ë‚µ‚¢‚Å‚·‚©H';
+		var msg='å¤‰æ›´ã‚’ä¿å­˜ã—ã¾ã™ã€‚ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ';
 	}
 	
 	var saveconf = confirm(msg)
@@ -346,7 +346,7 @@ function formValidate(fileexistsflg) {
 }
 
 function cancelConfirm() {
-	cancelconf = confirm('•ÏX‚ğ•Û‘¶‚¹‚¸‚ÉI—¹‚µ‚Ü‚·B‚æ‚ë‚µ‚¢‚Å‚·‚©H');
+	cancelconf = confirm('å¤‰æ›´ã‚’ä¿å­˜ã›ãšã«çµ‚äº†ã—ã¾ã™ã€‚ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ');
 	if (cancelconf) {
 		window.history.back();
 	}
@@ -407,7 +407,7 @@ quit delst
 <SCRIPT language="cache" method="RefListChk" arguments="rlist:%String" returntype="%String" runat="server">
 
 set rlist = $REPLACE(rlist," ","")
-set rlist = $REPLACE(rlist,"@","")
+set rlist = $REPLACE(rlist,"ã€€","")
 
 set refchk=rlist
 If refchk = "" Quit refchk
@@ -427,7 +427,7 @@ if rlen=1 {
 	}
 }
 
-//ƒ`ƒFƒbƒNNG‚Ìê‡‚Íu0vAƒ`ƒFƒbƒNOK‚Ìê‡‚ÍAƒXƒy[ƒX‚ğ”²‚¢‚½•¶š—ñ‚ğ•Ô‚·
+//ãƒã‚§ãƒƒã‚¯NGã®å ´åˆã¯ã€Œ0ã€ã€ãƒã‚§ãƒƒã‚¯OKã®å ´åˆã¯ã€ã‚¹ãƒšãƒ¼ã‚¹ã‚’æŠœã„ãŸæ–‡å­—åˆ—ã‚’è¿”ã™
 quit refchk
 
 </SCRIPT>
@@ -464,13 +464,13 @@ if startid'="" {
 		elseif startid=endid {
 			set vrange=startname
 		}else{
-			set vrange=startname_" ` "_endname
+			set vrange=startname_" ï½ "_endname
 		}
 	}else{
-		set vrange=startname_" `"
+		set vrange=startname_" ï½"
 	}
  }elseif endid'="" {
-	set vrange=" ` "_endname
+	set vrange=" ï½ "_endname
  }else {
 	set vrange=""
  }

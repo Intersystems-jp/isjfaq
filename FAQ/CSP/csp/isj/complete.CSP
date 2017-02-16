@@ -12,7 +12,7 @@
  Set DocNo=%request.Get("OBJID")
  Do ..RefCheckLink(DocNo)
 
-//“Y•tƒtƒ@ƒCƒ‹ƒAƒbƒvƒ[ƒhˆ—
+//æ·»ä»˜ãƒ•ã‚¡ã‚¤ãƒ«ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰å‡¦ç†
 set fileupflg = $get(%session.Data("UpFlg"))
 if fileupflg=1 {
 	set filename=##class(KB.Config).getAttachedFileName()_DocNo_".zip"
@@ -26,19 +26,19 @@ if fileupflg=1 {
 		set st = newfile.Open("NWUK\BIN\")
 		set st = newfile.CopyFrom(attached)
 		if st'=1 {
-			&js<alert('“Y•tƒtƒ@ƒCƒ‹‚Í•Û‘¶‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½');>
+			&js<alert('æ·»ä»˜ãƒ•ã‚¡ã‚¤ãƒ«ã¯ä¿å­˜ã§ãã¾ã›ã‚“ã§ã—ãŸ');>
 		}
 	 }else{
-		 &js<alert('w’è‚³‚ê‚½ƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚Ü‚¹‚ñ');>
+		 &js<alert('æŒ‡å®šã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã›ã‚“');>
 	 }
 	 
 	 set %session.Data("UpFlg") = ""
 	 
 }
 
-//TopicId ƒZƒbƒg
+//TopicId ã‚»ãƒƒãƒˆ
 set topic=##class(KB.Topic).%OpenId(DocNo)
-/* TopipID‚ÍŒvZƒtƒB[ƒ‹ƒh‚Æ‚È‚Á‚½‚Ì‚ÅˆÈ‰º‚Ìˆ—•s—v
+/* TopipIDã¯è¨ˆç®—ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã¨ãªã£ãŸã®ã§ä»¥ä¸‹ã®å‡¦ç†ä¸è¦
 if topic.Product.%Id()=1 {
 	set topic.TopicID="G-"_topic.TopicSubID
 }else{
@@ -46,7 +46,7 @@ if topic.Product.%Id()=1 {
 }
 */
 
-//UsersVoice ƒZƒbƒg
+//UsersVoice ã‚»ãƒƒãƒˆ
 set uv=topic.UsersVoice
 
 if uv="" {
@@ -68,18 +68,18 @@ Set topic = ##Class(KB.Topic).%OpenId(pDocNo)
 Set tSC = topic.RefCheckLink(0)
 Set OldList = $Get(%session.Data("RefTopic"))
 Set NewList = topic.RefTopic
-//•ÒW‚µ‚½Œ‹‰ÊA‘O‚ÌŠÖ˜AƒgƒsƒbƒN‚ğíœ‚µ‚½ê‡A‘Šè‚ÌƒgƒsƒbƒN‚©‚ç‚ÌQÆ‚àíœ‚·‚é
+//ç·¨é›†ã—ãŸçµæœã€å‰ã®é–¢é€£ãƒˆãƒ”ãƒƒã‚¯ã‚’å‰Šé™¤ã—ãŸå ´åˆã€ç›¸æ‰‹ã®ãƒˆãƒ”ãƒƒã‚¯ã‹ã‚‰ã®å‚ç…§ã‚‚å‰Šé™¤ã™ã‚‹
 set tSC = ##class(KB.Topic).RemoveLink(DocNo,OldList,NewList)
 </SCRIPT>
 
 <DIV align=center style="margin:20px; font-weight:bold;">
-  <SPAN>ƒgƒsƒbƒN‚ğ•Û‘¶‚µ‚Ü‚µ‚½BiID=#(DocNo)#) </SPAN><BR>
+  <SPAN>ãƒˆãƒ”ãƒƒã‚¯ã‚’ä¿å­˜ã—ã¾ã—ãŸã€‚ï¼ˆID=#(DocNo)#) </SPAN><BR>
 </DIV>
 <DIV align=center style="margin:20px;">
   <Input type="image" src="./images/button/tojiru1.gif" border="0" onclick="window.close()"><BR>
 </DIV>
 <DIV align=center style="margin:10px;">
-  <A href=result.CSP?DocNo=#(DocNo)# >&lt;&lt;ƒgƒsƒbƒN#(DocNo)#‚Ö</A>
+  <A href=result.CSP?DocNo=#(DocNo)# >&lt;&lt;ãƒˆãƒ”ãƒƒã‚¯#(DocNo)#ã¸</A>
 </DIV>
 
 </body>

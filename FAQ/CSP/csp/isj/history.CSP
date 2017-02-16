@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="GENERATOR" content="IBM HomePage Builder 2001 V5.0.0 for Windows">
-<title>	•ÒW—š—ğŒŸõ </title>
+<title>	ç·¨é›†å±¥æ­´æ¤œç´¢ </title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="styleedit.css" >
 <!-- Specify that this page is PRIVATE -->
 <!--<csp:CLASS PRIVATE=1>-->
@@ -16,7 +16,7 @@
 	.HedRow { background: #DFEFF4; }
 	.DarkRow { background: #DFF4EF; }
 	.LightRow { background: white; }
-	body { color: black; background: white;  face: "‚l‚r ‚oƒSƒVƒbƒN"; }
+	body { color: black; background: white;  face: "ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯"; }
 </style>
 
 <script language="javascript">
@@ -44,11 +44,11 @@ set emon = %request.Get("emon")
 set etype = %request.Get("etype")
 
 set strSQL = ""
-//’S“–Ò
+//æ‹…å½“è€…
 if uname'="" { set strSQL = " where  Username='"_uname_"'" }
 else { set strSQL = " where  Username not in ('','%system','UnknownUser','_SYSTEM')" }
 
-//ŒŸõ“ú•t
+//æ¤œç´¢æ—¥ä»˜
 if ((syear="----") || (smon="--")) && (eyear'="") && (emon'="") {
 	if strSQL = "" {set strSQL = " where "} else {set strSQL = strSQL_" and"}
 	set strSQL = strSQL_" UTCTimeStamp <= '"_eyear_"-"_$CASE($LENGTH(emon),1:"0"_emon,2:emon)_"-31%'"
@@ -57,7 +57,7 @@ if ((syear="----") || (smon="--")) && (eyear'="") && (emon'="") {
 	set strSQL = strSQL_" UTCTimeStamp between '"_syear_"-"_$CASE($LENGTH(smon),1:"0"_smon,2:smon)_"-01%' and '"_eyear_"-"_$CASE($LENGTH(emon),1:"0"_emon,2:emon)_"-31%'"
 }
 
-//ƒCƒxƒ“ƒgƒ^ƒCƒv
+//ã‚¤ãƒ™ãƒ³ãƒˆã‚¿ã‚¤ãƒ—
 if etype'="" {
 	if strSQL = "" {set strSQL = " where "} else {set strSQL = strSQL_" and"}
 	set strSQL = strSQL_" EventType ='"_etype_"'"
@@ -71,13 +71,13 @@ else
 //------------------//
 }
 
-//ƒfƒtƒHƒ‹ƒg”NŒ‚ÍAHorolog‚Ì”NŒB
+//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå¹´æœˆã¯ã€Horologã®å¹´æœˆã€‚
 //if syear="" {set syear=pYear}
 //if smon="" {set smon=$NUMBER(pMon)}
 if syear="" {set syear="----"}
 if smon="" {set smon="--"}
 
-//ƒ†[ƒU–¼‚Ì“o˜^
+//ãƒ¦ãƒ¼ã‚¶åã®ç™»éŒ²
 set auser(1) = "Furuzono"
 set auser(2) = "Horita"
 set auser(3) = "Iwamoto"
@@ -99,7 +99,7 @@ set auser(12) = "Yamamoto"
 <TABLE width=100% align="center" border=0>
   <TBODY>
   <TR height=60>
-    <TD class="title" valign="top" align="center" >•ÒW—š—ğˆê——•\¦</TD>
+    <TD class="title" valign="top" align="center" >ç·¨é›†å±¥æ­´ä¸€è¦§è¡¨ç¤º</TD>
   </TR>
   <TR>
     <TD align="center">
@@ -107,14 +107,14 @@ set auser(12) = "Yamamoto"
 	  <table width=90% align="center" border=0>
 	  <tbody>
 		<tr>
-		  <td>UsernameCEventTypeCTimeStamp(yyyy/mm)‚Ìw’èŒŸõ‚ª‚Å‚«‚Ü‚·B</td>
+		  <td>Usernameï¼ŒEventTypeï¼ŒTimeStamp(yyyy/mm)ã®æŒ‡å®šæ¤œç´¢ãŒã§ãã¾ã™ã€‚</td>
 		</tr>
         <tr>
           <td>
 	        <script P1="param" language="SQL" name="sqlquery">
 	         select distinct Username from %SYS.Audit where  Username not in ('','%system','UnknownUser','_SYSTEM')
 	       </script>
-            ’S“–Ò: 
+            æ‹…å½“è€…: 
             <select name="uname">
 	        <csp:loop counter="x" from="1" to="12">
     		  <option value=#(auser(x))# #($case(auser(x),uname:"selected",:""))#>#(auser(x))#</option>
@@ -129,21 +129,21 @@ set auser(12) = "Yamamoto"
    	    </tr>
    	    <tr>
    	      <td>
-            ŠJn“ú:
+            é–‹å§‹æ—¥:
             <select name="syear">
    		    <csp:loop counter="x" from="0" to="4">
         	  <option  value=#(minYear+x)# #($case($Number(syear),(minYear+x):"selected",:""))#>#(minYear+x)#</option>
             </csp:loop>
 	          <option value="----" #($case(syear,"----":"selected",:""))#>----</option>
             </select>
-            ”N
+            å¹´
             <select name="smon">
       	    <csp:loop counter="x" from="1" to="12">
         	  <option value=#(x)# #($case($Number(smon),x:"selected",:""))#>#(x)#</option>
             </csp:loop>
 	          <option value="--" #($case(smon,"--":"selected",:""))#>--</option>
             </select>
-            Œ &nbsp;`
+            æœˆ &nbsp;ï½
             <select name="eyear">
      	    <csp:loop counter="x" from="0" to="4">
      	    <csp:if condition=(minYear+x=$Number(pYear))&(eyear="")>
@@ -153,7 +153,7 @@ set auser(12) = "Yamamoto"
        		</csp:if>
             </csp:loop>      
             </select>
-            ”N
+            å¹´
             <select name="emon">
       	      <csp:loop counter="x" from="1" to="12">
       		<csp:if condition=(x=$Number(pMon))&(emon="")>
@@ -163,11 +163,11 @@ set auser(12) = "Yamamoto"
           	</csp:if>
      	    </csp:loop>      
             </select>
-            Œ
+            æœˆ
    	      </td>
    	    <tr>
    	      <td colspan=2 width=480>
-          ƒCƒxƒ“ƒgƒ^ƒCƒvF 
+          ã‚¤ãƒ™ãƒ³ãƒˆã‚¿ã‚¤ãƒ—ï¼š 
 	        <select name="etype">
    		      <option value="Create" #($case(etype,"Create":"selected",:""))#>Create</option>
   		      <option value="Update" #($case(etype,"Update":"selected",:""))#>Update</option>      	
@@ -176,7 +176,7 @@ set auser(12) = "Yamamoto"
    	      </td>
    	    </tr>
     	<tr>
-   	      <td>ğŒ‚Åi‚è‚İ<INPUT type="image" src="./images/button/Search.gif" border=0></td>
+   	      <td>æ¡ä»¶ã§çµã‚Šè¾¼ã¿<INPUT type="image" src="./images/button/Search.gif" border=0></td>
    	    </tr>
    	  </tbody>
 	  </table>
@@ -186,7 +186,7 @@ set auser(12) = "Yamamoto"
   <TR align="center">	
     <TD>
       <table width=600 border=1>
-	    <caption style="font-size:16pt;font-weight=bold">ŒŸõŒ‹‰Ê</caption>
+	    <caption style="font-size:16pt;font-weight=bold">æ¤œç´¢çµæœ</caption>
 			
 	    <script P1= "" language="SQL" name="sqlquery">
 	     #("select Username,EventType,EventData,UTCTimeStamp,Description from %SYS.Audit "_$get(strSQL,"")_"order by UTCTimeStamp desc")# 
@@ -207,10 +207,10 @@ set auser(12) = "Yamamoto"
 	    <tr class="DarkRow">
 	  </csp:if>
 	  
-	  	  <td><font color=blue>#($get(sqlquery.Data("Username")))#@</font></td>
-	  	  <td>#($get(sqlquery.Data("EventType")))#@</td>
-	  	  <td>#($get(sqlquery.Data("UTCTimeStamp")))#@</td>
-	  	  <td>#($get(sqlquery.Data("EventData")))#@</td> 
+	  	  <td><font color=blue>#($get(sqlquery.Data("Username")))#ã€€</font></td>
+	  	  <td>#($get(sqlquery.Data("EventType")))#ã€€</td>
+	  	  <td>#($get(sqlquery.Data("UTCTimeStamp")))#ã€€</td>
+	  	  <td>#($get(sqlquery.Data("EventData")))#ã€€</td> 
 	    </tr>
 	  </csp:while>
 
