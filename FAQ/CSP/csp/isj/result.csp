@@ -1,0 +1,371 @@
+<CSP:PARAMETER name="EXPIRES" value="">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="GENERATOR" content="IBM HomePage Builder 2001 V5.0.0 for Windows">
+<title>Cach&eacute; FAQ Database Seach Result Detail</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="style.css?15" >
+<!-- Specify that this page is PRIVATE -->
+<!--<csp:CLASS PRIVATE=1>-->
+
+<script language="JavaScript">
+
+function loadEvent()
+{
+   var wname=window.name;
+   var wnamesub=wname.substring(0,16);
+   
+   if (wnamesub=='TopicDescription') {
+	   var closebtn=document.getElementById("closebtn");
+   	   closebtn.style.visibility='visible';
+   }else{
+	   var toplink=document.getElementById("toplink");
+       toplink.style.visibility='visible';
+   }   
+}
+
+
+</script>
+
+</head>
+
+
+<!--<script type="text/javascript">
+  window.resizeTo(800,1000);
+</script>-->
+
+
+<BODY bgcolor="#FFFFFF" onload="loadEvent()">
+
+<script language="cache" method="OnPreHTTP" arguments="" returntype="%Boolean">
+
+//FAQアプリへのアクセスカウント(直接詳細を参照された場合+1)
+if $Get(%session.Data("Access"))="" {
+	set ^AccessCount = $Get(^AccessCount)+1
+	set today=$zdate($h,8)
+	set ^AccessCount(today) = $Get(^AccessCount(today))+1
+	set %session.Data("Access")=1
+}
+
+ Set DocNo=%request.Get("DocNo")
+ 
+ if DocNo'="" {
+	 Set topic = ##Class(KB.Topic).%OpenId(DocNo)
+ 	if topic="" {
+		 set %response.Redirect="FAQ.FAQTopicNotFound.cls"
+ 	}else{
+	 	 set TopicID=topic.TopicID
+ 	}
+
+ }
+  
+ quit 1
+</script>
+
+<SCRIPT LANGUAGE="cache" RUNAT="Server">
+
+ Set %session.Data("DocNo")=DocNo
+ 
+ Set roles=$Get(%session.Data("roles"))
+ if roles="" {
+	 set roles=0
+ }
+  
+ //参照回数のセット
+ if $Get(%session.Data("RefFreqChk",DocNo)) ="" {
+	
+	//set topic.RefFreq=topic.RefFreq+1
+	set uv=topic.UsersVoice
+	
+	if $isObject(uv) {
+	    set uv.RefFreq=uv.RefFreq+1	
+	}
+	Else {
+		set uv = ##class(KB.UsersVoice).%New()
+		set topic.UsersVoice = uv
+	    set uv.RefFreq=uv.RefFreq+1
+	    set uv.TopicId = topic.%Id()	
+	    set %session.Data("noAudit")=1
+	    set st=topic.%Save()
+	    set %session.Data("noAudit")=0
+	}
+		
+    set %session.Data("noAudit")=1
+	set st=uv.%Save()
+	set %session.Data("noAudit")=0
+	set %session.Data("RefFreqChk",DocNo)=%session.SessionId
+}
+
+
+ Set UpdateDate = topic.UpdateDate
+ Set title = ..EscapeHTML(topic.Title)
+ If topic.VersionRange'= "" {
+	 Set vrange = topic.VersionRange
+ }Else{
+	 Set vrange = ""
+ }
+ 
+ /*
+ If topic.Category'="" Set category = topic.Category.Description
+ If topic.Facility'="" Set facility = topic.Facility.Description
+ If topic.Platform'="" Set platform = topic.Platform.Name
+ If topic.FileFlg'="" Set fileflg = topic.FileFlg
+*/
+
+ // 関連トピックのセット
+ set refcount=0
+ if topic.RefTopic'="" {
+	 set refcount=$LENGTH(topic.RefTopic,",")
+ 
+	 for refkey=1:1:refcount {
+		 set refid = $PIECE(topic.RefTopic,",",refkey)
+		 set reftopic = ##class(KB.Topic).%OpenId(refid)
+		 if (reftopic '= "") {
+			 set refid(refkey) = refid
+			 set reftitle(refkey) = ..EscapeHTML(reftopic.Title)
+		 }else{
+			 set refcount=0
+		 }
+	 }
+ }
+ 
+ 
+ // 添付ファイル名のセット
+ set filename = ##class(KB.Config).getAttachedFileName()_DocNo_".zip"
+ set dir = ##class(KB.Config).getFTPDirectory()
+ set sep = ##class(KB.Config).getDirectorySeparator()
+ set filepath = dir_sep_filename
+ set fileexists = ##class(%File).Exists(filepath)
+ set %session.Data("filename")=filename
+ set %session.Data("dir")=dir
+ set %session.Data("sep")=sep
+ set %session.Data("filepath")=filepath
+ set %session.Data("fileexists")=fileexists
+ 
+ Set tProductId = topic.Product.%Id()
+ 
+ If (tProductId = 1) { //一般
+	 Set tLogo = ""
+ }
+ ElseIf (tProductId = 2) { //Cache
+	 Set tLogo = "cachecube.png"
+	 Set tWidth = 16
+	 Set tHight = 16
+ }
+ ElseIf (tProductId = 3) { //Ensemble
+	 Set tLogo = "ensemblecube.png"
+	 Set tWidth = 16
+	 Set tHight = 16
+ }
+ 
+ /*
+ set dir = ##class(KB.Config).getFTPDirectory()
+ set file = ##class(KB.Config).getAttachedFileName()
+ set sep = ##class(KB.Config).getDirectorySeparator()
+ set attachedurl=dir_sep_file_DocNo_".zip"
+ 
+ Set filename1="",filename2="",filename3="",version="",category="",facility="",platform=""
+ 
+ for i=1:1:3 {
+		
+	Set filenamei = "filename"_i
+	Set property = "FileLoc"_i
+	
+	Set fileloc = $ZOBJPROPERTY(topic,property)
+
+	If fileloc.Filename'="" {
+		
+   		Set filename = fileloc.Filename
+    	set sep = ##class(KB.Config).getDirectorySeparator()
+    	If $Length(filename,sep)>1 {
+	    	//一番下位のファイル名だけを取得する
+       		Set @filenamei = $Piece(filename,sep,$length(filename,sep))
+    	}
+		
+ 	    set fileext = $piece(@filenamei,".",2)
+ 
+    	if fileext = "doc" {
+        	do fileloc.SetAttribute("ContentType","application/msword")
+    	}
+    	elseif fileext = "pdf" {
+       		do fileloc.SetAttribute("ContentType","application/pdf")
+    	}
+    	elseif (fileext = "html") || (fileext = "htm") {
+       		do fileloc.SetAttribute("ContentType","text/html")
+    	}
+    	elseif fileext = "xml" {
+       		do fileloc.SetAttribute("ContentType","text/xml")
+    	}
+    	elseif fileext = "txt" {
+       		do fileloc.SetAttribute("ContentType","application/msword")
+    	}
+    	else {
+       		do fileloc.SetAttribute("ContentType","application/x-zip-compressed")
+    	}
+
+	    set contentdisposition ="filename="""_@filenamei_"""" 
+    	do fileloc.SetAttribute("ContentDisposition",contentdisposition)
+
+   		//IEは、以下の設定を行なわないとContentTypeの設定が反映されない
+   		do fileloc.SetAttribute("Expires",600)
+   		//SetAttributeを実行後にOidの設定を行なわないと、ContentDispositionが反映されない
+   		set %session.Data("Attached"_i)=fileloc.%Oid()
+ 	}
+ 	else {
+   		Set %session.Data("Attached"_i)=""	 
+ 	}
+ } 
+
+ */
+   
+</SCRIPT>
+
+<!--Cache' Version-->
+<csp:if condition='vrange=""'>
+<csp:else>
+  <DIV class="version"><SPAN class="version">Version #(vrange)#</SPAN></DIV>
+</csp:if>
+<!--Topic Title-->
+<DIV class="title"><IMG class="titleicon" src="./images/others/Question.gif">&nbsp;&nbsp;#(title)#
+<csp:if condition='tLogo=""'>
+<csp:else>
+<IMG class="producticon" width="#(tWidth)#" height="#(tHight)#" src="./images/logo/#(tLogo)#">
+</csp:if>
+</DIV>
+<!--<DIV><hr></DIV>-->
+<!--Description-->
+<DIV class="description" border=1>
+  <SCRIPT LANGUAGE="CACHE" runat=server>
+   set description=topic.Description
+   //コード部分
+   set cmdstart="<DIV class=divcommand><PRE><CODE>"
+   set cmdfin="</CODE></PRE></DIV>"
+                   
+   //コード部分、URLのリンク処理
+   set crlf = $c(13,10)
+   set lineno = $length(description,crlf)
+   for i = 1:1:lineno {
+	   set line(i)=$piece(description,crlf,i)
+	   set tLine =$ZCVT(line(i),"U")
+	   if $Extract(tLine,1,9)="<COMMAND>" {
+		   set cmdflg=1
+		   write cmdstart
+	   }
+	   elseif $Extract(tLine,1,10)="</COMMAND>" {
+		   set cmdflg=0
+		   write cmdfin
+	   }
+       elseif $Extract(tLine,1,5)="<URL>" {
+	       set llen=$Length(line(i))
+		   set url=$Extract(line(i),6,llen-6)
+		   write "<A href="_url_" target=""blank"">"_url_"</A><br>" 
+   	   }
+	   elseif $Extract(tLine,1,10)="<REFTOPIC>" {
+		   	set refid1=$Extract(line(i),11,13)
+			set refid2=$NUMBER($Extract(line(i),11,13))
+			set ref=##class(KB.Topic).%OpenId(refid2)
+			set reft=ref.Title
+			set refurl="http://www.intersystems.co.jp/faq.php?id="_refid1
+			write "<br><img src=""./images/button/arrow1.gif""><A href="_refurl_">Q："_reft_"</A><br>"
+	   }
+	   else{
+		   write ..EscapeHTML(line(i))_"<br>"
+	   }         
+   }
+ </SCRIPT>
+
+</DIV>
+<!--関連トピック-->
+<DIV>
+  <SPAN class="refhead">関連トピック：</SPAN>
+  <csp:if condition='refcount>0'>
+    <SCRIPT LANGUAGE="CACHE" runat=server>
+     for i=1:1:refcount {
+	     if i=1 {
+		     write "<SPAN class=""refbody""><A href=result.CSP?DocNo="_refid(i)_">"_reftitle(i)_"</A></SPAN>"
+	     }else{
+		     write "<BR><SPAN style=""visibility:hidden"">関連トピック：</SPAN>"
+		     write "<SPAN class=""refbody""><A href=result.CSP?DocNo="_refid(i)_">"_reftitle(i)_"</A></SPAN>"
+	     }   
+     }
+   </SCRIPT>
+  </csp:if>
+  </DIV>
+  <DIV>
+  <SPAN class="refhead">添付ファイル：</SPAN>
+  <csp:if condition='fileexists=1'>
+    <SPAN class="refbody"><A href=downloads/#(filename)#>参考資料(zip)</A></SPAN>
+  <csp:else>
+  </csp:if>
+</DIV>
+<csp:if condition='roles=0'>
+<csp:else>
+  <DIV class="toedit"><A href="edit.CSP?DocNo=#(DocNo)#" target="_self" style="color:#00CC00;">&gt;&gt;&gt;編集</A></DIV>
+</csp:if>
+<DIV>
+  <HR>
+</DIV>
+<P>
+<DIV class=enquete>
+  <SPAN class="enqhead">アンケートにご協力をお願いします</SPAN><BR>
+  <SPAN class="enq">このトピックは参考になりましたか？</SPAN>
+  <input type="image" src="./images/button/Yes1.gif" onmousedown="this.src='./images/button/Yes2.gif'" onmouseout="this.src='./images/button/Yes1.gif'" onclick=#call(..Enquete('Y'))#>
+  <input type="image" src="./images/button/No1.gif" onmousedown="this.src='./images/button/No2.gif'" onmouseout="this.src='./images/button/No1.gif'" onclick=#call(..Enquete('N'))#>
+</DIV>
+<DIV class="mailto">
+  <SPAN class="mail"><A href="mailto:jpnsup@intersystems.com?subject=Question>>>FAQ #(TopicID)#"><IMG src="./images/button/mail01-y.gif" border=0> このトピックに関するお問い合わせ</A></SPAN>
+</DIV>
+</P>
+<DIV class="closebtn" align="center">
+  <Input type="image" id="closebtn" src="./images/button/tojiru1.gif" border="0" onclick="window.close()" style="visibility:hidden;"><br>
+  <A href="FAQ.FAQApp.cls" id="toplink" style="visibility:hidden;">【Topページ】</A>
+</DIV>
+
+<script language="Cache" method="Enquete" arguments="ans:%String">
+
+&js<alert('ご協力ありがとうございました');>
+
+set DocNo=%session.Data("DocNo")
+
+if $Get(%session.Data("EnqChk",DocNo)) '="" {
+	quit
+}
+
+set tp=##class(KB.Topic).%OpenId(DocNo)
+set uv=tp.UsersVoice
+
+if $isObject(uv) {
+	   set uv.RefFreq=uv.RefFreq+1	
+}
+else {
+	   set uv = ##class(KB.UsersVoice).%New()
+	   set tp.UsersVoice = uv
+	   set uv.RefFreq=uv.RefFreq+1
+	   set uv.TopicId = tp.%Id()	
+	   set %session.Data("noAudit")=1
+	   set st=tp.%Save()
+	   set %session.Data("noAudit")=0
+	}
+		
+If ans="Y" {
+	set uv.EnqYes=uv.EnqYes+1
+}elseif ans="N"{
+	set uv.EnqNo=uv.EnqNo+1
+}
+
+set %session.Data("noAudit")=1
+set st=uv.%Save()
+set %session.Data("noAudit")=0
+
+set %session.Data("EnqChk",DocNo)=%session.SessionId
+
+quit
+
+
+</script>
+
+</BODY>
+
+</HTML>
