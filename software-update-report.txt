@@ -1,195 +1,195 @@
-�C��ID		HS001
+修正ID		HS001
 
-���t		2014/6/4		
+日付		2014/6/4		
 
-���e
+内容
 
-�Q�l�ɂȂ�܂������̃{�^���������Ɠ����T�[�o�G���[����
+参考になりましたかのボタンを押すと内部サーバエラー発生
 
-�C�����e
+修正内容
 
 
-�C�����W���[��
+修正モジュール
 
 result.csp
 
 ------------------------------------------------------------------------------------
-�C��ID		HS002
+修正ID		HS002
 
-���t		2014/7/25		
+日付		2014/7/25		
 
-���e
+内容
 
-���f�����̎���
+横断検索の実装
 
-�C�����e
+修正内容
 
 
 
-�C�����W���[��
+修正モジュール
 
 FAQ.FAQTopicSeachBodyTemplate.cls
 
 ------------------------------------------------------------------------------------
-�C��ID		HS003
+修正ID		HS003
 
-���t		2014/7/25		
+日付		2014/7/25		
 
-���e
+内容
 
-TopicID�̂T����
+TopicIDの５桁化
 
-�C�����e
+修正内容
 
-TopicID���v�Z�t�B�[���h�ɕύX
-�i�f�[�^�̃R���o�[�W����������邽�߁j
+TopicIDを計算フィールドに変更
+（データのコンバージョンを避けるため）
 
 
-�C�����W���[��
-
-KB.Topic.cls
-
-------------------------------------------------------------------------------------
-�C��ID		HS004
-
-���t		2014/7/25		
-
-���e
-
-�g�s�b�N�̑��݃����N�̎���
-
-�C�����e
-
-�Q�ƃg�s�b�N������ꍇ�ɁA���̃g�s�b�N�ɂ��t�Q�Ƃ�ݒ肷��
-���ɓo�^�ς̏ꍇ�ɂ́A�ݒ肵�Ȃ�
-
-�C�����W���[��
+修正モジュール
 
 KB.Topic.cls
 
 ------------------------------------------------------------------------------------
-�C��ID		HS005
+修正ID		HS004
 
-���t		2014/7/25		
+日付		2014/7/25		
 
-���e
+内容
 
-�G���[�����̃��t�@�C��
+トピックの相互リンクの実装
 
-�C�����e
+修正内容
 
-Try Catch�ŗ�O�𔭐�������悤�ɕύX
-Catch�������ŃG���[����ۑ�����悤�ɂ����B
+参照トピックがある場合に、そのトピックにも逆参照を設定する
+既に登録済の場合には、設定しない
 
-�C�����W���[��
+修正モジュール
+
+KB.Topic.cls
+
+------------------------------------------------------------------------------------
+修正ID		HS005
+
+日付		2014/7/25		
+
+内容
+
+エラー処理のリファイン
+
+修正内容
+
+Try Catchで例外を発生させるように変更
+Catch処理内でエラー情報を保存するようにした。
+
+修正モジュール
 
 FAQ.Error.cls
 KB.Topic.cls
 FAQ.FAQError.cls
 
 ------------------------------------------------------------------------------------
-�C��ID		HS006
+修正ID		HS006
 
-���t		2014/7/25		
+日付		2014/7/25		
 
-���e
+内容
 
-���i��ʂ̃}�N����
+製品種別のマクロ化
 
-�C�����e
+修正内容
 
 $$$GENERAL
 $$$CACHE
 $$$ENSEMBLE
 
-�C�����W���[��
+修正モジュール
 
 KB.Topic.cls
 FAQ.FAQTopicSearchBodyTemplate.cls
 FAQ.inc
 
 ------------------------------------------------------------------------------------
-�C��ID		HS007
+修正ID		HS007
 
-���t		2014/7/28		
+日付		2014/7/28		
 
-���e
+内容
 
-�g�s�b�N�̑��݃����N�̃}�C�i�[�o�O�t�B�b�N�X
+トピックの相互リンクのマイナーバグフィックス
 
-�C�����e
+修正内容
 
 
-�C�����W���[��
+修正モジュール
 
 KB.Topic.cls
 
 ------------------------------------------------------------------------------------
-�C��ID		HS008
+修正ID		HS008
 
-���t		2014/7/28		
+日付		2014/7/28		
 
-���e
+内容
 
-safari�ŏ���\������hyperevent�G���[��������������C��
+safariで初回表示時にhypereventエラーが発生する問題を修正
 
-�C�����e
+修正内容
 
-chrome�Ɠ��������킹�邱�Ƃŉ���
+chromeと動きを合わせることで解決
 
-�C�����W���[��
-
-FAQ.FAQTopicSearch.cls
-
-------------------------------------------------------------------------------------
-�C��ID		HS009
-
-���t		2014/7/28		
-
-���e
-
-�C���X�g�[���̎���
-
-�C�����e
-
-%Installer�@Manifest���g��������
-
-�C�����W���[��
+修正モジュール
 
 FAQ.FAQTopicSearch.cls
 
 ------------------------------------------------------------------------------------
-�C��ID		HS010
+修正ID		HS009
 
-���t		2014/7/28		
+日付		2014/7/28		
 
-���e
+内容
 
-UnitTest�̎���
+インストーラの実装
 
-�C�����e
+修正内容
 
-%UnitTest�t���[�����[�N���g��������
+%Installer　Manifestを使った実装
 
-�C�����W���[��
+修正モジュール
+
+FAQ.FAQTopicSearch.cls
+
+------------------------------------------------------------------------------------
+修正ID		HS010
+
+日付		2014/7/28		
+
+内容
+
+UnitTestの実装
+
+修正内容
+
+%UnitTestフレームワークを使った実装
+
+修正モジュール
 
 FAQ.Test.cls
 FAQ.UnitTests.cls
 
 ------------------------------------------------------------------------------------
-�C��ID		HS011
+修正ID		HS011
 
-���t		2014/8/18		
+日付		2014/8/18		
 
-���e
+内容
 
-�S�����������̕ύX
+全文検索方式の変更
 
-�C�����e
+修正内容
 
-n-grum������mecab�ɂ�镪�������������ɕύX
+n-grum式からmecabによる分かち書き方式に変更
 
-�C�����W���[��
+修正モジュール
 
 KB.Topic.cls
 KB.Text.cls
@@ -197,56 +197,56 @@ Text.MecabJapanese2.cls
 
 
 ------------------------------------------------------------------------------------
-�C��ID		HS012
+修正ID		HS012
 
-���t		2014/8/18		
+日付		2014/8/18		
 
-���e
+内容
 
-���݃����N�̍폜���̑���惊���N�̍폜
+相互リンクの削除時の相手先リンクの削除
 
-�C�����e
+修正内容
 
-���݃����N����OnAfterSave()�̏��ōs���Ă������A��������ƁA�폜���ɏz�������������Ă��܂�
-���܂������Ȃ����Ƃ����������̂ŁAcomplete.csp�ōŏI�`�F�b�N����悤�ɕύX
+相互リンクを％OnAfterSave()の所で行っていたが、そうすると、削除時に循環処理が発生してしまい
+うまくいかないことが判明したので、complete.cspで最終チェックするように変更
 
-�C�����W���[��
+修正モジュール
 
 KB.Topic.cls
 complete.csp
 
 ------------------------------------------------------------------------------------
-�C��ID		HS013
+修正ID		HS013
 
-���t		2014/8/18		
+日付		2014/8/18		
 
-���e
+内容
 
-�o�[�W�����ԍ��̓���
+バージョン番号の導入
 
-�C�����e
+修正内容
 
-�V�o�[�W�����������[�X���ɍX�V����悤�ɂ���
+新バージョンをリリース毎に更新するようにした
 
-�C�����W���[��
+修正モジュール
 
 KB.Utility.cls
 howto.csp
 howtoforeditors.csp
 
 ------------------------------------------------------------------------------------
-�C��ID		HS014
+修正ID		HS014
 
-���t		2014/8/18		
+日付		2014/8/18		
 
-���e
+内容
 
-�ڍו\���̍ۂɐ��i�敪���킩��悤�ɐ��i�A�C�R�����^�C�g���̑O�ɕ\��
+詳細表示の際に製品区分がわかるように製品アイコンをタイトルの前に表示
 
-�C�����e
+修正内容
 
 
-�C�����W���[��
+修正モジュール
 
 result.csp
 InterSystemsLogo.gif
@@ -254,409 +254,428 @@ cachecube.png
 ensemblecube.png
 
 ------------------------------------------------------------------------------------
-�C��ID		HS015
+修正ID		HS015
 
-���t		2014/8/21		
+日付		2014/8/21		
 
-���e
+内容
 
-�V�K�쐬�A�ҏW��ʓ��Ń^�u���g���Ȃ�
+新規作成、編集画面内でタブが使えない
 
-�C�����e
+修正内容
 
-�C���^�[�l�b�g�œ��肵��javascript��ǉ�
+インターネットで入手したjavascriptを追加
 
-�C�����W���[��
+修正モジュール
 
 new.csp
 edit.csp
 
 ------------------------------------------------------------------------------------
-�C��ID		HS016
+修正ID		HS016
 
-���t		2014/8/21		
+日付		2014/8/21		
 
-���e
+内容
 
-�V�K�쐬��ʂ�FF�����IE�ŃX�N���[�����o�Ȃ�
+新規作成画面でFFおよびIEでスクロールが出ない
 
 
-�C�����e
+修正内容
 
-window.open�̍ۂ�scrollbars=1��ǉ�
+window.openの際にscrollbars=1を追加
 
-scrollbars=yes�ł�IE,FF�œ��삵�Ȃ�����
+scrollbars=yesではIE,FFで動作しなかった
 
-�C�����W���[��
+修正モジュール
 
 howtoforeditors.csp
 
 ------------------------------------------------------------------------------------
-�C��ID		HS017
+修正ID		HS017
 
-���t		2014/8/21		
+日付		2014/8/21		
 
-���e
+内容
 
-�^�u��؂�ւ����IE,FF�ł͍ēx�N�G���[�����s����ď���������Ă��܂��B
-
-
-�C�����e
+タブを切り替えるとIE,FFでは再度クエリーが実行されて初期化されてしまう。
 
 
-OnresizeHandler��zenPage.setTabSize()�����s����悤�ɕύX
+修正内容
 
-tabGroup��onShowTab���\�b�h�ł͎��s���Ȃ��悤�ɕύX
 
-�C�����W���[��
+OnresizeHandlerでzenPage.setTabSize()を実行するように変更
+
+tabGroupのonShowTabメソッドでは実行しないように変更
+
+修正モジュール
 
 FAQ.FAQTopicSearchBodyTemplate.cls
 
 ------------------------------------------------------------------------------------
-�C��ID		HS018
+修正ID		HS018
 
-���t		2014/8/21		
+日付		2014/8/21		
 
-���e
+内容
 
-�ҏW�p�^�O�̑啶���������̐������ɘa
+編集用タグの大文字小文字の制限を緩和
 
-�C�����e
+修正内容
 
-UPPER�ɕϊ���A�`�F�b�N
+UPPERに変換後、チェック
 
-�C�����W���[��
+修正モジュール
 
 result.csp
 
 ------------------------------------------------------------------------------------
-�C��ID		HS019
+修正ID		HS019
 
-���t		2014/8/25		
+日付		2014/8/25		
 
-���e
+内容
 
-resize�̍ۂɑO��̌������������Z�b�g�������ւ̑Ή�
+resizeの際に前回の検索条件がリセットされる問題への対応
 
-�C�����e
+修正内容
 
-�����ɂ��΁A�ŋ߂̃u���E�U��IE���܂߂�setBodySize()�������ƌ����悤�ł���B
+調査によれば、最近のブラウザはIEも含めてsetBodySize()がちゃんと効くようである。
 
-IE�̌Â��o�[�W�����Ɋւ��Ă͕s�m���Ȃ��߁AIE9���O�̂��̂́A�����̓����Ƃ���
+IEの古いバージョンに関しては不確かなため、IE9より前のものは、旧来の動きとする
 
-�C�����W���[��
+修正モジュール
 
 FAQ.FAQTopicSearch.cls
 
 ------------------------------------------------------------------------------------
-�C��ID		HS020
+修正ID		HS020
 
-���t		2014/8/26		
+日付		2014/8/26		
 
-���e
+内容
 
-�������ʂ̕\����TOP�ɕύX
+検索結果の表示をTOPに変更
 
-�C�����e
+修正内容
 
-�����y�C����vgroup��valign=top��ݒ肷��
+検索ペインのvgroupのvalign=topを設定する
 
-�C�����W���[��
-
-FAQ.FAQTopicSearchBodyTemplate.cls
-�p�����Ă���N���X�̃��R���p�C���K�v
-
-------------------------------------------------------------------------------------
-�C��ID		HS021
-
-���t		2014/10/07		
-
-���e
-
-��ʃ^�u�ɑS�����̃`�F�b�N�{�b�N�X��\�����Ȃ��悤�ɕύX
-
-�C�����e
-
-%OnAfterCreatePage�ɂđS�����̃`�F�b�N�{�b�N�X��enclosingStype��Display:none��ݒ�
-
-�C�����W���[��
+修正モジュール
 
 FAQ.FAQTopicSearchBodyTemplate.cls
-�p�����Ă���N���X�̃��R���p�C���K�v
+継承しているクラスのリコンパイル必要
+
+------------------------------------------------------------------------------------
+修正ID		HS021
+
+日付		2014/10/07		
+
+内容
+
+一般タブに全検索のチェックボックスを表示しないように変更
+
+修正内容
+
+%OnAfterCreatePageにて全検索のチェックボックスのenclosingStypeにDisplay:noneを設定
+
+修正モジュール
+
+FAQ.FAQTopicSearchBodyTemplate.cls
+継承しているクラスのリコンパイル必要
 
 
 ------------------------------------------------------------------------------------
-�C��ID		HS022
+修正ID		HS022
 
-���t		2014/10/07		
+日付		2014/10/07		
 
-���e
+内容
 
-������ʏ�̑���w���v�ɑS�����̃`�F�b�N�{�b�N�X�̐�����ǉ�
+初期画面上の操作ヘルプに全検索のチェックボックスの説明を追加
 
-�C�����e
+修正内容
 
-�����e�L�X�g�̒ǉ�
+説明テキストの追加
 
-�C�����W���[��
+修正モジュール
 
 howto.csp
 
 
 ------------------------------------------------------------------------------------
-�C��ID		HS023
+修正ID		HS023
 
-���t		2014/12/02		
+日付		2014/12/02		
 
-���e
+内容
 
-�����f�[�^���������ɔ�������
+初期データ生成処理に抜けあり
 
-�C�����e
+修正内容
 
-masterSetup()��
+masterSetup()に
 
-do ##class(KB.Product).Init()��ǉ�
+do ##class(KB.Product).Init()を追加
 
-�C�����W���[��
+修正モジュール
 
 KB.Setup.cls
 
 
 ------------------------------------------------------------------------------------
-�C��ID		HS024
+修正ID		HS024
 
-���t		2014/12/02		
+日付		2014/12/02		
 
-���e
+内容
 
-�����f�[�^���������ɔ�������
+初期データ生成処理に抜けあり
 
-�C�����e
+修正内容
 
-setConfigParams()��
+setConfigParams()に
 
-do ##class(KB.Config).setFileNameAttached()��ǉ�
+do ##class(KB.Config).setFileNameAttached()を追加
 
-Installer��
+Installerに
 
-##class(KB.Setup).setConfigParams()�̌ďo����ǉ�
+##class(KB.Setup).setConfigParams()の呼出しを追加
 
 
-�C�����W���[��
+修正モジュール
 
 KB.Setup.cls
 FAQ.Installer.cls
 
 
 ------------------------------------------------------------------------------------
-�C��ID		HS025
+修正ID		HS025
 
-���t		2014/12/09		
+日付		2014/12/09		
 
-���e
+内容
 
 Typo
 
 
-�C�����e
+修正内容
 
-##class(KB.Setup).setConfigParams()�̌ďo����ǉ�
+##class(KB.Setup).setConfigParams()の呼出しを追加
 
 
-�C�����W���[��
+修正モジュール
 
 FAQ.Installer.cls
 
 ------------------------------------------------------------------------------------
-�C��ID		HS026
+修正ID		HS026
 
-���t		2015/02/25		
+日付		2015/02/25		
 
-���e
+内容
 
-�J�^�J�i��̒P�ꕪ����mecab�ł͑z�肵�������ɂȂ��Ă��Ȃ��̂ŁA�\�ߓo�^�����J�^�J�i�P��
-�Ɋւ��ĕ�����Amecab�ɓn���悤�ɕύX
-�E�Ɋւ��Ă����O�ɃX�y�[�X�ɕύX
-
-
-�C�����e
-
-^KatakanaWords�Ƃ����O���[�o���𐶐�
-���m�[�h�ɃJ�^�J�i�̒P�ꂪ����
+カタカナ語の単語分解がmecabでは想定した動きになっていないので、予め登録したカタカナ単語
+に関して分解後、mecabに渡すように変更
+・に関しても事前にスペースに変更
 
 
-�C�����W���[��
+修正内容
+
+^KatakanaWordsというグローバルを生成
+第一ノードにカタカナの単語が入る
+
+
+修正モジュール
 
 Text.MecabaJapanese2.cls
 
 
 ------------------------------------------------------------------------------------
-�C��ID		HS027
+修正ID		HS027
 
-���t		2015/02/25		
+日付		2015/02/25		
 
-���e
+内容
 
-HS026�̎����ɍۂ��A�J�^�J�i�ꂪ�ǂ̗l�ɕ�������Ă��邩�𒲂ׂ�N���X���\�b�h��ǉ�
-
-
-�C�����e
-
-FindKatakanaKeywords�Ƃ������O�̃N���X���\�b�h��ǉ�
+HS026の実装に際し、カタカナ語がどの様に分解されているかを調べるクラスメソッドを追加
 
 
-�C�����W���[��
+修正内容
+
+FindKatakanaKeywordsという名前のクラスメソッドを追加
+
+
+修正モジュール
 
 KB.Utility
 
 
 ------------------------------------------------------------------------------------
-�C��ID		HS028
+修正ID		HS028
 
-���t		2015/02/25		
+日付		2015/02/25		
 
-���e
+内容
 
-HS026�̕ύX�ɔ����A�C���X�g�[���[�̕ύX���K�v�ɂȂ���
+HS026の変更に伴い、インストーラーの変更が必要になった
 
 
-�C�����e
+修正内容
 
-�J�^�J�i�ꎫ���O���[�o���̃C���X�g�[��
+カタカナ語辞書グローバルのインストール
 
-�C�����W���[��
+修正モジュール
 
 FAQ.Installer
 
 
 ------------------------------------------------------------------------------------
-�C��ID		HS029
+修正ID		HS029
 
-���t		2015/03/19		
+日付		2015/03/19		
 
-���e
+内容
 
-HS026�̏����������P
-�����L�[���[�h����͂���ۂɁA�����o�^���ꂽ�J�^�J�i�ꂪ�܂܂�邩�ǂ����m�F����悤�ɕύX
-
-
-�C�����e
-
-SpritKatakanaKeyWord�Ƃ������O�̃N���X���\�b�h��ǉ�
+HS026の処理効率改善
+検索キーワードを解析する際に、辞書登録されたカタカナ語が含まれるかどうか確認するように変更
 
 
-�C�����W���[��
+修正内容
+
+SpritKatakanaKeyWordという名前のクラスメソッドを追加
+
+
+修正モジュール
 
 Text.MecabaJapanese2.cls
 
 
 ------------------------------------------------------------------------------------
-�C��ID		HS030
+修正ID		HS030
 
-���t		2015/03/19		
+日付		2015/03/19		
 
-���e
+内容
 
-HS026,HS029�Ɋ֘A����unittest�̎���
-
-
-�C�����e
-
-TestFindKatakanaWord�ATestSpritKatakanaKeyWord�Ƃ������O�̃N���X���\�b�h��ǉ�
+HS026,HS029に関連するunittestの実装
 
 
-�C�����W���[��
+修正内容
+
+TestFindKatakanaWord、TestSpritKatakanaKeyWordという名前のクラスメソッドを追加
+
+
+修正モジュール
 
 FAQ.UnitTests.cls
 
 ------------------------------------------------------------------------------------
-�C��ID		HS031
+修正ID		HS031
 
-���t		2015/04/13		
+日付		2015/04/13		
 
-���e
+内容
 
-HS029�̃o�O�C��
-
-
-
-�C�����e
-
-�o�^�ς݃J�^�J�i�̒����ϊ��@�\�����삵�Ă��Ȃ������B
+HS029のバグ修正
 
 
-�C�����W���[��
+
+修正内容
+
+登録済みカタカナの逐次変換機能が動作していなかった。
+
+
+修正モジュール
 
 Text.MecabaJapanese2.cls
 
 
 ------------------------------------------------------------------------------------
-�C��ID		HS032
+修正ID		HS032
 
-���t		2015/04/14		
+日付		2015/04/14		
 
-���e
+内容
 
-UsersVoice�̖{�Ԋ�setup(CreateUsersVoice)�Ƀo�O������AUsersVoice��Topic���ɕs���������������B
+UsersVoiceの本番環境setup(CreateUsersVoice)にバグがあり、UsersVoiceとTopic情報に不整合が発生した。
 
-Install���ɍs���̂ł͂Ȃ��A�Q�Ǝ��ɑ��݂��Ȃ��ꍇ��UsersVoice���쐬����悤�ɕύX����B
-
-
-�C�����e
-
-Installer����CreateUsersVoice�̌ďo���������폜
-UsersVoice�̍X�V����UsersVoice�����݂��Ȃ���΁A�V�K�C���X�^���X�𐶐�����B
+Install時に行うのではなく、参照時に存在しない場合にUsersVoiceを作成するように変更する。
 
 
-�C�����W���[��
+修正内容
+
+InstallerからCreateUsersVoiceの呼出し処理を削除
+UsersVoiceの更新時にUsersVoiceが存在しなければ、新規インスタンスを生成する。
+
+
+修正モジュール
 
 FAQ.Installer.cls
 result.CSP
-KB.Utility.cls�i�g��Ȃ��̂ŏC���̕K�v���Ȃ����ACreateUsersVoice�̃o�O�����łɏC���j
+KB.Utility.cls（使わないので修正の必要がないが、CreateUsersVoiceのバグもついでに修正）
 
 
 ------------------------------------------------------------------------------------
-�C��ID		HS033
+修正ID		HS033
 
-���t		2015/06/03		
+日付		2015/06/03		
 
-���e
+内容
 
-Ensemble�̃^�u�ł̓f�t�H���g�ŃR�A�e�N�m���W�̓��e���܂߂Č�������悤�Ɏd�l�ύX
+Ensembleのタブではデフォルトでコアテクノロジの内容も含めて検索するように仕様変更
 
 
-�C�����e
+修正内容
 
-�`�F�b�N�{�b�N�X�̃e�L�X�g��S��������R�A�e�N�m���W���܂ނɕύX
-Cache�^�u�ォ�炻�̃`�F�b�N�{�b�N�X�������Ȃ��悤�ɕύX
-Ensemble�^�u��ł͂��̃`�F�b�N�{�b�N�X�̃f�t�H���g��^�ɃZ�b�g
-%page�̑Ή�����v���p�e�B���y�[�W�쐬��ɐ^�ɃZ�b�g
+チェックボックスのテキストを全検索からコアテクノロジを含むに変更
+Cacheタブ上からそのチェックボックスを見えないように変更
+Ensembleタブ上ではそのチェックボックスのデフォルトを真にセット
+%pageの対応するプロパティもページ作成後に真にセット
 
-�C�����W���[��
+修正モジュール
 
 FAQ.FAQTopicSearchBodyTemplate.cls
 howto.CSP
 
 ------------------------------------------------------------------------------------
-�C��ID		HS034
+修正ID		HS034
 
-���t		2015/06/24		
+日付		2015/06/24		
 
-���e
+内容
 
-HS033�̕ύX�ɂ��o�O�C��
-��ʁACache�^�u��ōēx���������{����ƑS�Ă̂��̂������ΏۂƂȂ��Ă��܂��B
-
-
-�C�����e
-
-��ʁACache�^�u��ł͂��̃`�F�b�N�{�b�N�X�̃f�t�H���g���U�ɃZ�b�g
+HS033の変更によるバグ修正
+一般、Cacheタブ上で再度検索を実施すると全てのものが検索対象となってしまう。
 
 
-�C�����W���[��
+修正内容
+
+一般、Cacheタブ上ではそのチェックボックスのデフォルトを偽にセット
+
+
+修正モジュール
 
 FAQ.FAQTopicSearchBodyTemplate.cls
 
+------------------------------------------------------------------------------------
+修正ID		HS035
+
+日付		2017/01/26		
+
+内容
+
+検索条件の指定で月が14か月分選択可能となっている
+
+および非活動ユーザー名chika,Uematsuを削除
 
 
+修正内容
+
+ループ回数を14から12に変更
+
+
+修正モジュール
+
+
+history.csp
