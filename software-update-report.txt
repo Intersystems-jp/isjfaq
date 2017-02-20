@@ -679,3 +679,24 @@ FAQ.FAQTopicSearchBodyTemplate.cls
 
 
 history.csp
+
+------------------------------------------------------------------------------------
+修正ID		HS036
+
+日付		2017/02/20		
+
+内容
+
+全文検索のインデックス生成方法をMecabの形態素解析に基づく分かち書きからiKnowのiFindを使う方法に変更
+
+修正内容
+
+以下のようなクエリー構文に変更
+
+select ID,Title,Description from KB.Topic where %ID %FIND search_index(
+
+
+修正モジュール
+
+FAQTopicQueryTemplate.cls
+FAQTopicSearchBodyTemplate
