@@ -18,7 +18,7 @@ ClassMethod bitalloc(gn As %String, on As %Boolean, length As %Integer)
 
 ClassMethod bitset(gn As %String, col As %Integer)
 {
-  //Cache SQL‚Åg—p‚·‚éƒrƒbƒgƒ}ƒbƒvƒCƒ“ƒfƒbƒNƒX‚Ì1ƒrƒbƒg–Ú‚Íg—p‚µ‚Ä‚¢‚È‚¢‚½‚ß,1‚¸‚ç‚·
+  //Cache SQLã§ä½¿ç”¨ã™ã‚‹ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®1ãƒ“ãƒƒãƒˆç›®ã¯ä½¿ç”¨ã—ã¦ã„ãªã„ãŸã‚,1ãšã‚‰ã™
   set col = col + 1
   Set chunk=(col-1)\$$$CHUNKSIZE,offset=col-(chunk*$$$CHUNKSIZE)
   Set $Bit(@gn@(chunk+1),offset)=1
@@ -26,7 +26,7 @@ ClassMethod bitset(gn As %String, col As %Integer)
 
 ClassMethod bitclear(gn As %String, col As %Integer)
 {
-  //Cache SQL‚Åg—p‚·‚éƒrƒbƒgƒ}ƒbƒvƒCƒ“ƒfƒbƒNƒX‚Ì1ƒrƒbƒg–Ú‚Íg—p‚µ‚Ä‚¢‚È‚¢‚½‚ß,1‚¸‚ç‚·
+  //Cache SQLã§ä½¿ç”¨ã™ã‚‹ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®1ãƒ“ãƒƒãƒˆç›®ã¯ä½¿ç”¨ã—ã¦ã„ãªã„ãŸã‚,1ãšã‚‰ã™
    set col = col + 1	
    Set chunk=(col-1)\$$$CHUNKSIZE,offset=col-(chunk*$$$CHUNKSIZE)
    Set $Bit(@gn@(chunk+1),offset)=0
@@ -34,7 +34,7 @@ ClassMethod bitclear(gn As %String, col As %Integer)
 
 ClassMethod bitget(gn As %String, col As %Integer) As %Boolean
 {
-  //Cache SQL‚Åg—p‚·‚éƒrƒbƒgƒ}ƒbƒvƒCƒ“ƒfƒbƒNƒX‚Ì1ƒrƒbƒg–Ú‚Íg—p‚µ‚Ä‚¢‚È‚¢‚½‚ß,1‚¸‚ç‚·
+  //Cache SQLã§ä½¿ç”¨ã™ã‚‹ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®1ãƒ“ãƒƒãƒˆç›®ã¯ä½¿ç”¨ã—ã¦ã„ãªã„ãŸã‚,1ãšã‚‰ã™
  set col = col + 1
  set $zt = "error"
  Set chunk=(col-1)\$$$CHUNKSIZE,offset=col-(chunk*$$$CHUNKSIZE)
@@ -45,7 +45,7 @@ error	quit 0
 ClassMethod bitcount(gn As %String, on As %Boolean = 1) As %Integer
 {
 	Set chunk="",cnt=0
-	//chunk‚Åƒ‹[ƒv
+	//chunkã§ãƒ«ãƒ¼ãƒ—
 	For  {
 		Set chunk=$Order(@gn@(chunk))
 		Quit:chunk=""
@@ -60,7 +60,7 @@ ClassMethod bitcount(gn As %String, on As %Boolean = 1) As %Integer
 ClassMethod bitand(gn1 As %String, gn2 As %String, result As %String)
 {
 	Set chunk=""
-	//chunk‚Åƒ‹[ƒv
+	//chunkã§ãƒ«ãƒ¼ãƒ—
 	For  {
 		Set chunk=$Order(@gn1@(chunk))
 		Quit:chunk=""
@@ -75,7 +75,7 @@ ClassMethod bitand(gn1 As %String, gn2 As %String, result As %String)
 ClassMethod bitor(gn1 As %String, gn2 As %String, result As %String)
 {
 	Set chunk=""
-	//chunk‚Åƒ‹[ƒv
+	//chunkã§ãƒ«ãƒ¼ãƒ—
 	For  {
 		Set chunk=$Order(@gn1@(chunk))
 		Quit:chunk=""
@@ -90,7 +90,7 @@ ClassMethod bitor(gn1 As %String, gn2 As %String, result As %String)
 ClassMethod bitnot(gn1 As %String, result As %String)
 {
 	Set chunk=""
-	//chunk‚Åƒ‹[ƒv
+	//chunkã§ãƒ«ãƒ¼ãƒ—
 	For  {
 		    Set chunk=$Order(@gn1@(chunk))
 		    Quit:chunk=""
@@ -98,7 +98,7 @@ ClassMethod bitnot(gn1 As %String, result As %String)
 		    Set @result@(chunk)=$BITLOGIC(
 			    ~(@gn1@(chunk)))
 			if chunk = 1 {
-				//æ“ª‚Ì1ƒrƒbƒg‚ÍA‚©‚È‚ç‚¸0
+				//å…ˆé ­ã®1ãƒ“ãƒƒãƒˆã¯ã€ã‹ãªã‚‰ãš0
 				set $bit(@result@(chunk),1) = 0
 		    }
 								
@@ -108,7 +108,7 @@ ClassMethod bitnot(gn1 As %String, result As %String)
 ClassMethod bitandnot(gn1 As %String, gn2 As %String, result As %String)
 {
 	Set chunk=""
-	//chunk‚Åƒ‹[ƒv
+	//chunkã§ãƒ«ãƒ¼ãƒ—
 	For  {
 		    Set chunk=$Order(@gn1@(chunk))
 		    Quit:chunk=""
@@ -116,7 +116,7 @@ ClassMethod bitandnot(gn1 As %String, gn2 As %String, result As %String)
 		    Set @result@(chunk)=$BITLOGIC(
 			    @gn1@(chunk)&~(@gn2@(chunk)))
 			if chunk = 1 {
-				//æ“ª‚Ì1ƒrƒbƒg‚ÍA‚©‚È‚ç‚¸0
+				//å…ˆé ­ã®1ãƒ“ãƒƒãƒˆã¯ã€ã‹ãªã‚‰ãš0
 				set $bit(@result@(chunk),1) = 0
 		    }
 								
@@ -125,10 +125,10 @@ ClassMethod bitandnot(gn1 As %String, gn2 As %String, result As %String)
 
 ClassMethod bitfind(gn As %String, on As %Boolean, col As %Integer) As %Integer
 {
-    //Cache SQL‚Åg—p‚·‚éƒrƒbƒgƒ}ƒbƒvƒCƒ“ƒfƒbƒNƒX‚Ì1ƒrƒbƒg–Ú‚Íg—p‚µ‚Ä‚¢‚È‚¢‚½‚ß,1‚¸‚ç‚·
+    //Cache SQLã§ä½¿ç”¨ã™ã‚‹ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®1ãƒ“ãƒƒãƒˆç›®ã¯ä½¿ç”¨ã—ã¦ã„ãªã„ãŸã‚,1ãšã‚‰ã™
 	set col = col + 1
     Set chunk=(col-1)\$$$CHUNKSIZE,offset=col-(chunk*$$$CHUNKSIZE)
-    //chunk‚Åƒ‹[ƒv
+    //chunkã§ãƒ«ãƒ¼ãƒ—
     Set start = chunk*$$$CHUNKSIZE
     For  {
 	   Set chunk=$Order(@gn@(chunk))
@@ -147,20 +147,20 @@ ClassMethod bitfind(gn As %String, on As %Boolean, col As %Integer) As %Integer
 	Quit start+pos
 }
 
-// ˆø”1@bsgn@ƒrƒbƒgƒXƒ‰ƒCƒX—pƒCƒ“ƒfƒbƒNƒXƒOƒ[ƒoƒ‹QÆ@Cache SQL‚ª¶¬‚·‚é\‘¢‚ğ‘z’è
+// å¼•æ•°1ã€€bsgnã€€ãƒ“ãƒƒãƒˆã‚¹ãƒ©ã‚¤ã‚¹ç”¨ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚°ãƒ­ãƒ¼ãƒãƒ«å‚ç…§ã€€Cache SQLãŒç”Ÿæˆã™ã‚‹æ§‹é€ ã‚’æƒ³å®š
 
-// ˆø”2@cdgn@ŒvZğŒ—pƒrƒbƒgƒ}ƒbƒvƒOƒ[ƒoƒ‹
+// å¼•æ•°2ã€€cdgnã€€è¨ˆç®—æ¡ä»¶ç”¨ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã‚°ãƒ­ãƒ¼ãƒãƒ«
 
 ClassMethod bitslicesum(bsgn As %String, cdgn As %String) As %Integer
 {
 	Set bitno="",sum = 0
-	//bitno‚ÍA2i‚ÌŒ…”‚ğ•\‚·
+	//bitnoã¯ã€2é€²ã®æ¡æ•°ã‚’è¡¨ã™
 	For  {
 		  Set bitno=$Order(@bsgn@(bitno))
 		  Quit:(bitno="-")||(bitno="N")||(bitno="Z")||(bitno="")
-		  // Cache SQL‚ª¶¬‚·‚ébitsliceƒCƒ“ƒfƒbƒNƒX‚É‚ÍA-,N,Z‚ğ•\Œ»‚·‚ébit—ñ‚ğ•Ê‚É‚Â
+		  // Cache SQLãŒç”Ÿæˆã™ã‚‹bitsliceã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã«ã¯ã€-,N,Zã‚’è¡¨ç¾ã™ã‚‹bitåˆ—ã‚’åˆ¥ã«æŒã¤
 		  
-		  Set no = 2 ** (bitno - 1)		//Œ…”‚Í”ò‚Ñ”ò‚Ñ‚É‚È‚è‚¤‚é‚Ì‚ÅA‚±‚Ì—l‚ÉŒvZ‚·‚é
+		  Set no = 2 ** (bitno - 1)		//æ¡æ•°ã¯é£›ã³é£›ã³ã«ãªã‚Šã†ã‚‹ã®ã§ã€ã“ã®æ§˜ã«è¨ˆç®—ã™ã‚‹
 		  Set chunk=""
 		  For {
 			Set chunk=$Order(@bsgn@(bitno,chunk))
@@ -168,7 +168,7 @@ ClassMethod bitslicesum(bsgn As %String, cdgn As %String) As %Integer
 			set select = $bitlogic(@bsgn@(bitno,chunk)&@cdgn@(chunk))
 			set minus = $get(@bsgn@("-",chunk))
 			
-			// ‘S‘Ì‚ğ‰ÁZŒãAƒ}ƒCƒiƒX•ª‚ğ2”{‚µ‚Äˆø‚­
+			// å…¨ä½“ã‚’åŠ ç®—å¾Œã€ãƒã‚¤ãƒŠã‚¹åˆ†ã‚’2å€ã—ã¦å¼•ã
 			
 			Set sum = sum + (no * ($bitcount(select,1) - (2*$bitcount($bitlogic(select&minus),1))))  
 		  }
@@ -180,13 +180,13 @@ ClassMethod bitslicesum(bsgn As %String, cdgn As %String) As %Integer
 ClassMethod bitslicesum1(bsgn As %String) As %Integer
 {
 	Set bitno="",sum = 0
-	//bitno‚ÍA2i‚ÌŒ…”‚ğ•\‚·
+	//bitnoã¯ã€2é€²ã®æ¡æ•°ã‚’è¡¨ã™
 	For  {
 		  Set bitno=$Order(@bsgn@(bitno))
 		  Quit:(bitno="-")||(bitno="N")||(bitno="Z")||(bitno="")
-		  // Cache SQL‚ª¶¬‚·‚ébitsliceƒCƒ“ƒfƒbƒNƒX‚É‚ÍA-,N,Z‚ğ•\Œ»‚·‚ébit—ñ‚ğ•Ê‚É‚Â
+		  // Cache SQLãŒç”Ÿæˆã™ã‚‹bitsliceã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã«ã¯ã€-,N,Zã‚’è¡¨ç¾ã™ã‚‹bitåˆ—ã‚’åˆ¥ã«æŒã¤
 		  
-		  Set no = 2 ** (bitno - 1)		//Œ…”‚Í”ò‚Ñ”ò‚Ñ‚É‚È‚è‚¤‚é‚Ì‚ÅA‚±‚Ì—l‚ÉŒvZ‚·‚é
+		  Set no = 2 ** (bitno - 1)		//æ¡æ•°ã¯é£›ã³é£›ã³ã«ãªã‚Šã†ã‚‹ã®ã§ã€ã“ã®æ§˜ã«è¨ˆç®—ã™ã‚‹
 		  Set chunk=""
 		  For {
 			Set chunk=$Order(@bsgn@(bitno,chunk))
@@ -195,7 +195,7 @@ ClassMethod bitslicesum1(bsgn As %String) As %Integer
 			set select = $get(@bsgn@(bitno,chunk))
 			set minus = $get(@bsgn@("-",chunk))
 			
-			// ‘S‘Ì‚ğ‰ÁZŒãAƒ}ƒCƒiƒX•ª‚ğ2”{‚µ‚Äˆø‚­
+			// å…¨ä½“ã‚’åŠ ç®—å¾Œã€ãƒã‚¤ãƒŠã‚¹åˆ†ã‚’2å€ã—ã¦å¼•ã
 			
 			Set sum = sum + (no * (($bitcount(select,1) - (2*$bitcount($bitlogic(select&minus),1)))))  
 		  }

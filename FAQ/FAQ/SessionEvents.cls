@@ -12,7 +12,7 @@ ClassMethod OnStartSession()
 {
     s x=$system.License.PublicWebAppUser() 
     
-	//FAQƒAƒvƒŠ‚Ö‚ÌƒAƒNƒZƒXƒJƒEƒ“ƒg
+	//FAQã‚¢ãƒ—ãƒªã¸ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚«ã‚¦ãƒ³ãƒˆ
 	set ^AccessCountTest = $Get(^AccessCountTest)+1
 	set today=$zdate($h,8)
 	set ^AccessCountTest(today) = $Get(^AccessCountTest(today))+1

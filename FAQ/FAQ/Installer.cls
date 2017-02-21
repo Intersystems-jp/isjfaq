@@ -4,7 +4,7 @@ Include %occInclude
 Class FAQ.Installer
 {
 
-/// ƒ}ƒjƒtƒFƒXƒg’è‹`.
+/// ãƒãƒ‹ãƒ•ã‚§ã‚¹ãƒˆå®šç¾©.
 XData FAQManifest [ XMLNamespace = INSTALLER ]
 {
 <Manifest>
@@ -57,48 +57,48 @@ XData FAQManifest [ XMLNamespace = INSTALLER ]
 </Manifest>
 }
 
-/// ‚±‚ê‚Í XGL ‚É‚æ‚è¶¬‚³‚ê‚½ƒƒ\ƒbƒhEƒWƒFƒlƒŒ[ƒ^[‚Å‚·B.
+/// ã“ã‚Œã¯ XGL ã«ã‚ˆã‚Šç”Ÿæˆã•ã‚ŒãŸãƒ¡ã‚½ãƒƒãƒ‰ãƒ»ã‚¸ã‚§ãƒãƒ¬ãƒ¼ã‚¿ãƒ¼ã§ã™ã€‚.
 ClassMethod setup(ByRef pVars, pLogLevel As %Integer = 3, pInstaller As %Installer.Installer, pLogger As %Installer.AbstractLogger) As %Status [ CodeMode = objectgenerator, Internal ]
 {
- #; XGL ƒhƒLƒ…ƒƒ“ƒg‚Å‚±‚Ìƒƒ\ƒbƒh‚ÌƒR[ƒh‚ğ¶¬‚·‚é.
+ #; XGL ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã§ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã®ã‚³ãƒ¼ãƒ‰ã‚’ç”Ÿæˆã™ã‚‹.
  Quit ##class(%Installer.Manifest).%Generate(%compiledclass, %code, "FAQManifest")
 }
 
-// envID(ŠÂ‹«ID)FƒNƒ‰ƒEƒh(–{”Ô)ŠÂ‹«1Ajpnfilesrv2AƒNƒ‰ƒEƒh(ƒeƒXƒg)ŠÂ‹«3A‚»‚Ì‘¼4
+// envID(ç’°å¢ƒID)ï¼šã‚¯ãƒ©ã‚¦ãƒ‰(æœ¬ç•ª)ç’°å¢ƒï¼1ã€jpnfilesrvï¼2ã€ã‚¯ãƒ©ã‚¦ãƒ‰(ãƒ†ã‚¹ãƒˆ)ç’°å¢ƒï¼3ã€ãã®ä»–ï¼4
 
-// setuptypeF‰ŠúƒZƒbƒgƒAƒbƒv1AXV2
+// setuptypeï¼šåˆæœŸã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—ï¼1ã€æ›´æ–°ï¼2
 
-// datestrFƒZƒbƒgƒAƒbƒvƒLƒbƒg‚ÌƒfƒBƒŒƒNƒgƒŠ–¼‚Ég‚Á‚½“ú•t(YYYYMMDD)@¦ƒfƒBƒŒƒNƒgƒŠ–¼‚ª¡“ú‚Ì“ú•t‚Ìê‡‚Í‹ó‚ÅOK
+// datestrï¼šã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—ã‚­ãƒƒãƒˆã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåã«ä½¿ã£ãŸæ—¥ä»˜(YYYYMMDD)ã€€â€»ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªåãŒä»Šæ—¥ã®æ—¥ä»˜ã®å ´åˆã¯ç©ºã§OK
 
 ClassMethod runInstaller(datestr As %String) As %Status
 {
-	write "šÀs‚·‚é‘ÎÛ‚ÌenvID‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B",!,"  [ƒNƒ‰ƒEƒh(–{”Ô)ŠÂ‹«1Ajpnfilesrv2AƒNƒ‰ƒEƒh(ƒeƒXƒg)ŠÂ‹«3A‚»‚Ì‘¼4]F",!
+	write "â˜…å®Ÿè¡Œã™ã‚‹å¯¾è±¡ã®envIDã‚’å…¥åŠ›ã—ã¦ãã ã•ã„ã€‚",!,"  [ã‚¯ãƒ©ã‚¦ãƒ‰(æœ¬ç•ª)ç’°å¢ƒï¼1ã€jpnfilesrvï¼2ã€ã‚¯ãƒ©ã‚¦ãƒ‰(ãƒ†ã‚¹ãƒˆ)ç’°å¢ƒï¼3ã€ãã®ä»–ï¼4]ï¼š",!
 	read envID,!
 	
-	write "šsetuptype‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B[setuptypeF‰ŠúƒZƒbƒgƒAƒbƒv1Aƒf[ƒ^‚Æƒ\[ƒX‚ÌXV2Aƒf[ƒ^‚Ì‚İXV3AƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒ\[ƒX‚Ì‚İXV4]F",!
+	write "â˜…setuptypeã‚’å…¥åŠ›ã—ã¦ãã ã•ã„ã€‚[setuptypeï¼šåˆæœŸã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—ï¼1ã€ãƒ‡ãƒ¼ã‚¿ã¨ã‚½ãƒ¼ã‚¹ã®æ›´æ–°ï¼2ã€ãƒ‡ãƒ¼ã‚¿ã®ã¿æ›´æ–°ï¼3ã€ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚½ãƒ¼ã‚¹ã®ã¿æ›´æ–°ï¼4]ï¼š",!
 	read setuptype,!
 	
 	if envID=1 {
-		set envname="ƒNƒ‰ƒEƒh(–{”Ô)ŠÂ‹«"
+		set envname="ã‚¯ãƒ©ã‚¦ãƒ‰(æœ¬ç•ª)ç’°å¢ƒ"
 	}elseif envID=2 {
 		set envname="jpnfilesrv"
 	}elseif envID=3 {
-		set envname="ƒNƒ‰ƒEƒh(ƒeƒXƒg)ŠÂ‹«"
+		set envname="ã‚¯ãƒ©ã‚¦ãƒ‰(ãƒ†ã‚¹ãƒˆ)ç’°å¢ƒ"
 	}else {
-		set envname="‚»‚Ì‘¼ŠÂ‹«"
+		set envname="ãã®ä»–ç’°å¢ƒ"
 	}
 	
 	if setuptype=1 {
-		set setuptypename="‰ŠúƒZƒbƒgƒAƒbƒv"
+		set setuptypename="åˆæœŸã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—"
 	} elseif setuptype=2 {
-		set setuptypename="ƒf[ƒ^‚Æƒ\[ƒX‚ÌXV"
+		set setuptypename="ãƒ‡ãƒ¼ã‚¿ã¨ã‚½ãƒ¼ã‚¹ã®æ›´æ–°"
 	} elseif setuptype=3 {
-		set setuptypename="ƒf[ƒ^‚Ì‚İXV"
+		set setuptypename="ãƒ‡ãƒ¼ã‚¿ã®ã¿æ›´æ–°"
 	} elseif setuptype=4 {
-		set setuptypename="ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒ\[ƒX‚Ì‚İXV"
+		set setuptypename="ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚½ãƒ¼ã‚¹ã®ã¿æ›´æ–°"
 	}
 	
-	write envname_" ‚Ì "_setuptypename_" ‚ğÀs‚µ‚Ü‚·B‚æ‚ë‚µ‚¢‚Å‚·‚©H(Y/N)F"
+	write envname_" ã® "_setuptypename_" ã‚’å®Ÿè¡Œã—ã¾ã™ã€‚ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ(Y/N)ï¼š"
 	read answer,!
 	
 	if $zconvert(answer,"U") = "Y" {
@@ -137,22 +137,22 @@ ClassMethod runInstaller(datestr As %String) As %Status
 		//set vars("ResetTopicSubID") 	  = ^Techinfo("ResetTopicSubID") 
     
     	if (vars("ClassFileName")'="") && (##class(%File).Exists(vars("ClassFileName"))'=1) {
-	    	w vars("ClassFileName"),"‚Í‘¶İ‚µ‚Ü‚¹‚ñBƒtƒ@ƒCƒ‹‚ğŠm”F‚µ‚Ä‚­‚¾‚³‚¢B",!
+	    	w vars("ClassFileName"),"ã¯å­˜åœ¨ã—ã¾ã›ã‚“ã€‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç¢ºèªã—ã¦ãã ã•ã„ã€‚",!
 	    	quit 0
     	}
     	
     	if (vars("GlobalFileName")'="") && (##class(%File).Exists(vars("GlobalFileName"))'= 1) {
-    		w vars("GlobalFileName"),"‚Í‘¶İ‚µ‚Ü‚¹‚ñBƒtƒ@ƒCƒ‹‚ğŠm”F‚µ‚Ä‚­‚¾‚³‚¢B",!
+    		w vars("GlobalFileName"),"ã¯å­˜åœ¨ã—ã¾ã›ã‚“ã€‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç¢ºèªã—ã¦ãã ã•ã„ã€‚",!
 	    	quit 0
     	}
     
 		do ..setup(.vars,3)
 		
 	}else{
-		w !,"Installer‚ÌÀs‚ğ’†~‚µ‚Ü‚µ‚½"
+		w !,"Installerã®å®Ÿè¡Œã‚’ä¸­æ­¢ã—ã¾ã—ãŸ"
 	}
 	
-	w "Installer‚ÌÀs‚ªŠ®—¹‚µ‚Ü‚µ‚½",!
+	w "Installerã®å®Ÿè¡ŒãŒå®Œäº†ã—ã¾ã—ãŸ",!
 }
 
 ClassMethod getVersion() As %String

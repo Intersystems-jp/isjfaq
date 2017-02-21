@@ -1,8 +1,8 @@
-/// î•ñ‹æ•ª
+/// æƒ…å ±åŒºåˆ†
 Class KB.Category Extends (%Persistent, %XML.Adaptor) [ Inheritance = right ]
 {
 
-/// à–¾
+/// èª¬æ˜
 Property Description As %String(TRUNCATE = 1);
 
 Index DescriptionIndex On Description;
@@ -21,11 +21,11 @@ SELECT %ID,Description FROM Category
 ClassMethod Init()
 {
 	Do ##class(KB.Category).%KillExtent()
-	&SQL(insert into KB.Category (Description) values ('‹Zpî•ñ'))
-	&SQL(insert into KB.Category (Description) values ('ƒTƒ“ƒvƒ‹ƒR[ƒh'))
-	&SQL(insert into KB.Category (Description) values ('§ŒÀ–€'))
-	&SQL(insert into KB.Category (Description) values ('ƒAƒ‰[ƒg'))
-	&SQL(insert into KB.Category (Description) values ('‚»‚Ì‘¼'))
+	&SQL(insert into KB.Category (Description) values ('æŠ€è¡“æƒ…å ±'))
+	&SQL(insert into KB.Category (Description) values ('ã‚µãƒ³ãƒ—ãƒ«ã‚³ãƒ¼ãƒ‰'))
+	&SQL(insert into KB.Category (Description) values ('åˆ¶é™äº‹é …'))
+	&SQL(insert into KB.Category (Description) values ('ã‚¢ãƒ©ãƒ¼ãƒˆ'))
+	&SQL(insert into KB.Category (Description) values ('ãã®ä»–'))
 }
 
 Storage Default

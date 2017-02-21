@@ -154,45 +154,45 @@ Method TestRemoveLink()
 
 Method TestFindKatakanaWord()
 {
- set tString = "僇僞僇僫"	
+ set tString = "銈偪銈儕"	
  set tResult = 1
  do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Found a Katakana Word")
- set tString = "僇僞僇僫"	
+ set tString = "銈偪銈儕"	
  set tResult = 0
  do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString),tResult, "The length is short")
- set tString = "abc僇僞僇僫"	
+ set tString = "abc銈偪銈儕"	
  set tResult = 1
  do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Found a Katakana Word")
- set tString = "僇僞僇僫abc"	
+ set tString = "銈偪銈儕abc"	
  set tResult = 1
  do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Found a Katakana Word")
- set tString = "僇僞abc僇僞僇僫"	
+ set tString = "銈偪abc銈偪銈儕"	
  set tResult = 1
  do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Found a Katakana Word")
- set tString = "偐偨偐側"	
+ set tString = "銇嬨仧銇嬨仾"	
  set tResult = 0
  do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Not Found a Katakana Word")
 }
 
 Method TestSpritKatakanaKeyWord()
 {
- set tString = "傾儞僀儞僗僩乕儖"	
- set tResult = "傾儞 僀儞僗僩乕儖 "
+ set tString = "銈€兂銈ゃ兂銈广儓銉笺儷"	
+ set tResult = "銈€兂 銈ゃ兂銈广儓銉笺儷 "
  do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found a Katakana KeyWord")
- set tString = "傾儞僀儞僗僩乕儖"	
- set tResult = "傾儞僀儞僗僩乕儖"
+ set tString = "銈€兂銈ゃ兂銈广儓銉笺儷"	
+ set tResult = "銈€兂銈ゃ兂銈广儓銉笺儷"
  do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,7),tResult, "The length is long")
- set tString = "傾儞僀儞僗僩乕儖儗億乕僩"	
- set tResult = "傾儞 僀儞僗僩乕儖 儗億乕僩 "
+ set tString = "銈€兂銈ゃ兂銈广儓銉笺儷銉儩銉笺儓"	
+ set tResult = "銈€兂 銈ゃ兂銈广儓銉笺儷 銉儩銉笺儓 "
  do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found Katakana KeyWords")
- set tString = "傾儞僀儞僗僩乕儖儗億"	
- set tResult = "傾儞 僀儞僗僩乕儖 儗億"
+ set tString = "銈€兂銈ゃ兂銈广儓銉笺儷銉儩"	
+ set tResult = "銈€兂 銈ゃ兂銈广儓銉笺儷 銉儩"
  do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found a Katakana KeyWord")
- set tString = "abc傾儞僀儞僗僩乕儖儗億"	
- set tResult = "abc傾儞 僀儞僗僩乕儖 儗億"
+ set tString = "abc銈€兂銈ゃ兂銈广儓銉笺儷銉儩"	
+ set tResult = "abc銈€兂 銈ゃ兂銈广儓銉笺儷 銉儩"
  do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found a Katakana KeyWords")
- set tString = "傾儞僀儞僗僩乕儖儗億abc"	
- set tResult = "傾儞 僀儞僗僩乕儖 儗億abc"
+ set tString = "銈€兂銈ゃ兂銈广儓銉笺儷銉儩abc"	
+ set tResult = "銈€兂 銈ゃ兂銈广儓銉笺儷 銉儩abc"
  do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found a Katakana KeyWord")
 }
 
