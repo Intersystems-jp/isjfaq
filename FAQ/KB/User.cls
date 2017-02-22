@@ -1,16 +1,16 @@
-/// ƒ†[ƒU
+/// ãƒ¦ãƒ¼ã‚¶
 Class KB.User Extends %Persistent
 {
 
-/// ƒ†[ƒU–¼
+/// ãƒ¦ãƒ¼ã‚¶å
 Property Name As %String(TRUNCATE = 1);
 
 Index NameIndex On Name;
 
-/// ƒpƒXƒ[ƒh
+/// ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰
 Property Password As %String(TRUNCATE = 1) [ Private ];
 
-/// ƒpƒXƒ[ƒh‚ÌˆÃ†‰»
+/// ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã®æš—å·åŒ–
 Method SetPassword(New As %String, Old As %String) As %Boolean
 {
 	If (..Password '= "")
@@ -21,7 +21,7 @@ Method SetPassword(New As %String, Old As %String) As %Boolean
 	Quit $$$OK
 }
 
-/// ƒpƒXƒ[ƒh‚Ì•œ†‰»
+/// ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã®å¾©å·åŒ–
 Method VerifyPassword(Arg1 As %String) As %Boolean
 {
 	If Arg1 = $System.Encryption.AESCBCDecrypt(..Password,"1234567890") 
@@ -35,19 +35,19 @@ SELECT %ID FROM "User"
  WHERE (Name = :Name)
 }
 
-/// –¼
+/// æ°å
 Property Simei As %String(TRUNCATE = 1);
 
-/// emailƒAƒhƒŒƒX
+/// emailã‚¢ãƒ‰ãƒ¬ã‚¹
 Property Email As %String(TRUNCATE = 1);
 
-/// ‰ïĞ–¼
+/// ä¼šç¤¾å
 Property Company As %String(TRUNCATE = 1);
 
-/// •”–¼
+/// éƒ¨ç½²å
 Property Dept As %String(TRUNCATE = 1);
 
-/// ŠÇ—Òƒtƒ‰ƒO
+/// ç®¡ç†è€…ãƒ•ãƒ©ã‚°
 Property Admin As %Boolean;
 
 Storage Default

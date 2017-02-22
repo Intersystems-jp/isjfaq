@@ -1,14 +1,14 @@
-/// ƒo[ƒWƒ‡ƒ“î•ñ
+/// ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±
 Class KB.Version Extends (%Persistent, %XML.Adaptor) [ Inheritance = right ]
 {
 
-/// •\¦—pƒo[ƒWƒ‡ƒ“”Ô†
+/// è¡¨ç¤ºç”¨ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·
 Property ExternalVersion As %String(MAXLEN = 20, TRUNCATE = 1);
 
-/// “à•”ƒo[ƒWƒ‡ƒ“i‘å¬”äŠr—pj
+/// å†…éƒ¨ãƒãƒ¼ã‚¸ãƒ§ãƒ³ï¼ˆå¤§å°æ¯”è¼ƒç”¨ï¼‰
 Property InternalVersion As %Integer;
 
-/// Œn—ñ‡ID
+/// æ™‚ç³»åˆ—é †ID
 Property OrderId As %Integer;
 
 Index ExternalVersionIndex On ExternalVersion;

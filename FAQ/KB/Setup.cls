@@ -52,8 +52,8 @@ ClassMethod setConfigParams(envID As %Integer) As %Status
 		set cspdir = "/intersystems/cache/csp/faq"
 		set cspurl = "/csp/faq"
 		set ftpdir = "/intersystems/cache/csp/faq/downloads"
-		set setupdir = "/usr/FAQsetup/"
-		set classfilename = "FAQRefOnly.xml"
+		set setupdir = "/usr/FAQsetup"
+		set classfiledir = "FAQ"
 		set globalfilename = "TopicD.xml"
 		
 	//jpnfilesrv
@@ -65,7 +65,7 @@ ClassMethod setConfigParams(envID As %Integer) As %Status
 		set cspurl = "/csp/knowledge"
 		set ftpdir = "D:\InterSystems\Ensemble\CSP\knowledge\downloads"
 		set setupdir = "P:\Public\Tech\FAQ\NewKB\FAQsetup"
-		set classfilename = "FAQAllFunc.xml"
+		set classfiledir = "FAQ"
 		set globalfilename = "TopicD.xml"
 		
 	//クラウド(テスト)環境
@@ -77,7 +77,7 @@ ClassMethod setConfigParams(envID As %Integer) As %Status
 		set cspurl = "/csp/user"
 		set ftpdir = "/intersystems/cache/csp/user/downloads"
 		set setupdir = "/usr/FAQsetup"
-		set classfilename = "FAQRefOnly.xml"
+		set classfiledir = "FAQ"
 		set globalfilename = "TopicD.xml"
 		
 	//その他、ローカルに環境を作りたいときなどに使用(上の3つの内容を変更せずにここを利用)
@@ -89,7 +89,7 @@ ClassMethod setConfigParams(envID As %Integer) As %Status
 		set cspurl = "/csp/isj"
 		set ftpdir = "c:\InterSystems\Ensemble\CSP\isj\downloads"
 		set setupdir = "e:\Work\FAQ"
-		set classfilename = "FAQAllFunc.xml"
+		set classfiledir = "FAQ"
 		set globalfilename = "TopicD.xml"
 	}
 	
@@ -105,9 +105,8 @@ ClassMethod setConfigParams(envID As %Integer) As %Status
 	do ##class(KB.Config).setErrorPage(cspurl_"/FAQ.FAQError.cls")
 	do ##class(KB.Config).setFTPDirectory(ftpdir)
 	do ##class(KB.Config).setSetupDirectory(setupdir)
-	do ##class(KB.Config).setClassFileName(classfilename)
+	do ##class(KB.Config).setClassFileDir(classfiledir)
 	do ##class(KB.Config).setGlobalFileName(globalfilename)
-	do ##class(KB.Config).setKatakanaWordsFileName(setupdir_separator_"KatakanaWords.xml")
 
 	quit $$$OK
 }

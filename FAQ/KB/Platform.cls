@@ -1,8 +1,8 @@
-/// ‰Ò“®ƒvƒ‰ƒbƒgƒtƒH[ƒ€
+/// ç¨¼å‹•ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ 
 Class KB.Platform Extends (%Persistent, %XML.Adaptor) [ Inheritance = right ]
 {
 
-/// ƒvƒ‰ƒbƒgƒtƒH[ƒ€–¼
+/// ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ å
 Property Name As %String(TRUNCATE = 1);
 
 Index NameIndex On Name;

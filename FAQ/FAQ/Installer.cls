@@ -22,11 +22,9 @@ XData FAQManifest [ XMLNamespace = INSTALLER ]
     CookiePath="${CSPUrl}"
     AuthenticationMethods="${AuthenticationMethods}"
      CustomErrorPage="${CustomErrorPage}"/>
- <If Condition='$L("${ClassFileName}")>0'>
-<Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
-    <Arg Value="${ClassFileName}"/>
-    <Arg Value="ck"/>
-</Invoke>
+ <If Condition='$L("${ClassFileDir}")>0'>
+<Import File="${ClassFileDir}" Flags="ck" Recurse="1"> 
+</Import>
 </If>
 <If Condition='$L("${SetupType}")=1'>
 <Invoke Class="KB.Setup" Method="masterSetup" CheckStatus="0" Return="RetVal"> 
@@ -36,23 +34,9 @@ XData FAQManifest [ XMLNamespace = INSTALLER ]
 <Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
     <Arg Value="${GlobalFileName}"/>
 </Invoke>
-</If>
-<If Condition='$L("${KatakanaWordsFileName}")>0'>
-<Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
-    <Arg Value="${KatakanaWordsFileName}"/>
-</Invoke>
-</If>
-<Invoke Class="KB.Text" Method="ExcludeCommonTerms" CheckStatus="0" Return="RetVal"> 
-    <Arg Value="100"/>
-</Invoke>
 <Invoke Class="KB.Topic" Method="%BuildIndices" CheckStatus="0" Return="RetVal"> 
 </Invoke>
-<!--
-<If Condition='$L("${ResetTopicSubID}")>0'>
-<Invoke Class="KB.Topic" Method="ResetTopicSubID" CheckStatus="0" Return="RetVal"> 
-</Invoke>
 </If>
--->
 </Namespace>
 </Manifest>
 }
@@ -114,16 +98,16 @@ ClassMethod runInstaller(datestr As %String) As %Status
 		set setupdir = ^Techinfo("SetupDirectory")_^Techinfo("DirectorySeparator")_datestr_^Techinfo("DirectorySeparator")
 		
 		if setuptype=1 {
-			set vars("ClassFileName") = setupdir_^Techinfo("ClassFileName")
+			set vars("ClassFileDir") = setupdir_^Techinfo("ClassFileDir")
 			set vars("GlobalFileName") = setupdir_^Techinfo("GlobalFileName")
 		}elseif setuptype=2 {
-			set vars("ClassFileName") = setupdir_^Techinfo("ClassFileName")
+			set vars("ClassFileDir") = setupdir_^Techinfo("ClassFileDir")
 			set vars("GlobalFileName") = setupdir_^Techinfo("GlobalFileName")
 		}elseif setuptype=3 {
-			set vars("ClassFileName") = ""
+			set vars("ClassFileDir") = ""
 			set vars("GlobalFileName") = setupdir_^Techinfo("GlobalFileName")
 		}elseif setuptype=4 {
-			set vars("ClassFileName") = setupdir_^Techinfo("ClassFileName")
+			set vars("ClassFileDir") = setupdir_^Techinfo("ClassFileDir")
 			set vars("GlobalFileName") = ""
 		}			
 				
@@ -133,11 +117,9 @@ ClassMethod runInstaller(datestr As %String) As %Status
 		set vars("CSPDirectory") 		  = ^Techinfo("CSPDirectory") 
 		set vars("CustomErrorPage") 	  = ^Techinfo("ErrorPage")
 		set vars("AuthenticationMethods") = ^Techinfo("AuthenticationMethods")
-		set vars("KatakanaWordsFileName") = ^Techinfo("KatakanaWordsFileName")
-		//set vars("ResetTopicSubID") 	  = ^Techinfo("ResetTopicSubID") 
     
-    	if (vars("ClassFileName")'="") && (##class(%File).Exists(vars("ClassFileName"))'=1) {
-	    	w vars("ClassFileName"),"は存在しません。ファイルを確認してください。",!
+    	if (vars("ClassFileDir")'="") && (##class(%File).Exists(vars("ClassFileDir"))'=1) {
+	    	w vars("ClassFileDir"),"は存在しません。ファイルを確認してください。",!
 	    	quit 0
     	}
     	
@@ -157,7 +139,7 @@ ClassMethod runInstaller(datestr As %String) As %Status
 
 ClassMethod getVersion() As %String
 {
-	quit "1.0.004"
+	quit "1.0.005"
 }
 
 }

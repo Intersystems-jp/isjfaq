@@ -20,12 +20,12 @@ ClassMethod OnPage() As %Status [ ServerOnly = 1 ]
    set Email = tUserOBJ.Email
    set Dep = tUserOBJ.Dep
    set Confirm = tUserOBJ.Confirm
-   If $Get(Username)="" set Error="ƒ†[ƒU–¼‚ğ“ü—Í‚µ‚Ä‰º‚³‚¢" THROW ##class(%Exception.General).%New("ƒ†[ƒU[“o˜^ƒGƒ‰[","996",,Error)  
-   If $classmethod("Security.Users","Exists",Username,.sts) Set Error="ƒ†[ƒU–¼‚ÍAŠù‚É“o˜^‚³‚ê‚Ä‚¢‚Ü‚·B‘¼‚Ìƒ†[ƒU–¼‚ğ‚¨g‚¢‚­‚¾‚³‚¢" THROW ##class(%Exception.General).%New("ƒ†[ƒU[“o˜^ƒGƒ‰[","991",,Error)
-   If $Get(Password)'=$Get(Confirm) Set Error="ƒpƒXƒ[ƒhŠm”F‚ª‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½B" THROW ##class(%Exception.General).%New("ƒ†[ƒU[“o˜^ƒGƒ‰[","992",,Error)
-   If $Get(Name)="" Set Error="‚¨–¼‘O‚Ì“ü—Í‚ğ‚¨Šè‚¢‚µ‚Ü‚·B" THROW ##class(%Exception.General).%New("ƒ†[ƒU[“o˜^ƒGƒ‰[","993",,Error)
-   If $Get(Company)="" Set Error="‰ïĞ–¼i‚ ‚é‚¢‚ÍŠ‘®‘gD–¼j‚Ì“ü—Í‚ğ‚¨Šè‚¢‚µ‚Ü‚·B" THROW ##class(%Exception.General).%New("ƒ†[ƒU[“o˜^ƒGƒ‰[","994",,Error)
-   If $Get(Email)="" Set Error="E-mailƒAƒhƒŒƒX‚Ì“ü—Í‚ğ‚¨Šè‚¢‚µ‚Ü‚·B" THROW ##class(%Exception.General).%New("ƒ†[ƒU[“o˜^ƒGƒ‰[","995",,Error)
+   If $Get(Username)="" set Error="ãƒ¦ãƒ¼ã‚¶åã‚’å…¥åŠ›ã—ã¦ä¸‹ã•ã„" THROW ##class(%Exception.General).%New("ãƒ¦ãƒ¼ã‚¶ãƒ¼ç™»éŒ²ã‚¨ãƒ©ãƒ¼","996",,Error)  
+   If $classmethod("Security.Users","Exists",Username,.sts) Set Error="ãƒ¦ãƒ¼ã‚¶åã¯ã€æ—¢ã«ç™»éŒ²ã•ã‚Œã¦ã„ã¾ã™ã€‚ä»–ã®ãƒ¦ãƒ¼ã‚¶åã‚’ãŠä½¿ã„ãã ã•ã„" THROW ##class(%Exception.General).%New("ãƒ¦ãƒ¼ã‚¶ãƒ¼ç™»éŒ²ã‚¨ãƒ©ãƒ¼","991",,Error)
+   If $Get(Password)'=$Get(Confirm) Set Error="ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ç¢ºèªãŒã§ãã¾ã›ã‚“ã§ã—ãŸã€‚" THROW ##class(%Exception.General).%New("ãƒ¦ãƒ¼ã‚¶ãƒ¼ç™»éŒ²ã‚¨ãƒ©ãƒ¼","992",,Error)
+   If $Get(Name)="" Set Error="ãŠåå‰ã®å…¥åŠ›ã‚’ãŠé¡˜ã„ã—ã¾ã™ã€‚" THROW ##class(%Exception.General).%New("ãƒ¦ãƒ¼ã‚¶ãƒ¼ç™»éŒ²ã‚¨ãƒ©ãƒ¼","993",,Error)
+   If $Get(Company)="" Set Error="ä¼šç¤¾åï¼ˆã‚ã‚‹ã„ã¯æ‰€å±çµ„ç¹”åï¼‰ã®å…¥åŠ›ã‚’ãŠé¡˜ã„ã—ã¾ã™ã€‚" THROW ##class(%Exception.General).%New("ãƒ¦ãƒ¼ã‚¶ãƒ¼ç™»éŒ²ã‚¨ãƒ©ãƒ¼","994",,Error)
+   If $Get(Email)="" Set Error="E-mailã‚¢ãƒ‰ãƒ¬ã‚¹ã®å…¥åŠ›ã‚’ãŠé¡˜ã„ã—ã¾ã™ã€‚" THROW ##class(%Exception.General).%New("ãƒ¦ãƒ¼ã‚¶ãƒ¼ç™»éŒ²ã‚¨ãƒ©ãƒ¼","995",,Error)
    Set sts = $classmethod("Security.Users","Create",Username,,Password,Name,,,,,1,$Listbuild(Email,Company,Dep))
  }
  catch ErrorH {
@@ -36,11 +36,11 @@ ClassMethod OnPage() As %Status [ ServerOnly = 1 ]
  If $$$ISERR(tError) Write tErrorText,! Quit $$$OK
  If $$$ISERR(sts) Write $system.Status.DisplayError(sts) Quit $$$OK
  
- //ˆÈ‰º‚ÌƒR[ƒh‚ğ“®ì‚³‚¹‚é‚½‚ß‚É‚ÍSMTPŠÖ˜A‚Ìİ’è‚ª•K—v
- // smtpƒT[ƒo[‚ÌƒAƒhƒŒƒX
- // smtpƒT[ƒo[‚Ìƒ|[ƒg”Ô†iƒfƒtƒHƒ‹ƒg25‚Å‚Í‚È‚¢ê‡j
- // ƒ[ƒ‹‚Ì‘—MƒAƒhƒŒƒX
- // smtp‚Ì”FØƒ†[ƒU[‚ÆƒpƒXƒ[ƒh
+ //ä»¥ä¸‹ã®ã‚³ãƒ¼ãƒ‰ã‚’å‹•ä½œã•ã›ã‚‹ãŸã‚ã«ã¯SMTPé–¢é€£ã®è¨­å®šãŒå¿…è¦
+ // smtpã‚µãƒ¼ãƒãƒ¼ã®ã‚¢ãƒ‰ãƒ¬ã‚¹
+ // smtpã‚µãƒ¼ãƒãƒ¼ã®ãƒãƒ¼ãƒˆç•ªå·ï¼ˆãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ25ã§ã¯ãªã„å ´åˆï¼‰
+ // ãƒ¡ãƒ¼ãƒ«ã®é€ä¿¡ã‚¢ãƒ‰ãƒ¬ã‚¹
+ // smtpã®èªè¨¼ãƒ¦ãƒ¼ã‚¶ãƒ¼ã¨ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰
  
  Set s=##class(%Net.SMTP).%New()
  Set s.smtpserver=$Get(^Techinfo("SMTP Server"))
@@ -51,34 +51,34 @@ ClassMethod OnPage() As %Status [ ServerOnly = 1 ]
  Set m=##class(%Net.MailMessage).%New()
  Set m.From=$Get(^Techinfo("Mail Sender"))
  Do m.To.Insert(Email)
- Set m.Subject="Cach&eacute;ƒ\ƒŠƒ…[ƒVƒ‡ƒ“ƒy[ƒW‚Ö‚Ìƒ†[ƒU‚²“o˜^"
+ Set m.Subject="Cach&eacute;ã‚½ãƒªãƒ¥ãƒ¼ã‚·ãƒ§ãƒ³ãƒšãƒ¼ã‚¸ã¸ã®ãƒ¦ãƒ¼ã‚¶ã”ç™»éŒ²"
  Set m.Charset = "ISO-2022-JP"
  Set crlf=$C(13,10)
- Do m.TextData.Write("‚±‚Ì‚½‚Ñ‚ÍACach&eacute;ƒ\ƒŠƒ…[ƒVƒ‡ƒ“ƒy[ƒW‚Ö‚Ìƒ†[ƒU‚²“o˜^")
- Do m.TextData.Write("½‚É‚ ‚è‚ª‚Æ‚¤‚²‚´‚¢‚Ü‚·B")
+ Do m.TextData.Write("ã“ã®ãŸã³ã¯ã€Cach&eacute;ã‚½ãƒªãƒ¥ãƒ¼ã‚·ãƒ§ãƒ³ãƒšãƒ¼ã‚¸ã¸ã®ãƒ¦ãƒ¼ã‚¶ã”ç™»éŒ²")
+ Do m.TextData.Write("èª ã«ã‚ã‚ŠãŒã¨ã†ã”ã–ã„ã¾ã™ã€‚")
  Do m.TextData.Write(crlf)
  Do m.TextData.Write(crlf)
- Do m.TextData.Write("‚¨‹q—l‚Ìƒ†[ƒU–¼AƒpƒXƒ[ƒh‚ÍAˆÈ‰º‚Ì—l‚É‚È‚Á‚Ä‚¢‚Ü‚·B")
+ Do m.TextData.Write("ãŠå®¢æ§˜ã®ãƒ¦ãƒ¼ã‚¶åã€ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã¯ã€ä»¥ä¸‹ã®æ§˜ã«ãªã£ã¦ã„ã¾ã™ã€‚")
  Do m.TextData.Write(crlf)
  Do m.TextData.Write(crlf)
- Do m.TextData.Write("ƒ†[ƒU–¼: "_Username)
+ Do m.TextData.Write("ãƒ¦ãƒ¼ã‚¶å: "_Username)
  Do m.TextData.Write(crlf)
- Do m.TextData.Write("ƒpƒXƒ[ƒh: "_Password)
- Do m.TextData.Write(crlf)
- Do m.TextData.Write(crlf)
- Do m.TextData.Write("¡Œã‚Æ‚àCach&eacute;‚ğ‚²ˆ¤ŒÚ‚¢‚½‚¾‚«‚Ü‚·‚æ‚¤A")
- Do m.TextData.Write(crlf)
- Do m.TextData.Write("‚æ‚ë‚µ‚­‚¨Šè‚¢\‚µã‚°‚Ü‚·B")
+ Do m.TextData.Write("ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰: "_Password)
  Do m.TextData.Write(crlf)
  Do m.TextData.Write(crlf)
- Do m.TextData.Write("ƒCƒ“ƒ^[ƒVƒXƒeƒ€ƒYƒWƒƒƒpƒ“Š”®‰ïĞ")
+ Do m.TextData.Write("ä»Šå¾Œã¨ã‚‚Cach&eacute;ã‚’ã”æ„›é¡§ã„ãŸã ãã¾ã™ã‚ˆã†ã€")
+ Do m.TextData.Write(crlf)
+ Do m.TextData.Write("ã‚ˆã‚ã—ããŠé¡˜ã„ç”³ã—ä¸Šã’ã¾ã™ã€‚")
  Do m.TextData.Write(crlf)
  Do m.TextData.Write(crlf)
- Do m.TextData.Write("¦–{ƒ[ƒ‹‚Ìˆê•”A‚Ü‚½‚Í‘S•”‚Ì–³’f“]Ú‚ğ‹Ö‚¶‚Ü‚·B")
+ Do m.TextData.Write("ã‚¤ãƒ³ã‚¿ãƒ¼ã‚·ã‚¹ãƒ†ãƒ ã‚ºã‚¸ãƒ£ãƒ‘ãƒ³æ ªå¼ä¼šç¤¾")
+ Do m.TextData.Write(crlf)
+ Do m.TextData.Write(crlf)
+ Do m.TextData.Write("â€»æœ¬ãƒ¡ãƒ¼ãƒ«ã®ä¸€éƒ¨ã€ã¾ãŸã¯å…¨éƒ¨ã®ç„¡æ–­è»¢è¼‰ã‚’ç¦ã˜ã¾ã™ã€‚")
  Do m.TextData.Write(crlf)
  set status=s.Send(m)
  If $$$ISERR(status) Write $System.Status.GetErrorText(status) Quit $$$OK
- write "“o˜^‚µ‚Ü‚µ‚½",! quit $$$OK
+ write "ç™»éŒ²ã—ã¾ã—ãŸ",! quit $$$OK
 }
 
 /// Event handler for <b>PreHTTP</b> event: this is invoked before

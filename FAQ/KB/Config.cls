@@ -12,9 +12,9 @@ ClassMethod getAuthenticationMethods() As %String
 	quit $get(^Techinfo("AuthenticationMethods"))
 }
 
-ClassMethod getClassFileName() As %String
+ClassMethod getClassFileDir() As %String
 {
-	quit $get(^Techinfo("ClassFileName"))
+	quit $get(^Techinfo("ClassFileDir"))
 }
 
 ClassMethod getCSPDirectory() As %String
@@ -45,11 +45,6 @@ ClassMethod getFTPDirectory() As %String
 ClassMethod getGlobalFileName() As %String
 {
 	quit $get(^Techinfo("GlobalFileName"))
-}
-
-ClassMethod getKatakanaWordsFileName() As %String
-{
-	quit $get(^Techinfo("KatakanaWordsFileName"))
 }
 
 ClassMethod getMailSender() As %String
@@ -92,9 +87,9 @@ ClassMethod setAuthenticationMethods(auth As %String) As %String
 	set ^Techinfo("AuthenticationMethods") = auth
 }
 
-ClassMethod setClassFileName(cfile As %String) As %String
+ClassMethod setClassFileDir(cfile As %String) As %String
 {
-	set ^Techinfo("ClassFileName") = cfile
+	set ^Techinfo("ClassFileDir") = cfile
 }
 
 ClassMethod setCSPDirectory(cspdir As %String) As %String

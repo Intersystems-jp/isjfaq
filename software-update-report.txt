@@ -700,3 +700,30 @@ select ID,Title,Description from KB.Topic where %ID %FIND search_index(
 
 FAQTopicQueryTemplate.cls
 FAQTopicSearchBodyTemplate
+
+------------------------------------------------------------------------------------
+修正ID		HS037
+
+日付			2017/02/21
+
+内容
+
+　ソースの管理をAtelierに変更するに伴い、UDL形式のクラス単位でのソースロード方式に変更
+　iFindに変更したため、インストラー上でmecab関連のセットアップが不要になる
+
+以下のインストーラー処理を削除
+
+<If Condition='$L("${KatakanaWordsFileName}")>0'>
+<Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
+    <Arg Value="${KatakanaWordsFileName}"/>
+</Invoke>
+</If>
+<Invoke Class="KB.Text" Method="ExcludeCommonTerms" CheckStatus="0" Return="RetVal"> 
+    <Arg Value="100"/>
+</Invoke>
+
+修正モジュール
+
+FAQ.Installer.cls
+KB.Setup.cls
+KB.Config.cls
