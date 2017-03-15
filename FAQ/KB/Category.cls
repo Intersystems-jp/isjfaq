@@ -1,4 +1,3 @@
-/// 情報区分
 Class KB.Category Extends (%Persistent, %XML.Adaptor) [ Inheritance = right ]
 {
 

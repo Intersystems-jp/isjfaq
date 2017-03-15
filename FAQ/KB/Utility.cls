@@ -1,6 +1,3 @@
-Include %occInclude
-
-/// 
 Class KB.Utility
 {
 

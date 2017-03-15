@@ -1,4 +1,3 @@
-/// 機能区分
 Class KB.Facility Extends (%Persistent, %XML.Adaptor) [ Inheritance = right ]
 {
 

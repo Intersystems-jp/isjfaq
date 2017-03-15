@@ -1,16 +1,16 @@
 Class FAQ.FAQTopicSearchBodyEnsemble Extends FAQ.FAQTopicSearchBodyTemplate
 {
 
-/// ‚±‚Ìƒy[ƒW‚ª‘®‚·‚éƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÌƒNƒ‰ƒX–¼‚Å‚·B
+/// ã“ã®ãƒšãƒ¼ã‚¸ãŒå±žã™ã‚‹ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¯ãƒ©ã‚¹åã§ã™ã€‚
 Parameter APPLICATION = "FAQ.FAQApp";
 
-/// ‚±‚Ìƒy[ƒW‚Ì•\Ž¦–¼‚Å‚·B
+/// ã“ã®ãƒšãƒ¼ã‚¸ã®è¡¨ç¤ºåã§ã™ã€‚
 Parameter PAGENAME = "InterSystems FAQ";
 
-/// ƒ[ƒJƒ‰ƒCƒY‚ÅŽg—p‚³‚ê‚éƒhƒƒCƒ“‚Å‚·B
+/// ãƒ­ãƒ¼ã‚«ãƒ©ã‚¤ã‚ºã§ä½¿ç”¨ã•ã‚Œã‚‹ãƒ‰ãƒ¡ã‚¤ãƒ³ã§ã™ã€‚
 Parameter DOMAIN;
 
-/// ‚±‚Ì Style ƒuƒƒbƒN‚É‚Íƒy[ƒWŒÅ—L‚ÌCSSƒXƒ^ƒCƒ‹’è‹`‚ð‹Lq‚µ‚Ü‚·B
+/// ã“ã® Style ãƒ–ãƒ­ãƒƒã‚¯ã«ã¯ãƒšãƒ¼ã‚¸å›ºæœ‰ã®CSSã‚¹ã‚¿ã‚¤ãƒ«å®šç¾©ã‚’è¨˜è¿°ã—ã¾ã™ã€‚
 XData Style
 {
 <style type="text/css">

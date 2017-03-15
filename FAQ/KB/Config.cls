@@ -1,4 +1,3 @@
-/// 構成情報
 Class KB.Config
 {
 

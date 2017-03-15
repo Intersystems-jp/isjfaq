@@ -1,6 +1,3 @@
-Include %occInclude
-
-/// 
 Class KB.Setup
 {
 
@@ -82,12 +79,12 @@ ClassMethod setConfigParams(envID As %Integer) As %Status
 		
 	//その他、ローカルに環境を作りたいときなどに使用(上の3つの内容を変更せずにここを利用)
 	} else {
-		set ns = "ISJ"
+		set ns = "USER"
 		set auth = "32"		//パスワード認証
 		set separator = "\"
-		set cspdir = "c:\InterSystems\Ensemble\CSP\isj"
-		set cspurl = "/csp/isj"
-		set ftpdir = "c:\InterSystems\Ensemble\CSP\isj\downloads"
+		set cspdir = "c:\InterSystems\Ensemble2\CSP\user"
+		set cspurl = "/csp/user"
+		set ftpdir = "c:\InterSystems\Ensemble\CSP\user\downloads"
 		set setupdir = "e:\Work\FAQ"
 		set classfiledir = "FAQ"
 		set globalfilename = "TopicD.xml"

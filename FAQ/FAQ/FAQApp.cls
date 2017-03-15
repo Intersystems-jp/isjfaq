@@ -1,14 +1,13 @@
-/// FAQ.FAQApp
 Class FAQ.FAQApp Extends %ZEN.application
 {
 
-/// ����͂��̃A�v���P�[�V�����̖��O�ł��B
+/// これはこのアプリケーションの名前です。
 Parameter APPLICATIONNAME = "FAQApplication";
 
-/// ����͂��̃A�v���P�[�V�����̃��C���J�n�y�[�W��URL�ł��B
+/// これはこのアプリケーションのメイン開始ページのURLです。
 Parameter HOMEPAGE = "FAQ.FAQTopicSearch.cls";
 
-/// ���� Style �u���b�N�ɂ̓A�v���P�[�V�����S�̂�CSS�X�^�C����`���܂܂�܂��B
+/// この Style ブロックにはアプリケーション全体のCSSスタイル定義が含まれます。
 XData Style
 {
 <style type="text/css">

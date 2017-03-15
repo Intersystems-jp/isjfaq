@@ -1,4 +1,3 @@
-/// 稼動プラットフォーム
 Class KB.Platform Extends (%Persistent, %XML.Adaptor) [ Inheritance = right ]
 {
 

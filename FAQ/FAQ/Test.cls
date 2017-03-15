@@ -1,7 +1,7 @@
 Class FAQ.Test Extends %Base
 {
 
-/// UnitTest—pƒNƒ‰ƒX
+/// UnitTestç”¨ã‚¯ãƒ©ã‚¹
 ClassMethod ExceptionError() As %Status
 {
 	Set tSC = $$$OK

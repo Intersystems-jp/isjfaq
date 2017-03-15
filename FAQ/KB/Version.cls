@@ -1,4 +1,3 @@
-/// バージョン情報
 Class KB.Version Extends (%Persistent, %XML.Adaptor) [ Inheritance = right ]
 {
 

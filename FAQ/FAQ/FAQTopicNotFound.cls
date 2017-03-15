@@ -1,18 +1,18 @@
 Class FAQ.FAQTopicNotFound Extends %ZEN.Component.page
 {
 
-/// ���̃y�[�W��������A�v���P�[�V�����̃N���X���ł��B
+/// このページが属するアプリケーションのクラス名です。
 Parameter APPLICATION = "FAQ.FAQApp";
 
-/// ���̃y�[�W�̕\�����ł��B
+/// このページの表示名です。
 Parameter PAGENAME = "InterSystems FAQ Not Found";
 
-/// ���[�J���C�Y�Ŏg�p�����h���C���ł��B
+/// ローカライズで使用されるドメインです。
 Parameter DOMAIN;
 
 Parameter PAGETITLE = "InterSystems FAQ Not Found";
 
-/// ���� Style �u���b�N�ɂ̓y�[�W�ŗL��CSS�X�^�C����`���L�q���܂��B
+/// この Style ブロックにはページ固有のCSSスタイル定義を記述します。
 XData Style
 {
 <style type="text/css">
@@ -42,13 +42,13 @@ XData Style
 </style>
 }
 
-/// ����XML�u���b�N�͂��̃y�[�W�̃R���e���c���`���܂��B
+/// このXMLブロックはこのページのコンテンツを定義します。
 XData Contents [ XMLNamespace = "http://www.intersystems.com/zen" ]
 {
 <page xmlns="http://www.intersystems.com/zen" title="">
 <hgroup id="titlehgroup" width="100%">
 <vgroup width="50%" align="left" height="100%">
-<html valign="bottom"><span id="title1" style="padding:0px 0px 0px 30px;">FAQ </span><span id="title2">(�悭���邲����)</span></html>
+<html valign="bottom"><span id="title1" style="padding:0px 0px 0px 30px;">FAQ </span><span id="title2">(よくあるご質問)</span></html>
 </vgroup>
 <vgroup width="48%" align="center" height="100%">
 <html align="right" ><a href="http://www.intersystems.co.jp" ><img src="images/logo/CompanyLogo.png" width="200" height="50" border="0"/></a></html>
@@ -57,11 +57,11 @@ XData Contents [ XMLNamespace = "http://www.intersystems.com/zen" ]
 </hgroup>
 <spacer height="30" />
 <hgroup align="center">
-<label id="msglabel" value="���w�肳�ꂽ�ԍ��̃g�s�b�N�͑��݂��܂���B��"/>
+<label id="msglabel" value="＊指定された番号のトピックは存在しません。＊"/>
 </hgroup>
 <spacer height="30"/>
 <hgroup align="center">
-<link id="totoppage" href="FAQ.FAQTopicSearch.cls" caption="InterSystems FAQ�g�s�b�N���� Top��" style=""/> 
+<link id="totoppage" href="FAQ.FAQTopicSearch.cls" caption="InterSystems FAQトピック検索 Topへ" style=""/> 
 </hgroup>
 </page>
 }

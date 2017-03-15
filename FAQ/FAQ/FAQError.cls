@@ -1,16 +1,16 @@
 Class FAQ.FAQError Extends (%ZEN.Component.page, %CSP.Error)
 {
 
-/// ‚±‚Ìƒy[ƒW‚ª‘®‚·‚éƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÌƒNƒ‰ƒX–¼‚Å‚·B
+/// ã“ã®ãƒšãƒ¼ã‚¸ãŒå±žã™ã‚‹ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¯ãƒ©ã‚¹åã§ã™ã€‚
 Parameter APPLICATION = "FAQ.FAQApp";
 
-/// ‚±‚Ìƒy[ƒW‚Ì•\Ž¦–¼‚Å‚·B
+/// ã“ã®ãƒšãƒ¼ã‚¸ã®è¡¨ç¤ºåã§ã™ã€‚
 Parameter PAGENAME = "FAQErrorPage";
 
-/// ƒ[ƒJƒ‰ƒCƒY‚ÅŽg—p‚³‚ê‚éƒhƒƒCƒ“‚Å‚·B
+/// ãƒ­ãƒ¼ã‚«ãƒ©ã‚¤ã‚ºã§ä½¿ç”¨ã•ã‚Œã‚‹ãƒ‰ãƒ¡ã‚¤ãƒ³ã§ã™ã€‚
 Parameter DOMAIN;
 
-/// ‚±‚Ì Style ƒuƒƒbƒN‚É‚Íƒy[ƒWŒÅ—L‚ÌCSSƒXƒ^ƒCƒ‹’è‹`‚ð‹Lq‚µ‚Ü‚·B
+/// ã“ã® Style ãƒ–ãƒ­ãƒƒã‚¯ã«ã¯ãƒšãƒ¼ã‚¸å›ºæœ‰ã®CSSã‚¹ã‚¿ã‚¤ãƒ«å®šç¾©ã‚’è¨˜è¿°ã—ã¾ã™ã€‚
 XData Style
 {
 <style type="text/css">
@@ -40,13 +40,13 @@ XData Style
 </style>
 }
 
-/// ‚±‚ÌXMLƒuƒƒbƒN‚Í‚±‚Ìƒy[ƒW‚ÌƒRƒ“ƒeƒ“ƒc‚ð’è‹`‚µ‚Ü‚·B
+/// ã“ã®XMLãƒ–ãƒ­ãƒƒã‚¯ã¯ã“ã®ãƒšãƒ¼ã‚¸ã®ã‚³ãƒ³ãƒ†ãƒ³ãƒ„ã‚’å®šç¾©ã—ã¾ã™ã€‚
 XData Contents [ XMLNamespace = "http://www.intersystems.com/zen" ]
 {
 <page xmlns="http://www.intersystems.com/zen" title="">
 <hgroup id="titlehgroup" width="100%">
 <vgroup width="50%" align="left" height="100%">
-<html valign="bottom"><span id="title1" style="padding:0px 0px 0px 30px;">FAQ </span><span id="title2">(‚æ‚­‚ ‚é‚²Ž¿–â)</span></html>
+<html valign="bottom"><span id="title1" style="padding:0px 0px 0px 30px;">FAQ </span><span id="title2">(ã‚ˆãã‚ã‚‹ã”è³ªå•)</span></html>
 </vgroup>
 <vgroup width="48%" align="center" height="100%">
 <html align="right" ><a href="http://www.intersystems.co.jp" ><img src="images/logo/CompanyLogo.png" width="200" height="50" border="0"/></a></html>
@@ -55,11 +55,11 @@ XData Contents [ XMLNamespace = "http://www.intersystems.com/zen" ]
 </hgroup>
 <spacer height="30" />
 <hgroup align="center">
-<label id="msglabel" value="–ƒy[ƒWƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½B‹°‚ê“ü‚è‚Ü‚·‚ªATop‰æ–Ê‚æ‚èÄ“xŒŸõ‚ðŽÀs‚µ‚Ä‰º‚³‚¢B–"/>
+<label id="msglabel" value="ï¼Šãƒšãƒ¼ã‚¸ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸã€‚æã‚Œå…¥ã‚Šã¾ã™ãŒã€Topç”»é¢ã‚ˆã‚Šå†åº¦æ¤œç´¢ã‚’å®Ÿè¡Œã—ã¦ä¸‹ã•ã„ã€‚ï¼Š"/>
 </hgroup>
 <spacer height="30"/>
 <hgroup align="center">
-<link id="totoppage" href="FAQ.FAQTopicSearch.cls" caption="InterSystems FAQƒgƒsƒbƒNŒŸõ Top‚Ö" style=""/> 
+<link id="totoppage" href="FAQ.FAQTopicSearch.cls" caption="InterSystems FAQãƒˆãƒ”ãƒƒã‚¯æ¤œç´¢ Topã¸" style=""/> 
 </hgroup>
 </page>
 }

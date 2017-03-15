@@ -1,4 +1,3 @@
-/// Created using the page template: タイトルページ
 Class FAQ.FAQTopicSearchTest Extends %ZEN.Component.page
 {
 

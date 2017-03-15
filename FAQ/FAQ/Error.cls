@@ -1,7 +1,7 @@
 Class FAQ.Error Extends (%Persistent, %XML.Adaptor)
 {
 
-/// アプリケーションエラーを記録するクラス
+/// 繧｢繝励Μ繧ｱ繝ｼ繧ｷ繝ｧ繝ｳ繧ｨ繝ｩ繝ｼ繧定ｨ倬鹸縺吶ｋ繧ｯ繝ｩ繧ｹ
 Property EventDateTime As %TimeStamp;
 
 Property ErrorDescription As %String(MAXLEN = 1000);

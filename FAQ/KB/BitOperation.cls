@@ -1,4 +1,4 @@
-Include (bitutil, %occInclude)
+Include (bitutil)
 
 Class KB.BitOperation
 {

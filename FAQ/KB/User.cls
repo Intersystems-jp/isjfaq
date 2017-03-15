@@ -1,4 +1,3 @@
-/// ユーザ
 Class KB.User Extends %Persistent
 {
 

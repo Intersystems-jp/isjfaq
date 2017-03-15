@@ -1,11 +1,10 @@
-/// Created using the page template: Default
 Class FAQ.FAQTopicQuery Extends %ZEN.Mojo.basePage
 {
 
 Parameter ALLOWMOBILE = 1;
 
 /// Class name of application this page belongs to.
-Parameter APPLICATION = "ZMdemo.LoadAndStore.Application";
+Parameter APPLICATION = "";
 
 /// Displayed name of this page.
 Parameter PAGENAME = "HomePage";
