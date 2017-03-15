@@ -20,7 +20,7 @@ XData FAQManifest [ XMLNamespace = INSTALLER ]
     AuthenticationMethods="${AuthenticationMethods}"
      CustomErrorPage="${CustomErrorPage}"/>
  <If Condition='$L("${ClassFileDir}")>0'>
-<Import File="${ClassFileDir}" Flags="cuk" Recurse="1" IgnoreErrors="1"> 
+<Import File="${ClassFileDir}" Flags="ckr" Recurse="1" IgnoreErrors="1"> 
 </Import>
 </If>
 <If Condition='$L("${SetupType}")=1'>
