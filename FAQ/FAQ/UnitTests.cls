@@ -152,48 +152,4 @@ Method TestRemoveLink()
  do $$$AssertStatusNotOK(tSC, "Format Error")
 }
 
-Method TestFindKatakanaWord()
-{
- set tString = "カタカナ"	
- set tResult = 1
- do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Found a Katakana Word")
- set tString = "カタカナ"	
- set tResult = 0
- do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString),tResult, "The length is short")
- set tString = "abcカタカナ"	
- set tResult = 1
- do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Found a Katakana Word")
- set tString = "カタカナabc"	
- set tResult = 1
- do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Found a Katakana Word")
- set tString = "カタabcカタカナ"	
- set tResult = 1
- do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Found a Katakana Word")
- set tString = "かたかな"	
- set tResult = 0
- do $$$AssertEquals(##class(Text.MecabJapanese2).FindKatakanaWord(tString,3),tResult, "Not Found a Katakana Word")
-}
-
-Method TestSpritKatakanaKeyWord()
-{
- set tString = "アンインストール"	
- set tResult = "アン インストール "
- do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found a Katakana KeyWord")
- set tString = "アンインストール"	
- set tResult = "アンインストール"
- do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,7),tResult, "The length is long")
- set tString = "アンインストールレポート"	
- set tResult = "アン インストール レポート "
- do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found Katakana KeyWords")
- set tString = "アンインストールレポ"	
- set tResult = "アン インストール レポ"
- do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found a Katakana KeyWord")
- set tString = "abcアンインストールレポ"	
- set tResult = "abcアン インストール レポ"
- do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found a Katakana KeyWords")
- set tString = "アンインストールレポabc"	
- set tResult = "アン インストール レポabc"
- do $$$AssertEquals(##class(Text.MecabJapanese2).SpritKatakanaKeyWord(tString,20),tResult, "Found a Katakana KeyWord")
-}
-
 }

@@ -6,6 +6,11 @@ XData FAQManifest [ XMLNamespace = INSTALLER ]
 {
 <Manifest>
 
+<Namespace Name="%SYS" Create="no">
+<Invoke Class="Config.NLS.Locales" Method="Install" CheckStatus="0" Return="RetVal"> 
+    <Arg Value="jpuw"/>
+</Invoke>
+</Namespace>
 <Namespace Name="${NAMESPACE}" 
            Create="no">
 <CSPApplication 
