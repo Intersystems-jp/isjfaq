@@ -39,6 +39,11 @@ XData FAQManifest [ XMLNamespace = INSTALLER ]
 <Invoke Class="KB.Topic" Method="%BuildIndices" CheckStatus="0" Return="RetVal"> 
 </Invoke>
 </If>
+<If Condition='$L("${FTPDirectory}")>0'>
+<Invoke Class="KB.Setup" Method="copyDownloadFiles" CheckStatus="0" Return="RetVal"> 
+    <Arg Value="${setupdir}"/>
+</Invoke>
+</If>
 </Namespace>
 </Manifest>
 }
@@ -97,28 +102,29 @@ ClassMethod runInstaller(datestr As %String) As %Status
 			set datestr=$zdate($h,8)
 		}
 		
-		set setupdir = ^Techinfo("SetupDirectory")_^Techinfo("DirectorySeparator")_datestr_^Techinfo("DirectorySeparator")
-		
+		set setupdir = ##class(KB.Config).getSetupDirectory()_##class(KB.Config).getDirectorySeparator()_datestr_##class(KB.Config).getDirectorySeparator()
+        set vars("setupdir") = setupdir
+		set vars("FTPDirectory") = ##class(KB.Config).getFTPDirectory()
 		if setuptype=1 {
-			set vars("ClassFileDir") = setupdir_^Techinfo("ClassFileDir")
-			set vars("GlobalFileName") = setupdir_^Techinfo("GlobalFileName")
+			set vars("ClassFileDir") = setupdir_##class(KB.Config).getClassFileDir()
+			set vars("GlobalFileName") = setupdir_##class(KB.Config).getGlobalFileName()
 		}elseif setuptype=2 {
-			set vars("ClassFileDir") = setupdir_^Techinfo("ClassFileDir")
-			set vars("GlobalFileName") = setupdir_^Techinfo("GlobalFileName")
+			set vars("ClassFileDir") = setupdir_##class(KB.Config).getClassFileDir()
+			set vars("GlobalFileName") = setupdir_##class(KB.Config).getGlobalFileName()
 		}elseif setuptype=3 {
 			set vars("ClassFileDir") = ""
-			set vars("GlobalFileName") = setupdir_^Techinfo("GlobalFileName")
+			set vars("GlobalFileName") = setupdir_##class(KB.Config).getGlobalFileName()
 		}elseif setuptype=4 {
-			set vars("ClassFileDir") = setupdir_^Techinfo("ClassFileDir")
+			set vars("ClassFileDir") = setupdir_##class(KB.Config).getClassFileDir()
 			set vars("GlobalFileName") = ""
 		}			
 				
 		set vars("SetupType")			  = setuptype
-		set vars("NAMESPACE")			  = ^Techinfo("Namespace")
-		set vars("CSPUrl")				  = ^Techinfo("CSPUrl") 
-		set vars("CSPDirectory") 		  = ^Techinfo("CSPDirectory") 
-		set vars("CustomErrorPage") 	  = ^Techinfo("ErrorPage")
-		set vars("AuthenticationMethods") = ^Techinfo("AuthenticationMethods")
+		set vars("NAMESPACE")			  = ##class(KB.Config).getNamespace()
+		set vars("CSPUrl")				  = ##class(KB.Config).getCSPUrl() 
+		set vars("CSPDirectory") 		  = ##class(KB.Config).getCSPDirectory() 
+		set vars("CustomErrorPage") 	  = ##class(KB.Config).getErrorPage()
+		set vars("AuthenticationMethods") = ##class(KB.Config).getAuthenticationMethods()
     
     	if (vars("ClassFileDir")'="") && (##class(%File).Exists(vars("ClassFileDir"))'=1) {
 	    	w vars("ClassFileDir"),"は存在しません。ファイルを確認してください。",!
@@ -141,7 +147,7 @@ ClassMethod runInstaller(datestr As %String) As %Status
 
 ClassMethod getVersion() As %String
 {
-	quit "1.0.005"
+	quit "1.0.007"
 }
 
 }

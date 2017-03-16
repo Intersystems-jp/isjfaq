@@ -84,7 +84,7 @@ ClassMethod setConfigParams(envID As %Integer) As %Status
 		set separator = "\"
 		set cspdir = "c:\InterSystems\Ensemble2\CSP\user"
 		set cspurl = "/csp/user"
-		set ftpdir = "c:\InterSystems\Ensemble\CSP\user\downloads"
+		set ftpdir = "c:\InterSystems\Ensemble2\CSP\user\downloads"
 		set setupdir = "e:\Work\FAQ"
 		set classfiledir = "FAQ"
 		set globalfilename = "TopicD.xml"
@@ -119,53 +119,22 @@ ClassMethod masterSetup() As %Status
 	quit $$$OK
 }
 
-ClassMethod attachedRebuild()
+ClassMethod copyDownloadFiles(pSetupDir As %String) As %Status
 {
-	//添付ファイル情報は、％FileBinaryObjectとして実装されているため、他環境からデータベースを
-	//移行してきた場合には、ファイル名のディレクトリ情報を調整する必要あり
-	set nooftopic = $get(^KB.TopicD)
-	set ftpdir = ##class(KB.Config).getFTPDirectory()
-	set sep = ##class(KB.Config).getDirectorySeparator()
-	for i = 1:1:nooftopic {
-		set toref = ##class(KB.Topic).%OpenId(i)
-		quit:'$isobject(toref)
-		set fileloc = toref.FileLoc
-		if fileloc'="" {
-			set filename = fileloc.Filename
-			set filename = $piece(filename,sep,$length(filename,sep))
-			set fileloc.Filename = ftpdir_sep_filename
-			set sts = toref.%Save()
-	        If $$$ISERR(sts) Do $system.OBJ.DisplayError(sts) Quit  
-		}
-	}
-}
-
-ClassMethod attachedRebuild2()
-{
-	//添付ファイル情報は、％FileBinaryObjectとして実装されているため、他環境からデータベースを
-	//移行してきた場合には、ファイル名のディレクトリ情報を調整する必要あり
-	// KB.Topic クラス変更に伴い修正 by A.Tanaka 2009/10/15
-	
-	set ftpdir = ##class(KB.Config).getFTPDirectory()
-	set sep = ##class(KB.Config).getDirectorySeparator()
-
-	Set rs=##class(%ResultSet).%New("KB.Topic:Extent")
-	Do rs.Execute()
-	while rs.Next() {
-		set i=rs.GetData(1)
-		set toref = ##class(KB.Topic).%OpenId(i)
-		quit:'$isobject(toref)
-		for filenum=1:1:3 {
-			set fileloc = $zobjproperty(toref,"FileLoc"_filenum)
-			if fileloc'="" {
-				set filename = fileloc.Filename
-				set filename = $piece(filename,sep,$length(filename,sep))
-				set fileloc.Filename = ftpdir_sep_i_sep_filename
-				set sts = toref.%Save()
-		        If $$$ISERR(sts) Do $system.OBJ.DisplayError(sts) Quit  
-			}
-		}
-	}
+	//ダウンロードファイルをFTPディレクトリーにコピーする
+	set ftpDir = ##class(KB.Config).getFTPDirectory()
+	set dirSep = ##class(KB.Config).getDirectorySeparator()
+	set sourceDownloadDir = ##class(KB.Config).getSetupDirectory()_dirSep_"downloads"
+	set copyParam = pSetupDir_dirSep_"downloads "_ftpDir
+  
+	if dirSep = "\" {
+       set copyCommand = "xcopy /e /y "_copyParam
+    }
+    else  {
+       set copyCommand = "cp -R "_copyParam
+    }
+       
+    quit $zf(-1,copyCommand)
 }
 
 }
