@@ -34,7 +34,7 @@ ClassMethod %OnGetJSONContent(pWhich As %String, pKey As %String, ByRef pParms, 
 		set pObject.sectionHeader = "検索結果リスト"
 
 		set statement = ##class(%SQL.Statement).%New()
-		set sql = "select ID,Title,Description from KB.Topic where %ID %FIND search_index(DescriptionIndex1,'?',0) OR %ID %FIND search_index(TitleIndex1,'?',0)"
+		set sql = "select ID,Title,Description from KB.Topic where %ID %FIND search_index(DescriptionIndex1,?,0) OR %ID %FIND search_index(TitleIndex1,?,0)"
 		set tsc = statement.%Prepare(sql)
 		if ($$$ISERR(tsc)) {
 			quit $$$OK
