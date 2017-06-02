@@ -284,10 +284,10 @@ if $Get(%session.Data("Access"))="" {
     <SCRIPT LANGUAGE="CACHE" runat=server>
      for i=1:1:refcount {
 	     if i=1 {
-		     write "<SPAN class=""refbody""><A href=result.CSP?DocNo="_refid(i)_">"_reftitle(i)_"</A></SPAN>"
+		     write "<SPAN class=""refbody""><A href=result.csp?DocNo="_refid(i)_">"_reftitle(i)_"</A></SPAN>"
 	     }else{
 		     write "<BR><SPAN style=""visibility:hidden"">関連トピック：</SPAN>"
-		     write "<SPAN class=""refbody""><A href=result.CSP?DocNo="_refid(i)_">"_reftitle(i)_"</A></SPAN>"
+		     write "<SPAN class=""refbody""><A href=result.csp?DocNo="_refid(i)_">"_reftitle(i)_"</A></SPAN>"
 	     }   
      }
    </SCRIPT>
@@ -302,7 +302,7 @@ if $Get(%session.Data("Access"))="" {
 </DIV>
 <csp:if condition='roles=0'>
 <csp:else>
-  <DIV class="toedit"><A href="edit.CSP?DocNo=#(DocNo)#" target="_self" style="color:#00CC00;">&gt;&gt;&gt;編集</A></DIV>
+  <DIV class="toedit"><A href="edit.csp?DocNo=#(DocNo)#" target="_self" style="color:#00CC00;">&gt;&gt;&gt;編集</A></DIV>
 </csp:if>
 <DIV>
   <HR>

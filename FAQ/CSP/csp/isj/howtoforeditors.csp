@@ -44,10 +44,10 @@ FAQトピック検索システム・バージョン #(##class(KB.Utility).ShowVe
 <tr height=70px">
 <td width="50%" align="center">
 <!-- <a href="javascript:window.open('new.CSP','new','width=1000,height=600,left='+(window.screen.width-1000)/2+',top='+(window.screen.height-600)/2+''),scrollbars=yes;void(0);" style="font-style:bold; font-size:80%; color:#00CC00"><IMG src="images/button/newtopic.gif"></A> -->
-<a href="javascript:openWindow('new.CSP');" style="font-style:bold; font-size:80%; color:#00CC00"><IMG src="images/button/newtopic.gif"></A>
+<a href="javascript:openWindow('new.csp');" style="font-style:bold; font-size:80%; color:#00CC00"><IMG src="images/button/newtopic.gif"></A>
 </td>
 <td width="50%" align="center">
-<a href="javascript:openWindow('history.CSP');" style="font-style:bold; font-size:80%; color:#00CC00"/><IMG src="images/button/history.gif"></A>
+<a href="javascript:openWindow('history.csp');" style="font-style:bold; font-size:80%; color:#00CC00"/><IMG src="images/button/history.gif"></A>
 </td>
 </tr>
 </table>
