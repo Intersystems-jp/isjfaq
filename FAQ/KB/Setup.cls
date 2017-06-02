@@ -125,6 +125,9 @@ ClassMethod copyDownloadFiles(pSetupDir As %String) As %Status
 	set ftpDir = ##class(KB.Config).getFTPDirectory()
 	set dirSep = ##class(KB.Config).getDirectorySeparator()
 	set sourceDownloadDir = ##class(KB.Config).getSetupDirectory()_dirSep_"downloads"
+	//ディレクトリがなければコピーしない
+	if '##class(%File).Exists(sourceDownLoadDir) quit $$$OK
+	
 	set copyParam = pSetupDir_dirSep_"downloads "_ftpDir
   
 	if dirSep = "\" {
