@@ -803,3 +803,26 @@ FAQTopicQueryTemplate.cls
 
 FAQ.Installer.cls
 KB.Setup.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS043
+
+日付			2017/06/02
+
+内容
+
+開発環境と実行環境のOSが異なることによるCSPファイル名の大文字小文字に関連する不整合を解消するため、ファイル名の拡張子を全て小文字に統一する。
+
+修正モジュール
+
+FAQ.FAQTopicSearch.cls
+FAQ.FAQTopicSearchBodyTemplate.cls
+FAQ.FAQTopicSearchTest.csp
+complete.csp
+edit.csp
+history.csp
+howto.csp
+howtoforexitors.csp
+new.csp
+result.csp
