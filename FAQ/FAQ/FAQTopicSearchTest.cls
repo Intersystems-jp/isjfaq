@@ -168,7 +168,7 @@ XData Contents [ XMLNamespace = "http://www.intersystems.com/zen" ]
 <vgroup id="tabvgroup" width="100%" height="100%">
 <tabGroup id="tabGroup" showTabBar="true" showBody="true" width="100%" height="650px" onshowTab="zenPage.setTabSize();">
 <tab id="hometab" caption="Home" align="center" width="100%" height="100%">
-<iframe id="homeframe" align="center" src="howto.CSP" width="99.8%" height="650px" scrolling="auto"/> 
+<iframe id="homeframe" align="center" src="howto.csp" width="99.8%" height="650px" scrolling="auto"/> 
 </tab>
 <tab id="gentab" caption="一般的質問" width="100%" height="100%">
 <iframe id="genframe" align="center" src="FAQ.FAQTopicSearchBodyGeneral.cls" width="99.8%" height="650px" scrolling="auto"/> 

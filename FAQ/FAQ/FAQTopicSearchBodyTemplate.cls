@@ -506,14 +506,14 @@ ClientMethod tableRowClick() [ Language = javascript ]
 
 ClientMethod openResult(id) [ Language = javascript ]
 {
-	var url = 'result.CSP?DocNo='+id;
+	var url = 'result.csp?DocNo='+id;
   	
     window.open(url,'TopicDescription'+id,'width=1000,height=600,left='+(window.screen.width-1000)/2+',top='+(window.screen.height-600)/2+',scrollbars=1');
 }
 
 ClientMethod showNewTopic(id) [ Language = javascript ]
 {
-	var url = 'result.CSP?DocNo='+id
+	var url = 'result.csp?DocNo='+id
   	
     window.open(url,'TopicDescription'+id,'width=1000,height=600,left='+(window.screen.width-1000)/2+',top='+(window.screen.height-600)/2+',scrollbars=1');
 }
@@ -527,7 +527,7 @@ ClientMethod openPrivateWindow(cspname) [ Language = javascript ]
 
 ClassMethod SetURL(cspname) As %String [ ZenMethod ]
 {
-	set url = ..Link(cspname_".CSP")
+	set url = ..Link(cspname_".csp")
 	
 	quit url
 }
