@@ -31,12 +31,6 @@ function loadEvent()
 
 </head>
 
-
-<!--<script type="text/javascript">
-  window.resizeTo(800,1000);
-</script>-->
-
-
 <BODY bgcolor="#FFFFFF" onload="loadEvent()">
 
 <script language="cache" method="OnPreHTTP" arguments="" returntype="%Boolean">
@@ -61,7 +55,7 @@ if $Get(%session.Data("Access"))="" {
 
  }
   
- quit 1
+ quit $$$OK
 </script>
 
 <SCRIPT LANGUAGE="cache" RUNAT="Server">
@@ -107,13 +101,6 @@ if $Get(%session.Data("Access"))="" {
 	 Set vrange = ""
  }
  
- /*
- If topic.Category'="" Set category = topic.Category.Description
- If topic.Facility'="" Set facility = topic.Facility.Description
- If topic.Platform'="" Set platform = topic.Platform.Name
- If topic.FileFlg'="" Set fileflg = topic.FileFlg
-*/
-
  // 関連トピックのセット
  set refcount=0
  if topic.RefTopic'="" {
@@ -159,67 +146,7 @@ if $Get(%session.Data("Access"))="" {
 	 Set tWidth = 16
 	 Set tHight = 16
  }
- 
- /*
- set dir = ##class(KB.Config).getFTPDirectory()
- set file = ##class(KB.Config).getAttachedFileName()
- set sep = ##class(KB.Config).getDirectorySeparator()
- set attachedurl=dir_sep_file_DocNo_".zip"
- 
- Set filename1="",filename2="",filename3="",version="",category="",facility="",platform=""
- 
- for i=1:1:3 {
-		
-	Set filenamei = "filename"_i
-	Set property = "FileLoc"_i
-	
-	Set fileloc = $ZOBJPROPERTY(topic,property)
-
-	If fileloc.Filename'="" {
-		
-   		Set filename = fileloc.Filename
-    	set sep = ##class(KB.Config).getDirectorySeparator()
-    	If $Length(filename,sep)>1 {
-	    	//一番下位のファイル名だけを取得する
-       		Set @filenamei = $Piece(filename,sep,$length(filename,sep))
-    	}
-		
- 	    set fileext = $piece(@filenamei,".",2)
- 
-    	if fileext = "doc" {
-        	do fileloc.SetAttribute("ContentType","application/msword")
-    	}
-    	elseif fileext = "pdf" {
-       		do fileloc.SetAttribute("ContentType","application/pdf")
-    	}
-    	elseif (fileext = "html") || (fileext = "htm") {
-       		do fileloc.SetAttribute("ContentType","text/html")
-    	}
-    	elseif fileext = "xml" {
-       		do fileloc.SetAttribute("ContentType","text/xml")
-    	}
-    	elseif fileext = "txt" {
-       		do fileloc.SetAttribute("ContentType","application/msword")
-    	}
-    	else {
-       		do fileloc.SetAttribute("ContentType","application/x-zip-compressed")
-    	}
-
-	    set contentdisposition ="filename="""_@filenamei_"""" 
-    	do fileloc.SetAttribute("ContentDisposition",contentdisposition)
-
-   		//IEは、以下の設定を行なわないとContentTypeの設定が反映されない
-   		do fileloc.SetAttribute("Expires",600)
-   		//SetAttributeを実行後にOidの設定を行なわないと、ContentDispositionが反映されない
-   		set %session.Data("Attached"_i)=fileloc.%Oid()
- 	}
- 	else {
-   		Set %session.Data("Attached"_i)=""	 
- 	}
- } 
-
- */
-   
+    
 </SCRIPT>
 
 <!--Cache' Version-->
@@ -238,41 +165,62 @@ if $Get(%session.Data("Access"))="" {
 <!--Description-->
 <DIV class="description" border=1>
   <SCRIPT LANGUAGE="CACHE" runat=server>
+  
    set description=topic.Description
-   //コード部分
-   set cmdstart="<DIV class=divcommand><PRE><CODE>"
-   set cmdfin="</CODE></PRE></DIV>"
+
+   set crlf = $char(13,10)
+   set syn = $Char(22)  //一度置換したurlを再度置換しないように、ありえない文字（制御文字）を埋め込む
+   
+   set edesc = description
+   
+   set sts = ##class(KB.Utility).PickupTags(description,"COMMAND",.tCommand)
+   
+   for i = 1:1:tCommand {
+     set replaced = tCommand(i)
+     set replace = "<DIV class=divcommand><PRE><CODE>"_replaced_"</CODE></PRE></DIV>"
+     set edesc = $replace(edesc,replaced,replace)
+   }
+    
+   set sts = ##class(KB.Utility).PickupTags(description,"URL",.tUrl)
+      
+   for i = 1:1:tUrl {
+     set replaced = tUrl(i)
+     set url = $replace(replaced,crlf,"")
+     set url = $extract(url,1)_syn_$extract(url,2,*)
+     set replace = "<A href="_url_" target=""blank"">"_url_"</A><br>"
+     set edesc = $replace(edesc,replaced,replace)
+   }
+      
+   set edesc = $translate(edesc,syn,"")
+   set edesc = $replace(edesc,"<COMMAND>","")
+   set edesc = $replace(edesc,"</COMMAND>","")
+   set edesc = $replace(edesc,"<command>","")
+   set edesc = $replace(edesc,"</command>","")
+   set edesc = $replace(edesc,"<Command>","")
+   set edesc = $replace(edesc,"</Command>","")
+   set edesc = $replace(edesc,"<URL>","")
+   set edesc = $replace(edesc,"</URL>","")
+   set edesc = $replace(edesc,"<url>","")
+   set edesc = $replace(edesc,"</url>","")
+   set edesc = $replace(edesc,"<Url>","")
+   set edesc = $replace(edesc,"</Url>","")
                    
-   //コード部分、URLのリンク処理
-   set crlf = $c(13,10)
-   set lineno = $length(description,crlf)
+   set lineno = $length(edesc,crlf)
+   
    for i = 1:1:lineno {
-	   set line(i)=$piece(description,crlf,i)
-	   set tLine =$ZCVT(line(i),"U")
-	   if $Extract(tLine,1,9)="<COMMAND>" {
-		   set cmdflg=1
-		   write cmdstart
+   
+	   set line(i)=$piece(edesc,crlf,i)
+	   
+	   if (line(i) [ "<DIV") {
+	     write line(i)
 	   }
-	   elseif $Extract(tLine,1,10)="</COMMAND>" {
-		   set cmdflg=0
-		   write cmdfin
+	   elseif (line(i) [ "A>") || (line(i) [ "<A") || (line(i) [ "DIV>") {
+	     write line(i)_"<br>"
 	   }
-       elseif $Extract(tLine,1,5)="<URL>" {
-	       set llen=$Length(line(i))
-		   set url=$Extract(line(i),6,llen-6)
-		   write "<A href="_url_" target=""blank"">"_url_"</A><br>" 
-   	   }
-	   elseif $Extract(tLine,1,10)="<REFTOPIC>" {
-		   	set refid1=$Extract(line(i),11,13)
-			set refid2=$NUMBER($Extract(line(i),11,13))
-			set ref=##class(KB.Topic).%OpenId(refid2)
-			set reft=ref.Title
-			set refurl="http://www.intersystems.co.jp/faq.php?id="_refid1
-			write "<br><img src=""./images/button/arrow1.gif""><A href="_refurl_">Q："_reft_"</A><br>"
+	   else {  	   
+	     write ..EscapeHTML(line(i))_"<br>"
 	   }
-	   else{
-		   write ..EscapeHTML(line(i))_"<br>"
-	   }         
+	   
    }
  </SCRIPT>
 
