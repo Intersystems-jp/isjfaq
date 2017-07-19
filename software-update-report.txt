@@ -855,4 +855,57 @@ kb.Utility.cls
 修正モジュール
 
 result.csp
-kb.Utility.cls
+
+
+------------------------------------------------------------------------------------
+
+修正ID		HS046
+
+日付			2017/07/03
+
+内容
+
+refleshの際に遷移するページ指定にあやまり（存在しないcspページ）があったので、修正
+
+修正モジュール
+
+howto.csp
+howtoforeditors.csp
+
+------------------------------------------------------------------------------------
+
+修正ID		HS047
+
+日付			2017/07/18
+
+内容
+
+niceditを組み込むことで、操作イメージ等のデータを表示可能にした
+
+修正モジュール
+
+complete.csp
+new.csp
+edit.csp
+
+------------------------------------------------------------------------------------
+
+修正ID		HS048
+
+日付			2017/07/18
+
+内容
+
+製品別にタブを設けるのをやめてすべて一つのタブに集約
+ただし旧インタフェースはそのまま残す
+
+修正モジュール
+
+FAQ.inc
+FAQ.FAQTopicSearch2.cls
+FAQ.FAQTopicSearchBodyAll.cls
+FAQ.FAQTopicSearchBodyTemplate.cls
+FAQ.FAQTopicSearchBodyCache.cls(コンパイルのみ)
+FAQ.FAQTopicSearchBodyEnsemble.cls(コンパイルのみ)
+FAQ.FAQTopicSearchBodyGeneral.cls(コンパイルのみ)
+

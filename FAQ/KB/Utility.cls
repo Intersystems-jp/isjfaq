@@ -508,33 +508,6 @@ ClassMethod SetOpenDate() As %Status
 	}
 }
 
-/*ClassMethod TopicRefCount() As %Status
-{
-	&sql(select sum(reffreq) into :topicrefcount from KB.Topic)
-	
-	if (SQLCODE=0) {
-		set yesterday=$zdate($h-1,8)
-		//前日分のトピック参照数を算出
-		set ^AccessCount(yesterday,"TopicRefCount") = topicrefcount- $Get(^AccessCount("TopicRefTotal"))
-		//積算トータル参照数をセット
-		set ^AccessCount("TopicRefTotal") = topicrefcount
-	}
-}
-*/
-
-/*
-ClassMethod ClearUsersVoice() As %Status
-{
-	for i=1:1:^KB.TopicD {
-		set tp=##class(KB.Topic).%OpenId(i)
-		if tp {
-			set tp.UsersVoice=""
-			set st=tp.%Save()
-		}
-	}
-}
-*/
-
 /*
 新規に追加されたトピック用に、
 UsersVoiceオブジェクトを作成し、セットする。
@@ -569,7 +542,7 @@ ClassMethod CreateUsersVoice() As %Status
 
 ClassMethod ShowVersion() As %String
 {
-	quit "1.0.015"
+	quit "1.1.001"
 }
 
 ClassMethod FindKatakanaKeywords() As %Status

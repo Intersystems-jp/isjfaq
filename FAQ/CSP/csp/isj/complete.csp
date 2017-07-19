@@ -38,13 +38,6 @@ if fileupflg=1 {
 
 //TopicId セット
 set topic=##class(KB.Topic).%OpenId(DocNo)
-/* TopipIDは計算フィールドとなったので以下の処理不要
-if topic.Product.%Id()=1 {
-	set topic.TopicID="G-"_topic.TopicSubID
-}else{
-	set topic.TopicID=topic.%Id()
-}
-*/
 
 //UsersVoice セット
 set uv=topic.UsersVoice

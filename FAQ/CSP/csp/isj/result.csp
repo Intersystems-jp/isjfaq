@@ -166,31 +166,44 @@ if $Get(%session.Data("Access"))="" {
 <DIV class="description" border=1>
   <SCRIPT LANGUAGE="CACHE" runat=server>
   
-   set description=topic.Description
+   set description=##class(%CSP.Page).UnescapeHTML(topic.Description)
 
    set crlf = $char(13,10)
    set syn = $Char(22)  //一度置換したurlを再度置換しないように、ありえない文字（制御文字）を埋め込む
    
    set edesc = description
    
-   set sts = ##class(KB.Utility).PickupTags(description,"COMMAND",.tCommand)
+   //NicEditで追加したAタグを<URL>処理で変換しないようにありえない文字を追加する
    
+   set edesc = $replace(edesc,"a href=""h","a href=""h"_$char(22,22))
+   
+   set sts = ##class(KB.Utility).PickupTags(description,"COMMAND",.tCommand)
+      
    for i = 1:1:tCommand {
      set replaced = tCommand(i)
+
      set replace = "<DIV class=divcommand><PRE><CODE>"_syn_replaced_syn_"</CODE></PRE></DIV>"
      set edesc = $replace(edesc,replaced,replace)
+     set edesc = $replace(edesc,"<DIV>","")
+     set edesc = $replace(edesc,"</DIV>","")
+     set edesc = $replace(edesc,"<div>","")
+     set edesc = $replace(edesc,"</div>","")
+     set edesc = $replace(edesc,"<Div>","")
+     set edesc = $replace(edesc,"</Div>","")
+     set edesc = $replace(edesc,"</CODE></PRE>","</CODE></PRE></DIV>")
    }
     
    set sts = ##class(KB.Utility).PickupTags(description,"URL",.tUrl)
       
    for i = 1:1:tUrl {
-     set replaced = tUrl(i)
+	 set replaced = tUrl(i)
      set url = $replace(replaced,crlf,"")
      set url = $extract(url,1)_syn_$extract(url,2,*)
      set replace = "<A href="_url_" target=""blank"">"_url_"</A><br>"
+     
      set edesc = $replace(edesc,replaced,replace)
    }
-      
+     
    set edesc = $replace(edesc,"<COMMAND>","")
    set edesc = $replace(edesc,"</COMMAND>","")
    set edesc = $replace(edesc,"<command>","")
@@ -205,10 +218,11 @@ if $Get(%session.Data("Access"))="" {
    set edesc = $replace(edesc,"</Url>","")
                    
    set lineno = $length(edesc,crlf)
-   
+      
    for i = 1:1:lineno {
    
 	   set line(i)=$piece(edesc,crlf,i)
+	   
 	   
 	   if (line(i) [ syn) {
 	     if (line(i) [ "<DIV") {
@@ -219,7 +233,8 @@ if $Get(%session.Data("Access"))="" {
 	     }
 	   }
 	   else {  	   
-	     write ..EscapeHTML(line(i))_"<br>"
+	     //write ..EscapeHTML(line(i))_"<br>"
+	     write line(i)_"<br>"
 	   }
 	   
    }

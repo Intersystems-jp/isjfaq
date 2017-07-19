@@ -9,6 +9,22 @@ content="text/html; charset=utf-8">
 <LINK REL="stylesheet" TYPE="text/css" HREF="styleedit.css" >
 <!-- Specify that this page is PRIVATE -->
 <csp:CLASS PRIVATE=1>
+<script type="text/javascript" src="http://js.nicedit.com/nicEdit-latest.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+        bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });
+  //]]>
+</script>
+<script type="text/javascript">
+  function saveTextarea(){
+	nc1 = nicEditors.findEditor('dsc');
+	nc1.saveContent();
+	nc2 = nicEditors.findEditor('nt');
+	nc2.saveContent();
+	nc3 = nicEditors.findEditor('ud');
+	nc3.saveContent();
+}
+</script>
 </head>
 
 <BODY bgcolor="#FFFFFF" onload="loadEvent();">
@@ -29,42 +45,6 @@ if fileexists=1 {
 }else{
 	set filename=""
 }
-
- /*
- //ファイルアップロード処理 グローバルに格納する場合
- set sep = ##class(KB.Config).getDirectorySeparator()
- set dir = ##class(KB.Config).getFTPDirectory()
- set dir = dir_"\"_DocNo
- 
- for i=1:1:3 {
-		
-	Set filenamei = "filename"_i
-	Set property = "FileLoc"_i
-	
-	Set fileloc = $ZOBJPROPERTY(topic,property)
-   	Set filename = fileloc.Filename
-   	Set @filenamei = $piece(filename,sep,$length(filename,sep))
-
-    Set attached = $get(%request.MimeData("AttachedFile"_i,1))
-	    
-   	If (attached'="") {
-    	set st = $ZUTIL(140,9,dir)
-     	set sts = fileloc.Clear()
-       	set file = attached.FileName
-       	// UploadはWindowsから行うことを前提
-       	set file = $piece(file,"\",$length(file,"\"))
-       	set sts = fileloc.LinkToFile(dir_sep_file)
-       	set sts = fileloc.CopyFrom(attached)
-       	Set status = topic.%Save()
-       	If $$$ISERR(status) {
-           	Set err =$System.Status.GetErrorText(status)
-       	}
-    	set filename = dir_sep_file
-        set @filenamei = $piece(filename,sep,$length(filename,sep))
-
-   	}
- }
- */
  
 //添付ファイルアップロード処理
 set fileupflg = $get(%session.Data("UpFlg"))
@@ -108,7 +88,7 @@ if topic.OpenDate'="" {
       <table width=95% style="margin-top:10px;">
       <tbody>
         <!--<form name="form" cspbind="topic" cspjs="All" action="edit.csp?DocNo=#(DocNo)#" enctype="multipart/form-data" method="POST">-->
-        <form name="form" cspbind="topic" cspjs="All" onsubmit="return saveTopic()" action="edit.CSP?DocNo=#(DocNo)#" enctype="multipart/form-data" method="POST">
+        <form name="form" cspbind="topic" cspjs="All" onsubmit="return saveTopic()" action="edit.csp?DocNo=#(DocNo)#" enctype="multipart/form-data" method="POST">
         <tr align=right>
           <td colspan=2 class="readonlytitle" style="color:#666666;">作成者：<input type="text" name="Creator" cspbind="Creator" readonly size="10" class="readonly">  最終更新者：<input type="text" name="Updater" cspbind="Updater" readonly size="10" class="readonly" ></td>
         </tr>
@@ -125,7 +105,7 @@ if topic.OpenDate'="" {
           <td ><input type="text" name="Title" cspbind="Title" size="70" class="textbox"></td>
         </tr>
           <td class="coltitle">内容：</td>
-          <td ><textarea onkeydown="insertTab(this, event);" name="Description" cspbind="Description" cols="50" rows="20"></textarea></td>
+          <td ><textarea onkeydown="insertTab(this, event);" name="Description" cspbind="Description" cols="50" rows="20" id="dsc"></textarea></td>
 		  <!--<td><textarea name="Description" cspbind="Description" cols="85" rows="30" style="font-size:100%;font-family:'ＭＳ ゴシック';line-height:1.5em;"></textarea></td>-->
 		</tr>
    		<tr>
@@ -181,7 +161,7 @@ if topic.OpenDate'="" {
 		</tr>
         <tr>
           <td class="coltitle">*社内用メモ*：</td>
-          <td ><textarea name="Note" cspbind="Note" cols="65" rows="3" ></textarea></td>
+          <td ><textarea name="Note" cspbind="Note" cols="65" rows="3" id="nt"></textarea></td>
         </tr>
 	    <tr>
          <td class="coltitle">*更新履歴*：</td>
@@ -207,14 +187,14 @@ if topic.OpenDate'="" {
 			  <tr>
   				<td class="newline">#($zdatetime($h,3,2))#</td>
   				<td class="newline">#($username)#</td>
-  				<td><textarea name="UpdateDescription" rows="2"></textarea></td>
+  				<td><textarea name="UpdateDescription" rows="2" id="ud"></textarea></td>
 			  </tr>
             </table>
           </td>
         </tr>
         <tr height=40>
           <td colspan=6 align="center">
-            <input type="image" name="btnSave" src="./images/button/Save1.gif" border="0" onclick="formValidate(#(fileexists)#)">
+            <input type="image" name="btnSave" src="./images/button/Save1.gif" border="0" onclick="saveTextarea(); formValidate(#(fileexists)#);">
           </td>
         </tr>
         </tbody>
@@ -491,18 +471,6 @@ set uhistory.Topic=topic
 set st=uhistory.%Save()
 
 </SCRIPT>
-
-<!--
-<SCRIPT LANGUAGE=CACHE METHOD="OnPreHTTP" RETURNTYPE="%Boolean">
-if ($Data(%session.Data("Login")) = 0) {
-	set %response.ServerSideRedirect="FAQ.FAQApp.cls"
-	 
-	 Quit $$$OK
-}
-Quit $$$OK
-
-</SCRIPT>
--->
 
 </BODY>
 </HTML>
