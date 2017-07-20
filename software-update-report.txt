@@ -898,14 +898,74 @@ edit.csp
 
 製品別にタブを設けるのをやめてすべて一つのタブに集約
 ただし旧インタフェースはそのまま残す
+一般的質問のTopicIDも通常のIDに戻す。
 
 修正モジュール
 
 FAQ.inc
-FAQ.FAQTopicSearch2.cls
+FAQ.FAQTopicSearch2.cls（新規追加）
 FAQ.FAQTopicSearchBodyAll.cls
 FAQ.FAQTopicSearchBodyTemplate.cls
 FAQ.FAQTopicSearchBodyCache.cls(コンパイルのみ)
 FAQ.FAQTopicSearchBodyEnsemble.cls(コンパイルのみ)
 FAQ.FAQTopicSearchBodyGeneral.cls(コンパイルのみ)
+
+------------------------------------------------------------------------------------
+
+修正ID		HS049
+
+日付			2017/07/20
+
+内容
+
+既存のレコードに＜COMMAND>や<URL>およびｃｒｌｆがあるとNicEditの動作に支障があるため、ロード時にcrlfは<br>、<COMMAND>などの<>はHTMLエスケープする
+
+修正モジュール
+
+KB.Topic.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS050
+
+日付			2017/07/20
+
+内容
+
+<COMMAND>行の表示の際に余分な<br>の出力をなくす
+
+修正モジュール
+
+result.csp
+
+------------------------------------------------------------------------------------
+
+修正ID		HS051
+
+日付			2017/07/20
+
+内容
+
+製品バージョンを2020.2まで追加
+
+修正モジュール
+
+KB.Version.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS052
+
+日付			2017/07/20
+
+内容
+
+製品にHealtShareを追加
+
+製品IDを追加しただけで表示等の対応はまだ未実装
+
+修正モジュール
+
+KB.Product.cls
+FAQ.inc
 

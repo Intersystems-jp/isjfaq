@@ -223,20 +223,12 @@ if $Get(%session.Data("Access"))="" {
    
 	   set line(i)=$piece(edesc,crlf,i)
 	   
-	   
 	   if (line(i) [ syn) {
-	     if (line(i) [ "<DIV") {
-	       write $Translate(line(i),syn,"")
-	     }
-	     else {
-	       write $Translate(line(i),syn,"")_"<br>"
-	     }
+	       write $replace($Translate(line(i),syn,""),"<CODE><br>","<CODE>")_"<br>"
 	   }
-	   else {  	   
-	     //write ..EscapeHTML(line(i))_"<br>"
-	     write line(i)_"<br>"
-	   }
-	   
+       else {
+	       write $replace(line(i),"<CODE><br>","<CODE>")_"<br>"
+       }
    }
  </SCRIPT>
 

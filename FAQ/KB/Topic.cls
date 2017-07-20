@@ -23,7 +23,7 @@ Property Facility As KB.Facility;
 Property Title As %Text(COLLATION = "SQLUPPER", LANGUAGECLASS = "%TextJapanese", MAXLEN = 1000) [ Required ];
 
 /// 内容
-Property Description As %Text(COLLATION = "SQLUPPER", LANGUAGECLASS = "%TextJapanese", MAXLEN = 32000);
+Property Description As %Text(COLLATION = "SQLUPPER", LANGUAGECLASS = "%TextJapanese", MAXLEN = 1000000);
 
 /// 稼動プラットフォーム
 Property Platform As KB.Platform;
@@ -141,6 +141,12 @@ Method %OnBeforeSave(pInsert As %Boolean) As %Status [ Private, ServerOnly = 1 ]
 			}
 		}
 	}
+	
+	// nicEditがのAタグのDescriptionを変更する
+	
+	
+	set ..Description = $replace(..Description,"javascript:nicTemp();","ご参考資料")
+		
 	
 	Quit $$$OK
 }
@@ -471,6 +477,31 @@ Storage Default
 <IndexLocation>^KB.TopicI</IndexLocation>
 <StreamLocation>^KB.TopicS</StreamLocation>
 <Type>%Library.CacheStorage</Type>
+}
+
+Method DescriptionGet() As %Text
+{
+ set crlf = $char(13,10)
+ set gt = "&gt;"
+ set lt = "&lt;"
+ set Description = i%Description
+
+ set Description = $replace(Description,crlf,"<br>")
+ set Description = $replace(Description,"<command>",lt_"command"_gt)
+ set Description = $replace(Description,"</command>",lt_"/command"_gt)
+ set Description = $replace(Description,"<Command>",lt_"Command"_gt)
+ set Description = $replace(Description,"</Command>",lt_"/Command"_gt)
+ set Description = $replace(Description,"<COMMAND>",lt_"COMMAND"_gt)
+ set Description = $replace(Description,"</COMMAND>",lt_"/COMMAND"_gt)
+
+ set Description = $replace(Description,"<url>",lt_"url"_gt)
+ set Description = $replace(Description,"</url>",lt_"/url"_gt)
+ set Description = $replace(Description,"<Url>",lt_"Url"_gt)
+ set Description = $replace(Description,"</Url>",lt_"/Url"_gt)
+ set Description = $replace(Description,"<URL>",lt_"URL"_gt)
+ set Description = $replace(Description,"</URL>",lt_"/URL"_gt)
+ 
+ quit Description
 }
 
 }

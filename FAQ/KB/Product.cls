@@ -23,6 +23,7 @@ ClassMethod Init()
 	&SQL(insert into KB.Product (ProductName) values ('一般'))
 	&SQL(insert into KB.Product (ProductName) values ('Caché'))
 	&SQL(insert into KB.Product (ProductName) values ('Ensemble'))
+	&SQL(insert into KB.Product (ProductName) values ('HealthShare'))
 }
 
 Storage Default
