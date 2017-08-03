@@ -969,3 +969,20 @@ KB.Version.cls
 KB.Product.cls
 FAQ.inc
 
+------------------------------------------------------------------------------------
+
+修正ID		HS053
+
+日付			2017/08/03
+
+内容
+
+copyDownloadFiles内で変数名に間違いがある
+
+sourceDownLoadDir
+
+正しくはsourceDownloadDir
+
+修正モジュール
+
+KB.Setup.cls
