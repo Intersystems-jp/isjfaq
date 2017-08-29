@@ -169,13 +169,12 @@ XData Contents [ XMLNamespace = "http://www.intersystems.com/zen" ]
 </hgroup>
 <hgroup id="tabhgroup" align="center" width="100%">
 <vgroup id="tabvgroup" width="100%" height="100%">
-<!-- <tabGroup id="tabGroup" showTabBar="true" showBody="true" width="100%" height="650px" onshowTab="zenPage.setTabSize();"> -->
 <tabGroup id="tabGroup" showTabBar="true" showBody="true" width="100%" height="100%" >
-<tab id="hometab" caption="Home" align="center" width="100%" height="100%">
-<iframe id="homeframe" align="center" src="howto.csp" width="99.8%" height="100%" scrolling="auto"/> 
-</tab>
 <tab id="alltab" caption="FAQ" width="100%" height="100%">
 <iframe id="allframe" align="center" src="FAQ.FAQTopicSearchBodyAll.cls" width="99.8%" height="100%" scrolling="auto"/> 
+</tab>
+<tab id="hometab" caption="利用方法" align="center" width="100%" height="100%">
+<iframe id="homeframe" align="center" src="howto.csp" width="99.8%" height="100%" scrolling="auto"/> 
 </tab>
 </tabGroup>
 </vgroup>

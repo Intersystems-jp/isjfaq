@@ -637,7 +637,7 @@ Method %OnAfterCreatePage() As %Status
 
 		Set nonproduct = %page.%GetComponentById("Nonproduct")
 	    Set nonproduct.enclosingStyle="display:block;"  //="visibility: hidden;"
-		Set nonproduct.value = 1
+		Set nonproduct.value = 0
 		Set %page.nonproduct = nonproduct.value
 
 		Set cache = %page.%GetComponentById("Cache")
