@@ -9,22 +9,7 @@ content="text/html; charset=utf-8">
 <LINK REL="stylesheet" TYPE="text/css" HREF="styleedit.css" >
 <!-- Specify that this page is PRIVATE -->
 <csp:CLASS PRIVATE=1>
-<script type="text/javascript" src="http://js.nicedit.com/nicEdit-latest.js"></script>
-<script type="text/javascript">
-//<![CDATA[
-        bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });
-  //]]>
-</script>
-<script type="text/javascript">
-  function saveTextarea(){
-	nc1 = nicEditors.findEditor('dsc');
-	nc1.saveContent();
-	nc2 = nicEditors.findEditor('nt');
-	nc2.saveContent();
-	nc3 = nicEditors.findEditor('ud');
-	nc3.saveContent();
-}
-</script>
+  <script src="https://cdn.ckeditor.com/4.7.3/standard-all/ckeditor.js"></script>
 </head>
 
 <BODY bgcolor="#FFFFFF" onload="loadEvent();">
@@ -36,7 +21,7 @@ Set topic = ##Class(KB.Topic).%OpenId(DocNo)
 Set %session.Data("DocNo")=DocNo
 Set %session.Data("RefTopic") = topic.RefTopic
 
-//添付ファイル名のセット
+ //添付ファイル名のセット
 set filepath=%session.Data("filepath")
 set fileexists=##class(%File).Exists(filepath)
 
@@ -46,7 +31,7 @@ if fileexists=1 {
 	set filename=""
 }
  
-//添付ファイルアップロード処理
+ //添付ファイルアップロード処理
 set fileupflg = $get(%session.Data("UpFlg"))
 if fileupflg=$$$OK {
 	set attached = $get(%request.MimeData("AttachedFile",1))
@@ -108,6 +93,13 @@ if topic.OpenDate'="" {
           <td ><textarea onkeydown="insertTab(this, event);" name="Description" cspbind="Description" cols="50" rows="20" id="dsc"></textarea></td>
 		  <!--<td><textarea name="Description" cspbind="Description" cols="85" rows="30" style="font-size:100%;font-family:'ＭＳ ゴシック';line-height:1.5em;"></textarea></td>-->
 		</tr>
+	    <script>
+		CKEDITOR.replace( 'dsc', {
+			extraPlugins: 'colorbutton,font,justify,tableresize,uploadimage,uploadfile,pastefromword,liststyle',
+			filebrowserUploadUrl: 'imageupload.csp',
+            allowedContent: true
+        } );
+	    </script>
    		<tr>
           <td class="coltitle">プロダクト：</td>
           <td><select name="Product" cspbind="Product" classname="KB.Product" query="ListProduct" field="ProductName" onchange="javascript:disableFacility()"></select></td>
@@ -194,7 +186,7 @@ if topic.OpenDate'="" {
         </tr>
         <tr height=40>
           <td colspan=6 align="center">
-            <input type="image" name="btnSave" src="./images/button/Save1.gif" border="0" onclick="saveTextarea(); formValidate(#(fileexists)#);">
+            <input type="image" name="btnSave" src="./images/button/Save1.gif" border="0" onclick="copyToTextArea(); formValidate(#(fileexists)#);">
           </td>
         </tr>
         </tbody>
@@ -315,6 +307,9 @@ function formValidate(fileexistsflg) {
 	}else {
 		var msg='変更を保存します。よろしいですか？';
 	}
+
+	//Ckedit経由のデータにｃｒｌｆが入るので取り除く
+	//document.form.Description.value.replace(/\r\n?/g, '');
 	
 	var saveconf = confirm(msg)
 	if (saveconf) {
@@ -359,6 +354,11 @@ function insertTab(o, e)
 		return false;
 	}
 	return true;
+}
+
+function copyToTextArea()
+{
+  document.form.Description.value = CKEDITOR.instances.dsc.getData();
 }
 
 </SCRIPT>
@@ -407,7 +407,7 @@ if rlen=1 {
 	}
 }
 
-//チェックNGの場合は「0」、チェックOKの場合は、スペースを抜いた文字列を返す
+ //チェックNGの場合は「0」、チェックOKの場合は、スペースを抜いた文字列を返す
 quit refchk
 
 </SCRIPT>

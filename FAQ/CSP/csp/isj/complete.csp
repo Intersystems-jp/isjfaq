@@ -12,7 +12,7 @@
  Set DocNo=%request.Get("OBJID")
  Do ..RefCheckLink(DocNo)
 
-//添付ファイルアップロード処理
+ //添付ファイルアップロード処理
 set fileupflg = $get(%session.Data("UpFlg"))
 if fileupflg=1 {
 	set filename=##class(KB.Config).getAttachedFileName()_DocNo_".zip"
@@ -22,10 +22,11 @@ if fileupflg=1 {
 
 	set attached = $get(%request.MimeData("AttachedFile",1))
 	if attached'="" {
-		set newfile = ##class(%File).%New(filepath)
-		set st = newfile.Open("NWUK\BIN\")
-		set st = newfile.CopyFrom(attached)
-		if st'=1 {
+	    set stream=##class(%Stream.FileBinary).%New()
+        do stream.FilenameSet(filepath)	
+		set st = stream.CopyFrom(attached)
+		set st = stream.%Save()
+		if st'=$$$OK {
 			&js<alert('添付ファイルは保存できませんでした');>
 		}
 	 }else{
@@ -36,10 +37,10 @@ if fileupflg=1 {
 	 
 }
 
-//TopicId セット
+ //TopicId セット
 set topic=##class(KB.Topic).%OpenId(DocNo)
 
-//UsersVoice セット
+ //UsersVoice セット
 set uv=topic.UsersVoice
 
 if uv="" {
@@ -61,7 +62,7 @@ Set topic = ##Class(KB.Topic).%OpenId(pDocNo)
 Set tSC = topic.RefCheckLink(0)
 Set OldList = $Get(%session.Data("RefTopic"))
 Set NewList = topic.RefTopic
-//編集した結果、前の関連トピックを削除した場合、相手のトピックからの参照も削除する
+ //編集した結果、前の関連トピックを削除した場合、相手のトピックからの参照も削除する
 set tSC = ##class(KB.Topic).RemoveLink(DocNo,OldList,NewList)
 </SCRIPT>
 

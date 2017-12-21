@@ -35,7 +35,7 @@ function loadEvent()
 
 <script language="cache" method="OnPreHTTP" arguments="" returntype="%Boolean">
 
-//FAQアプリへのアクセスカウント(直接詳細を参照された場合+1)
+ //FAQアプリへのアクセスカウント(直接詳細を参照された場合+1)
 if $Get(%session.Data("Access"))="" {
 	set ^AccessCount = $Get(^AccessCount)+1
 	set today=$zdate($h,8)
@@ -173,7 +173,7 @@ if $Get(%session.Data("Access"))="" {
    
    set edesc = description
    
-   //NicEditで追加したAタグを<URL>処理で変換しないようにありえない文字を追加する
+   //Aタグを<URL>処理で変換しないようにありえない文字を追加する
    
    set edesc = $replace(edesc,"a href=""h","a href=""h"_$char(22,22))
    
@@ -284,7 +284,6 @@ if $Get(%session.Data("Access"))="" {
 </P>
 <DIV class="closebtn" align="center">
   <Input type="image" id="closebtn" src="./images/button/tojiru1.gif" border="0" onclick="window.close()" style="visibility:hidden;"><br>
-  <A href="FAQ.FAQApp.cls" id="toplink" style="visibility:hidden;">【Topページ】</A>
 </DIV>
 
 <script language="Cache" method="Enquete" arguments="ans:%String">
