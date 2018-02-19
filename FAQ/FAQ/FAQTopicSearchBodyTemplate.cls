@@ -35,6 +35,10 @@ Property cache As %Boolean;
 
 Property ensemble As %Boolean;
 
+Property healthshare As %Boolean;
+
+Property iris As %Boolean;
+
 /// この Style ブロックにはページ固有のCSSスタイル定義が含まれます。
 XData Style
 {
@@ -224,6 +228,8 @@ XData Contents [ XMLNamespace = "http://www.intersystems.com/zen" ]
 <checkbox id="Nonproduct" caption="一般的質問" label="" value="0"/>
 <checkbox id="Cache" caption="Caché" label="" value="0"/>
 <checkbox id="Ensemble" caption="Ensemble" label="" value="0"/>
+<checkbox id="HealthShare" caption="HealthShare" label="" value="0"/>
+<checkbox id="IRIS" caption="IRIS" label="" value="0"/>
 
 </hgroup>
 </vgroup>
@@ -366,6 +372,14 @@ ClientMethod executeQuery() [ Language = javascript ]
 	var ensemblev = ensemble.getValue();
 	zenPage.setProperty('ensemble',ensemblev);
 
+	var healthshare=this.getComponentById('HealthShare');
+	var healthsharev = healthshare.getValue();
+	zenPage.setProperty('healthshare',healthsharev);
+
+	var iris=this.getComponentById('IRIS');
+	var irisv = iris.getValue();
+	zenPage.setProperty('iris',irisv);
+
 	zen('TopicTitleTable').executeQuery();
 }
 
@@ -374,7 +388,6 @@ Method CreateTitleRS(Output pSC As %Status, pInfo As %ZEN.Auxiliary.QueryInfo) A
 	set pSC=$$$OK
 	
 	set admin = $roles["FAQEditor"
-	
 	set result = ##Class(%ResultSet).%New()
 	set cond=""
 	set keycond=""
@@ -389,47 +402,55 @@ Method CreateTitleRS(Output pSC As %Status, pInfo As %ZEN.Auxiliary.QueryInfo) A
 	set cache = %page.cache
 	set nonproduct = %page.nonproduct
 	set ensemble = %page.ensemble
+	set healthshare = %page.healthshare
+	set iris = %page.iris
+		
+	// 製品別にタブを分けない様に仕様変更。　その結果、一般的質問のTopicIDを使う必要がなくなったため、単にゼロパディングする。
 	
+	if nonproduct {
+	  set productCond = $Get(productCond)_" PRODUCT = 1 OR"
+	}
+
+	if cache {
+	  set productCond = $Get(productCond)_" PRODUCT = 2 OR"
+	}
+
+	if ensemble {
+	  set productCond = $Get(productCond)_" PRODUCT = 3 OR"
+	}
+
+	if healthshare {
+	  set productCond = $Get(productCond)_" PRODUCT = 4 OR"
+	}
 	
-	//Select節
-	If crosssearch {
+	if iris {
+	  set productCond = $Get(productCond)_" PRODUCT = 5 OR"
+	}
+	
+	if $Get(productCond) = "" {
+	  //どの製品も検索対象ではない時、PRODUCT = 99 （将来的にもあり得ない製品）を指定し、結果として該当トピックがない状態を作る
+	  set productCond = " PRODUCT = 99 OR"
+	}
+	
+	//最後の余分なORを取り除き、括弧で囲む
+	set productCond = "("_$Extract(productCond,1,*-2)_")"
+	set sqlselect=" ID,LPAD(ID,5,'0') TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where "_productCond
+
+	//以下の機能は旧インタフェースFAQTopicSearch（製品別タブ）から呼び出される場合のみ呼び出される
+	If ..Product = $$$Cache || ..Product = $$$General || ..Product = $$$Ensemble { 
+	  If crosssearch {
 		
 		// Ensembleタブで検索する場合のみCache（コアテクノロジー）を含めるオプションを持たせる
 		// Product = 2 Cache 
 		// Product = 3 Ensemble
 		
-	set sqlselect=" ID,TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where (Product = 2 OR Product = 3)"
-	}
-	Else {
-	set sqlselect=" ID,TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where Product="_..Product
-	}
+	  set sqlselect=" ID,TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where (Product = 2 OR Product = 3)"
+	  }
+	  Else {
+	  set sqlselect=" ID,TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where Product="_..Product
+	  }
 	
-	// 製品別にタブを分けない様に仕様変更。　その結果、一般的質問のTopicIDを使う必要がなくなったため、単にゼロパディングする。
-	
-	if (cache && nonproduct && ensemble) {
-	  set sqlselect=" ID,LPAD(ID,5,'0') TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where (Product = 1 OR Product = 2 OR Product = 3)"
-	}
-	elseif (cache && nonproduct) {
-	  set sqlselect=" ID,LPAD(ID,5,'0') TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where (Product = 1 OR Product = 2)"
-	}
-	elseif (cache && ensemble) {
-	  set sqlselect=" ID,LPAD(ID,5,'0') TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where (Product = 2 OR Product = 3)"
-	}
-	elseif (nonproduct && ensemble) {
-	  set sqlselect=" ID,LPAD(ID,5,'0') TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where (Product = 1 OR Product = 3)"
-	}
-	elseif (nonproduct) {
-	  set sqlselect=" ID,LPAD(ID,5,'0') TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where (Product = 1)"
-	}
-	elseif (cache) {
-	  set sqlselect=" ID,TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where (Product = 2)"
-	}
-	elseif (ensemble) {
-	  set sqlselect=" ID,TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where (Product = 3)"
-	}
-	else {
-	set sqlselect=" ID,LPAD(ID,5,'0') TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where Product="_..Product
-	}
+    }
 
 	//Guestユーザの参照共通条件のセット
 	set comcond="Completed=1 and Visible=1 and DeleteFlg!=1"
@@ -606,13 +627,22 @@ Method %OnAfterCreatePage() As %Status
 
 	set ensemble = %page.%GetComponentById("Ensemble")
 	set ensemble.enclosingStyle="display:none;"  //="visibility: hidden;"
+
+	set healthshare = %page.%GetComponentById("HealthShare")
+	set healthshare.enclosingStyle="display:none;"  //="visibility: hidden;"
 	
+	set iris = %page.%GetComponentById("IRIS")
+	set iris.enclosingStyle="display:none;"  //="visibility: hidden;"
+
+	//TABを分けなくなったためCrossSearchは現在は使用していない。
 	If (..Product = $$$General) || (..Product = $$$Cache) {
+	    //この条件は現時点では成立しないはず	
 
 		Set CrossSeachCheck = %page.%GetComponentById("CrossSeachCheck")
 	    Set CrossSeachCheck.enclosingStyle="display:none;"  //="visibility: hidden;"
 	}
 	ElseIf ..Product = $$$Ensemble {
+	    //この条件は現時点では成立しないはず	
 
 		Set CrossSeachCheck = %page.%GetComponentById("CrossSeachCheck")
 		Set CrossSeachCheck.value = 1
@@ -621,7 +651,7 @@ Method %OnAfterCreatePage() As %Status
 	}
 	
 	ElseIf (..Product = $$$All) {
-
+        //現時点ではこの条件のみ成立する
 	    set frequentTopicsGroup1 = %page.%GetComponentById("frequentTopicsGroup1")
 	    set frequentTopicsGroup1.enclosingStyle="display:none;"  //="visibility: hidden;"
 	    set newTopicsGroup1 = %page.%GetComponentById("newTopicsGroup1")
@@ -649,9 +679,19 @@ Method %OnAfterCreatePage() As %Status
 	    Set ensemble.enclosingStyle="display:block;"  //="visibility: hidden;"
 		Set ensemble.value = 1
 		Set %page.ensemble = ensemble.value
+
+		Set healthshare = %page.%GetComponentById("HealthShare")
+	    Set healthshare.enclosingStyle="display:block;"  //="visibility: hidden;"
+		Set healthshare.value = 1
+		Set %page.healthshare = healthshare.value
+
+		Set iris = %page.%GetComponentById("IRIS")
+	    Set iris.enclosingStyle="display:block;"  //="visibility: hidden;"
+		Set iris.value = 1
+		Set %page.iris = iris.value
 	    }
 	else {
-			
+	    //この条件は現時点では成立しないはず	
 		Set CrossSeachCheck = %page.%GetComponentById("CrossSeachCheck")
 	    Set CrossSeachCheck.enclosingStyle="display:none;"  //="visibility: hidden;"
 

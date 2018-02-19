@@ -24,6 +24,7 @@ ClassMethod Init()
 	&SQL(insert into KB.Product (ProductName) values ('Caché'))
 	&SQL(insert into KB.Product (ProductName) values ('Ensemble'))
 	&SQL(insert into KB.Product (ProductName) values ('HealthShare'))
+	&SQL(insert into KB.Product (ProductName) values ('IRIS Data Platform'))
 }
 
 Storage Default

@@ -1079,3 +1079,36 @@ FAQApp.cls
 修正モジュール
 
 result.csp
+
+------------------------------------------------------------------------------------
+
+修正ID		HS060
+
+日付			2017/12/25
+
+内容
+
+インストーラーにトピック表示用にアップロードしたイメージをコピーする処理を追加
+
+修正モジュール
+
+FAQ.Installer.cls
+KB.Setup.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS061
+
+日付			2018/2/19
+
+内容
+
+プロダクトにHealthShareとIRIS Data Platformを追加
+
+修正モジュール
+
+FAQ.inc
+KB.Product
+KB.Utility
+FAQ.TopicSearchTemplate.cls
+FAQ.TopicSearchBodyAll.cls(Compileのみ)
