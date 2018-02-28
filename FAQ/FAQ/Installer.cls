@@ -20,6 +20,9 @@ XData FAQManifest [ XMLNamespace = INSTALLER ]
     AuthenticationMethods="${AuthenticationMethods}"
      CustomErrorPage="${CustomErrorPage}"/>
  <If Condition='$L("${ClassFileDir}")>0'>
+<Invoke Class="KB.Utility" Method="cspUtf8AddBOM" CheckStatus="0" Return="RetVal"> 
+    <Arg Value="${CSPFileDir}"/>
+</Invoke>
 <Import File="${ClassFileDir}" Flags="ckr" Recurse="1" IgnoreErrors="1"> 
 </Import>
 </If>
@@ -37,6 +40,14 @@ XData FAQManifest [ XMLNamespace = INSTALLER ]
 <If Condition='$L("${FTPDirectory}")>0'>
 <Invoke Class="KB.Setup" Method="copyDownloadFiles" CheckStatus="0" Return="RetVal"> 
     <Arg Value="${setupdir}"/>
+</Invoke>
+</If>
+<If Condition='$L("${CSPDirectory}")>0'>
+<Invoke Class="KB.Setup" Method="copyImages" CheckStatus="0" Return="RetVal"> 
+    <Arg Value="${setupdir}"/>
+</Invoke>
+<Invoke Class="KB.Setup" Method="copyCSPs" CheckStatus="0" Return="RetVal"> 
+    <Arg Value="${CSPFileDir}"/>
 </Invoke>
 </If>
 </Namespace>
@@ -121,11 +132,27 @@ ClassMethod runInstaller(datestr As %String) As %Status
 		set vars("CustomErrorPage") 	  = ##class(KB.Config).getErrorPage()
 		set vars("AuthenticationMethods") = ##class(KB.Config).getAuthenticationMethods()
     
+        if vars("ClassFileDir") = "" {
+           set vars("CSPFileDir") = ""
+        }
+        else {
+		  //以下のディレクトリ構造はGitHubリポジトリーに依存しているため固定
+		  set vars("CSPFileDir") = setupdir_##class(KB.Config).getClassFileDir()
+		  set vars("CSPFileDir") = vars("CSPFileDir")_##class(KB.Config).getDirectorySeparator()_"CSP"
+		  set vars("CSPFileDir") = vars("CSPFileDir")_##class(KB.Config).getDirectorySeparator()_"csp"
+		  set vars("CSPFileDir") = vars("CSPFileDir")_##class(KB.Config).getDirectorySeparator()_"isj"
+        }
+        
     	if (vars("ClassFileDir")'="") && (##class(%File).Exists(vars("ClassFileDir"))'=1) {
 	    	w vars("ClassFileDir"),"は存在しません。ファイルを確認してください。",!
 	    	quit 0
     	}
     	
+    	if (vars("CSPFileDir")'="") && (##class(%File).Exists(vars("CSPFileDir"))'=1) {
+	    	w vars("CSPFileDir"),"は存在しません。ファイルを確認してください。",!
+	    	quit 0
+    	}
+
     	if (vars("GlobalFileName")'="") && (##class(%File).Exists(vars("GlobalFileName"))'= 1) {
     		w vars("GlobalFileName"),"は存在しません。ファイルを確認してください。",!
 	    	quit 0
@@ -142,7 +169,7 @@ ClassMethod runInstaller(datestr As %String) As %Status
 
 ClassMethod getVersion() As %String
 {
-	quit "1.0.007"
+	quit "1.0.015"
 }
 
 }

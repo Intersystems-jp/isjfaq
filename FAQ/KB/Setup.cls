@@ -79,12 +79,12 @@ ClassMethod setConfigParams(envID As %Integer) As %Status
 		
 	//その他、ローカルに環境を作りたいときなどに使用(上の3つの内容を変更せずにここを利用)
 	} else {
-		set ns = "USER"
-		set auth = "32"		//パスワード認証
+		set ns = "FAQ"
+		set auth = "64"		
 		set separator = "\"
-		set cspdir = "c:\InterSystems\Ensemble2\CSP\user"
-		set cspurl = "/csp/user"
-		set ftpdir = "c:\InterSystems\Ensemble2\CSP\user\downloads"
+		set cspdir = "c:\InterSystems\Ensemble\CSP\faq"
+		set cspurl = "/csp/faq"
+		set ftpdir = "c:\InterSystems\Ensemble\CSP\faq\downloads"
 		set setupdir = "e:\Work\FAQ"
 		set classfiledir = "FAQ"
 		set globalfilename = "TopicD.xml"
@@ -129,6 +129,46 @@ ClassMethod copyDownloadFiles(pSetupDir As %String) As %Status
 	if '##class(%File).Exists(sourceDownloadDir) quit $$$OK
 	
 	set copyParam = pSetupDir_dirSep_"downloads "_ftpDir
+  
+	if dirSep = "\" {
+       set copyCommand = "xcopy /e /y "_copyParam
+    }
+    else  {
+       set copyCommand = "cp -R "_copyParam
+    }
+       
+    quit $zf(-1,copyCommand)
+}
+
+ClassMethod copyImages(pSetupDir As %String) As %Status
+{
+	//参照用イメージファイルをimagesディレクトリーにコピーする
+	set dirSep = ##class(KB.Config).getDirectorySeparator()
+	set imagesDir = ##class(KB.Config).getCSPDirectory()_dirSep_"images"
+	//ディレクトリがなければコピーしない
+	if '##class(%File).Exists(imagesDir) quit $$$OK
+	
+	set copyParam = pSetupDir_dirSep_"images "_imagesDir
+  
+	if dirSep = "\" {
+       set copyCommand = "xcopy /e /y "_copyParam
+    }
+    else  {
+       set copyCommand = "cp -R "_copyParam
+    }
+       
+    quit $zf(-1,copyCommand)
+}
+
+ClassMethod copyCSPs(pSetupDir As %String) As %Status
+{
+	//cspファイルやcssファイルをcspディレクトリーにコピーする
+	set CSPDir = ##class(KB.Config).getCSPDirectory()
+	set dirSep = ##class(KB.Config).getDirectorySeparator()
+	//ディレクトリがなければコピーしない
+	if '##class(%File).Exists(CSPDir) quit $$$OK
+	
+	set copyParam = pSetupDir_" "_CSPDir
   
 	if dirSep = "\" {
        set copyCommand = "xcopy /e /y "_copyParam

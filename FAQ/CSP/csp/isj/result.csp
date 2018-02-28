@@ -222,12 +222,13 @@ if $Get(%session.Data("Access"))="" {
    for i = 1:1:lineno {
    
 	   set line(i)=$piece(edesc,crlf,i)
-	   
+ 	   
 	   if (line(i) [ syn) {
-	       write $replace($Translate(line(i),syn,""),"<CODE><br>","<CODE>")_"<br>"
+	       // <CODE>タグの後ろに<br />または<br>がつくケースがあるので、表示の際はそれを取り除く
+	       write $replace($replace($Translate(line(i),syn,""),"<CODE><br />","<CODE>"),"<CODE><br>","<CODE>")_"<br>"
 	   }
        else {
-	       write $replace(line(i),"<CODE><br>","<CODE>")_"<br>"
+	       write $replace($replace(line(i),"<CODE><br />","<CODE>"),"<CODE><br />","<CODE>")_"<br>"
        }
    }
  </SCRIPT>

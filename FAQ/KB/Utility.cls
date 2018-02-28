@@ -542,7 +542,7 @@ ClassMethod CreateUsersVoice() As %Status
 
 ClassMethod ShowVersion() As %String
 {
-	quit "1.2.002"
+	quit "1.2.005"
 }
 
 ClassMethod FindKatakanaKeywords() As %Status
@@ -608,4 +608,43 @@ ClassMethod PickupTags(pText As %String, pTag As %String, ByRef pResults As %Str
 	Quit $$$OK
 }
 
+/// cspファイルでエンコーディングがUTF8でBOMなしのものにBOMを付加する
+/// cspファイルはUTF8であることが前提
+
+ClassMethod cspUtf8AddBOM(pfiledir As %String) As %Status
+{
+    set status = $$$OK
+    
+	// Create a new XML Reader class
+	Set query = ##class(%SQL.Statement).%New()
+	set status = query.%PrepareClassQuery("%File","FileSet")
+	if $$$ISERR(status) { do $system.OBJ.DisplayError(status) Quit} 
+	set rs = query.%Execute(pfiledir,"*.csp")
+	set bom = $char(239,187,191)
+	while rs.%Next() {
+	  set cspfilename = rs.%Get("Name")
+	  set tempfilename = $piece(cspfilename,".",1)_".tmp"
+	  set inputstream = ##class(%Stream.FileCharacter).%New()
+	  set inputstream.TranslateTable = "UTF8"
+	  set status = inputstream.LinkToFile(cspfilename)
+	  set outputstream = ##class(%Stream.FileCharacter).%New()
+	  set outputstream.TranslateTable = "UTF8"
+	  set outputstream.BOM = bom
+	  set status = outputstream.LinkToFile(tempfilename)
+	  while 'inputstream.AtEnd {
+	    set line = inputstream.ReadLine()
+	    
+	    set status = outputstream.WriteLine(line)
+	    if $$$ISERR(status) { do $system.OBJ.DisplayError(status) Quit} 
+	  
+	  }
+
+	  do outputstream.%Save()
+	  kill inputstream
+	  set status = ##class(%File).Delete(cspfilename,.return)
+	  set status = ##class(%File).Rename(tempfilename,cspfilename,.return)
+	}
+	  
+    quit status
+  }
 }
