@@ -542,7 +542,7 @@ ClassMethod CreateUsersVoice() As %Status
 
 ClassMethod ShowVersion() As %String
 {
-	quit "1.2.005"
+	quit "1.2.13"
 }
 
 ClassMethod FindKatakanaKeywords() As %Status
@@ -647,4 +647,85 @@ ClassMethod cspUtf8AddBOM(pfiledir As %String) As %Status
 	  
     quit status
   }
+ClassMethod EscapeTag(pText As %String, pTag As %String) As %String
+{
+    //データに<script xxx>が含まれると編集できなくなる問題の対応
+	set UText = pText
+	set UTag = pTag
+    set sfind = 0
+    set substr = ""
+    set escsubstr = ""
+    set STag = "<"_UTag_""
+    
+	set sfind = $Find(UText,STag,sfind)
+	If sfind {
+	   set efind = $Find(UText,">",sfind)
+	   If efind {
+		  set substr =$extract(pText,sfind-$length(STag),efind)
+	   }
+	   Else {
+		  set substr = ""
+	   }
+	   set escsubstr = ##class(%CSP.Page).EscapeHTML(substr)
+	}
+    	
+	Quit $replace(pText,substr,escsubstr)
+}
+
+ClassMethod AjustBrace(pText As %String) As %String
+{
+    //検索文字に括弧があって正しく閉じられていない場合にエラーとなるケースの対処
+    //　iFindの仕様という観点から()はスぺ^-スに置き換えるのが正しいと判明したためこのメソッドは使用しない
+	set BraceLeft = "("
+	set BraceRight = ")"
+	if pText [ BraceLeft {
+	  // (だけがあって、)がない場合、最後に)を置く
+	  set rtext = $piece(pText,BraceLeft,2)
+	  if rtext '[ BraceRight set pText = pText_BraceRight
+	}
+	
+	elseif pText [ BraceRight {
+	  // )だけがあって、(がない場合、どこに(を置けば良いか判断が難しいのでとりあえず先頭に置く
+	  set ltext = $piece(pText,BraceRight,1)
+	  if ltext '[ BraceLeft {
+	    set pText = BraceLeft_pText
+	  }
+	}
+    	
+	Quit pText
+}
+
+ClassMethod EscapeTagInCommand(pText As %String) As %String
+{
+    //<COMMAND>タグ内に<>があると表示がおかしくなる問題に対応
+	set UText = pText
+	set CtagStart = "<CODE>"
+	set CtagEnd= "</CODE>"
+    set sfind = 0
+    set substr = ""
+    set escsubstr = ""
+    
+    for {
+	  set sfind = $Find(UText,CtagStart,sfind)
+	  If sfind {
+	     set efind = $Find(UText,CtagEnd,sfind)
+	     If efind {
+		    set substr =$extract(UText,sfind,efind-$length(CtagEnd)-1)
+	     }
+	     Else {
+		    set substr = ""
+	     }
+	     set escsubstr = $replace($replace(substr,"<","&lt;"),">","&gt;")
+	  }
+	  Else {
+	    quit
+	  }
+	
+	  set UText = $replace(UText,substr,escsubstr)
+
+    }	
+
+	Quit UText
+}
+
 }

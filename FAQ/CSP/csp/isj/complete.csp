@@ -62,6 +62,9 @@ Set topic = ##Class(KB.Topic).%OpenId(pDocNo)
 Set tSC = topic.RefCheckLink(0)
 Set OldList = $Get(%session.Data("RefTopic"))
 Set NewList = topic.RefTopic
+ //リスト内の重複トピックを取り除く 
+Set NewList = topic.RemoveDuplicatedRefNo(NewList)
+Set topic.RefTopic = NewList
  //編集した結果、前の関連トピックを削除した場合、相手のトピックからの参照も削除する
 set tSC = ##class(KB.Topic).RemoveLink(DocNo,OldList,NewList)
 </SCRIPT>

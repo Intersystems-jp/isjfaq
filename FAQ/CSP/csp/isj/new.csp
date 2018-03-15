@@ -33,7 +33,6 @@
         </tr>
           <td class="coltitle">内容：</td>
           <td><textarea onkeydown="insertTab(this, event);" name="Description" cspbind="Description" cols="50" rows="15" id="dsc"></textarea></td>
-		  <!--<td><textarea name="Description" cspbind="Description" cols="85" rows="30" style="font-size:100%;font-family:'ＭＳ ゴシック';line-height:1.5em;"></textarea></td>-->
 	    <script>
 		CKEDITOR.replace( 'dsc', {
 			extraPlugins: 'colorbutton,font,justify,tableresize,uploadimage,uploadfile,pastefromword,liststyle',
@@ -141,7 +140,7 @@ function formValidate() {
 		var refchk = #server(..RefListChk(reflist))#;
 		if (refchk==0) {
 			alert('関連トピックの指定が不正です。指定されたIDのトピックは存在しません。');
-			document.form.RefTopic.value='';
+			document.form.RefTopic.value=reflist;
 		}else {
 			document.form.RefTopic.value=refchk;
 		}
@@ -173,7 +172,10 @@ function formValidate() {
 	}	
 	
 	//Ckedit経由のデータにｃｒｌｆが入るので取り除く
-	//document.form.Description.value.replace(/\r\n?/g, '');
+	
+	var desc = document.form.Description.value;
+	desc = desc.replace(/\r?\n/g, '');
+	document.form.Description.value = desc;
 	
 	//トピック保存
 	var saveconf = confirm('このトピックを追加します。よろしいですか？')

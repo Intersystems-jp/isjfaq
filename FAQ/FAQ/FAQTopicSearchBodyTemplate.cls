@@ -516,7 +516,9 @@ Method SetKeyCond(keylist As %String) As %String
  		set keyword = $piece(keylist," ",i) 
  		if keyword'= "" {
 	 		set keyno=keyno+1
-	 		set keyword(keyno) = keyword
+	 		
+	 		// キーワードが(または)で終わる場合、検索エラーとなる問題に対処する
+	 		set keyword(keyno) = $replace($replace(keyword,"("," "),")"," ")
  		}
 	}
  	 	

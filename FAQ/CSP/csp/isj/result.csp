@@ -222,6 +222,8 @@ if $Get(%session.Data("Access"))="" {
    for i = 1:1:lineno {
    
 	   set line(i)=$piece(edesc,crlf,i)
+	   set line(i) = ##class(KB.Utility).EscapeTag(line(i),"script")
+	   set line(i) = ##class(KB.Utility).EscapeTagInCommand(line(i))
  	   
 	   if (line(i) [ syn) {
 	       // <CODE>タグの後ろに<br />または<br>がつくケースがあるので、表示の際はそれを取り除く

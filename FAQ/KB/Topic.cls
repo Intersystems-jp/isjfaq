@@ -79,25 +79,6 @@ Property UsersVoice As KB.UsersVoice;
 /// 更新履歴
 Relationship UpdateDetail As KB.UpdateHistory [ Cardinality = children, Inverse = Topic ];
 
-/*
-/// 添付ファイルフラグ1
-Property FileFlg1 As %Boolean [ InitialExpression = 0 ];
-
-/// 添付ファイル1
-Property FileLoc1 As %FileBinaryStream(XMLPROJECTION = "NONE");
-
-/// 添付ファイルフラグ2
-Property FileFlg2 As %Boolean [ InitialExpression = 0 ];
-
-/// 添付ファイル2
-Property FileLoc2 As %FileBinaryStream(XMLPROJECTION = "NONE");
-
-/// 添付ファイルフラグ3
-Property FileFlg3 As %Boolean [ InitialExpression = 0 ];
-
-/// 添付ファイル3
-Property FileLoc3 As %FileBinaryStream(XMLPROJECTION = "NONE");
-*/
 Index IndexIssueDate On IssueDate;
 
 Index IndexTitle On Title;
@@ -142,8 +123,11 @@ Method %OnBeforeSave(pInsert As %Boolean) As %Status [ Private, ServerOnly = 1 ]
 		}
 	}
 	
-    // CKEditから取得したテキストにcrlfが入り<br>に変換されるため、取り除く
-    set ..Description = $replace(..Description,"<br>","")   	
+	// 参照トピックリスト内に自分自身が入っていたら取り除く
+	set ..RefTopic = ..RemoveRefNoForOwn(..RefTopic, ..%Id())
+	// 参照トピックリスト内の重複を取り除く
+	set ..RefTopic = ..RemoveDuplicatedRefNo(..RefTopic)
+	
 	Quit $$$OK
 }
 
@@ -231,6 +215,54 @@ ClassMethod ComputeTopicID(pId As %Integer) As %String
 		set tSC = ##class(FAQ.Error).StoreErrorInformation(tE)
 	}
 	quit $Get(tTopicId)
+}
+
+ClassMethod RemoveDuplicatedRefNo(pRefNoList As %String) As %String
+{
+	//関連Topicリスト内の重複Topicを取り除く
+	
+	if pRefNoList = "" quit ""
+	
+	for i = 1:1:$length(pRefNoList,",") {
+	  set refno = $piece(pRefNoList,",",i)
+	  set ref(refno) = ""
+	}
+	
+	set node = "", newref = ""
+	
+	for {
+	  set node = $order(ref(node))
+	  if node = "" quit
+	  set newref = newref_","_node
+	}
+	
+	quit $extract(newref,2,*)
+		
+}
+
+ClassMethod RemoveRefNoForOwn(pRefNoList As %String, pTopicId As %Integer) As %String
+{
+	//関連Topicリスト内の本トピックがある場合取り除く
+	
+	if pRefNoList = "" quit ""
+	
+	for i = 1:1:$length(pRefNoList,",") {
+	  set refno = $piece(pRefNoList,",",i)
+	  if refno '= pTopicId {
+	    set ref(refno) = ""
+	  }
+	}
+	
+	set node = "", newref = ""
+	
+	for {
+	  set node = $order(ref(node))
+	  if node = "" quit
+	  set newref = newref_","_node
+	}
+	
+	quit $extract(newref,2,*)
+		
 }
 
 Method RefCheckLink(pDebug As %Boolean) As %Status
@@ -343,7 +375,6 @@ Method DescriptionGet() As %Text
  set lt = "&lt;"
  set Description = i%Description
 
- set Description = $replace(Description,crlf,"<br>")
  set Description = $replace(Description,"<command>",lt_"command"_gt)
  set Description = $replace(Description,"</command>",lt_"/command"_gt)
  set Description = $replace(Description,"<Command>",lt_"Command"_gt)
