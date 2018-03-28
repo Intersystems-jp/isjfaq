@@ -222,15 +222,26 @@ if $Get(%session.Data("Access"))="" {
    for i = 1:1:lineno {
    
 	   set line(i)=$piece(edesc,crlf,i)
-	   set line(i) = ##class(KB.Utility).EscapeTag(line(i),"script")
-	   set line(i) = ##class(KB.Utility).EscapeTagInCommand(line(i))
+	   set count = ##class(KB.Utility).NoOfTags(line(i),"script")
+	   
+	   for j = 1:1:count {
+	     set line(i) = ##class(KB.Utility).EscapeTag(line(i),"script")
+	   }
+
+	   set count = ##class(KB.Utility).NoOfTags(line(i),"code")
+
+       for j = 1:1:count {
+	     set line(i) = ##class(KB.Utility).EscapeTagInCommand(line(i))
+ 	   }
+ 	   
+ 	   set line(i) = $replace(line(i),"&lt;br /&gt;","<br />")
  	   
 	   if (line(i) [ syn) {
-	       // <CODE>タグの後ろに<br />または<br>がつくケースがあるので、表示の際はそれを取り除く
-	       write $replace($replace($Translate(line(i),syn,""),"<CODE><br />","<CODE>"),"<CODE><br>","<CODE>")_"<br>"
+	      
+	       write $Translate(line(i),syn,"")_"<br>"
 	   }
        else {
-	       write $replace($replace(line(i),"<CODE><br />","<CODE>"),"<CODE><br />","<CODE>")_"<br>"
+	       write line(i)_"<br>"
        }
    }
  </SCRIPT>

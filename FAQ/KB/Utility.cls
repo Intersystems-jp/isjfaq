@@ -542,7 +542,7 @@ ClassMethod CreateUsersVoice() As %Status
 
 ClassMethod ShowVersion() As %String
 {
-	quit "1.2.13"
+	quit "1.2.15"
 }
 
 ClassMethod FindKatakanaKeywords() As %Status
@@ -672,6 +672,33 @@ ClassMethod EscapeTag(pText As %String, pTag As %String) As %String
 	Quit $replace(pText,substr,escsubstr)
 }
 
+ClassMethod NoOfTags(pText As %String, pTag As %String) As %Integer
+{
+    //データに<script xxx>が含まれると編集できなくなる問題の対応
+	set UText = pText
+	set UTag = pTag
+    set sfind = 0
+    set count = 0
+    set end = 0
+    set escsubstr = ""
+    set STag = "<"_UTag_""
+    
+    for {
+	  set sfind = $Find(UText,STag,sfind)
+
+	  If sfind {
+	     set count = $increment(count)
+	  }
+	  Else {
+		 set end = 1
+	  }
+	  
+	  if end = 1 quit 
+	}
+    	
+	Quit count
+}
+
 ClassMethod AjustBrace(pText As %String) As %String
 {
     //検索文字に括弧があって正しく閉じられていない場合にエラーとなるケースの対処
@@ -699,8 +726,8 @@ ClassMethod EscapeTagInCommand(pText As %String) As %String
 {
     //<COMMAND>タグ内に<>があると表示がおかしくなる問題に対応
 	set UText = pText
-	set CtagStart = "<CODE>"
-	set CtagEnd= "</CODE>"
+	set CtagStart = "<code>"
+	set CtagEnd= "</code>"
     set sfind = 0
     set substr = ""
     set escsubstr = ""
