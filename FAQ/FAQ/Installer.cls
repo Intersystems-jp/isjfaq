@@ -25,6 +25,10 @@ XData FAQManifest [ XMLNamespace = INSTALLER ]
 </Invoke>
 <Import File="${ClassFileDir}" Flags="ckr" Recurse="1" IgnoreErrors="1"> 
 </Import>
+<Invoke Class="%SYSTEM.OBJ" Method="Compile" CheckStatus="0" Return="RetVal"> 
+    <Arg Value="KB.Topic"/>
+    <Arg Value="ck"/>
+</Invoke>
 </If>
 <If Condition='$L("${SetupType}")=1'>
 <Invoke Class="KB.Setup" Method="masterSetup" CheckStatus="0" Return="RetVal"> 
@@ -169,7 +173,7 @@ ClassMethod runInstaller(datestr As %String) As %Status
 
 ClassMethod getVersion() As %String
 {
-	quit "1.0.015"
+	quit "1.0.020"
 }
 
 }
