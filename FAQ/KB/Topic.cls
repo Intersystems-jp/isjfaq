@@ -128,6 +128,14 @@ Method %OnBeforeSave(pInsert As %Boolean) As %Status [ Private, ServerOnly = 1 ]
 	// 参照トピックリスト内の重複を取り除く
 	set ..RefTopic = ..RemoveDuplicatedRefNo(..RefTopic)
 	
+	//トピック内の参照イメージのurlを絶対パスから相対パスに変更する
+	//データ本番移行の際、namespaceの違いを考慮する必要をなくすため
+	
+	set namespace = $ZCVT($namespace,"L")
+	set apath = "/csp/"_namespace_"/images"
+	set rpath = "./images"
+	set ..Description = $replace(..Description,apath,rpath)
+	
 	Quit $$$OK
 }
 
@@ -390,6 +398,30 @@ Method DescriptionGet() As %Text
  set Description = $replace(Description,"</URL>",lt_"/URL"_gt)
  
  quit Description
+}
+
+ClassMethod ChangeUrlPathForImages() {
+   try {
+     //ckeditorで追加したイメージは、絶対パスでhtmlに埋め込まれるため、本番移行、テスト移行等の際、ネームスペースが異なると表示されなくなるので、相対パスに変更する
+     //今後は、トピックの保存の際、この変換を行うので、インストールの際には必要なくなる
+     set sql = "select %ID,Description from KB.Topic where Description [ '/csp/knowledge/images/'"
+     set newnamespace = $zcvt($namespace,"L")
+     set statement = ##class(%SQL.Statement).%New()
+     set status = statement.%Prepare(sql)
+     if 'status $$$ThrowStatus(status)
+     set rs = statement.%Execute()
+     While rs.%Next() {
+       set id = rs.%Get("ID")
+       set topic = ##class(KB.Topic).%OpenId(id)
+       set desc = topic.Description
+       set topic.Description = $replace(desc,"/csp/knowledge/images/","./images/")
+       set status = topic.%Save()
+       if 'status $$$ThrowStatus(status)
+      }
+    }
+    catch ex {
+      set status = ##class(FAQ.Error).StoreErrorInformation(ex)  
+    }	
 }
 
 Storage Default

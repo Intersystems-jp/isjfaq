@@ -124,16 +124,16 @@ ClassMethod copyDownloadFiles(pSetupDir As %String) As %Status
 	//ダウンロードファイルをFTPディレクトリーにコピーする
 	set ftpDir = ##class(KB.Config).getFTPDirectory()
 	set dirSep = ##class(KB.Config).getDirectorySeparator()
-	set sourceDownloadDir = ##class(KB.Config).getSetupDirectory()_dirSep_"downloads"
 	//ディレクトリがなければコピーしない
-	if '##class(%File).Exists(sourceDownloadDir) quit $$$OK
-	
-	set copyParam = pSetupDir_dirSep_"downloads "_ftpDir
-  
+	if '##class(%File).Exists(pSetupDir_dirSep_"downloads") quit $$$OK
+	  
 	if dirSep = "\" {
+       set copyParam = pSetupDir_dirSep_"downloads "_ftpDir
        set copyCommand = "xcopy /e /y "_copyParam
     }
     else  {
+       set ftpDir = $piece(ftpDir,dirSep,1,*-1)
+       set copyParam = pSetupDir_dirSep_"downloads "_ftpDir
        set copyCommand = "cp -R "_copyParam
     }
        
@@ -144,16 +144,17 @@ ClassMethod copyImages(pSetupDir As %String) As %Status
 {
 	//参照用イメージファイルをimagesディレクトリーにコピーする
 	set dirSep = ##class(KB.Config).getDirectorySeparator()
-	set imagesDir = ##class(KB.Config).getCSPDirectory()_dirSep_"images"
 	//ディレクトリがなければコピーしない
-	if '##class(%File).Exists(imagesDir) quit $$$OK
-	
-	set copyParam = pSetupDir_dirSep_"images "_imagesDir
-  
+	if '##class(%File).Exists(ｐSetupDir_dirSep_"images") quit $$$OK
+	  
 	if dirSep = "\" {
+	   set imagesDir = ##class(KB.Config).getCSPDirectory()_dirSep_"images"
+       set copyParam = pSetupDir_dirSep_"images "_imagesDir
        set copyCommand = "xcopy /e /y "_copyParam
     }
     else  {
+	   set imagesDir = ##class(KB.Config).getCSPDirectory()
+       set copyParam = pSetupDir_dirSep_"images "_imagesDir
        set copyCommand = "cp -R "_copyParam
     }
        
@@ -166,7 +167,7 @@ ClassMethod copyCSPs(pSetupDir As %String) As %Status
 	set CSPDir = ##class(KB.Config).getCSPDirectory()
 	set dirSep = ##class(KB.Config).getDirectorySeparator()
 	//ディレクトリがなければコピーしない
-	if '##class(%File).Exists(CSPDir) quit $$$OK
+	if '##class(%File).Exists(pSetupDir) quit $$$OK
 	
 	set copyParam = pSetupDir_" "_CSPDir
   
