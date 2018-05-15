@@ -145,7 +145,7 @@ ClassMethod copyImages(pSetupDir As %String) As %Status
 	//参照用イメージファイルをimagesディレクトリーにコピーする
 	set dirSep = ##class(KB.Config).getDirectorySeparator()
 	//ディレクトリがなければコピーしない
-	if '##class(%File).Exists(ｐSetupDir_dirSep_"images") quit $$$OK
+	if '##class(%File).Exists(pSetupDir_dirSep_"images") quit $$$OK
 	  
 	if dirSep = "\" {
 	   set imagesDir = ##class(KB.Config).getCSPDirectory()_dirSep_"images"

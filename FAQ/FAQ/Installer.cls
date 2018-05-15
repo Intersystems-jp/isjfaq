@@ -38,7 +38,7 @@ XData FAQManifest [ XMLNamespace = INSTALLER ]
 <Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
     <Arg Value="${GlobalFileName}"/>
 </Invoke>
-<Invoke Class="KB.Topic" Method="ChangeUrlPathForImages" CheckStatus="0" Return="RetVal"> 
+<Invoke Class="KB.Topic" Method="ChangeUrlPathForImages" CheckStatus="0"> 
 </Invoke>
 <Invoke Class="KB.Topic" Method="%BuildIndices" CheckStatus="0" Return="RetVal"> 
 </Invoke>
@@ -175,7 +175,7 @@ ClassMethod runInstaller(datestr As %String) As %Status
 
 ClassMethod getVersion() As %String
 {
-	quit "1.0.020"
+	quit "1.0.022"
 }
 
 }

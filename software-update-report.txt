@@ -1402,3 +1402,22 @@ KB.Setup.cls
 KB.Topic.cls
 KB.Utility.cls
 FAQ.Installer.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS080
+
+日付			2018/5/15
+
+内容
+
+
+result.cspのスタイルシートの指定を微調整　
+　HREF="style.css?15"
+ -->
+　HREF="style.css"
+
+修正モジュール
+
+result.csp
+KB.Utility.cls
