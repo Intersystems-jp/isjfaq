@@ -19,4 +19,11 @@ XData Style
 
 Property Product As %String [ InitialExpression = 3 ];
 
+ClassMethod %OnPreHTTP() As %Boolean [ ServerOnly = 1 ]
+{
+ #dim %response As %CSP.Response
+ set %response.ServerSideRedirect="FAQ.FAQApp.cls"
+ quit $$$OK
+}
+
 }

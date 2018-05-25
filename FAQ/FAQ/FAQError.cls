@@ -59,7 +59,7 @@ XData Contents [ XMLNamespace = "http://www.intersystems.com/zen" ]
 </hgroup>
 <spacer height="30"/>
 <hgroup align="center">
-<link id="totoppage" href="FAQ.FAQTopicSearch.cls" caption="InterSystems FAQトピック検索 Topへ" style=""/> 
+<link id="totoppage" href="FAQ.FAQApp.cls" caption="InterSystems FAQトピック検索 Topへ" style=""/> 
 </hgroup>
 </page>
 }
