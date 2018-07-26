@@ -1,3 +1,8 @@
+<SCRIPT LANGUAGE="cache" RUNAT="Server">
+ set companylogourl = %request.CgiEnvs("HTTP_HOST")_$piece(%request.CgiEnvs("REQUEST_URI"),"/",1,2)_"/images/logo/CompanyLogo.png"
+ set url = %request.CgiEnvs("HTTP_HOST")_%request.CgiEnvs("REQUEST_URI")
+</SCRIPT>
+
 <CSP:PARAMETER name="EXPIRES" value="">
 <html>
 
@@ -5,6 +10,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="GENERATOR" content="IBM HomePage Builder 2001 V5.0.0 for Windows">
+<meta property="og:title" content="FAQ検索結果ページ">
+<meta property="og:type" content="article">
+<meta property="og:image" content="#(companylogourl)#">
+<meta property="og:url" content="#(url)#">
 <title>Cach&eacute; FAQ Database Seach Result Detail</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="style.css" >
 <!-- Specify that this page is PRIVATE -->
@@ -20,6 +29,8 @@ function loadEvent()
    if (wnamesub=='TopicDescription') {
 	   var closebtn=document.getElementById("closebtn");
    	   closebtn.style.visibility='visible';
+	   var gotoppage=document.getElementById("gotoppage");
+   	   gotoppage.style.visibility='hidden';
    }else{
 	   var toplink=document.getElementById("toplink");
        toplink.style.visibility='visible';
@@ -169,53 +180,9 @@ if $Get(%session.Data("Access"))="" {
    set description=##class(%CSP.Page).UnescapeHTML(topic.Description)
 
    set crlf = $char(13,10)
-   set syn = $Char(22)  //一度置換したurlを再度置換しないように、ありえない文字（制御文字）を埋め込む
    
    set edesc = description
    
-   //Aタグを<URL>処理で変換しないようにありえない文字を追加する
-   
-   set edesc = $replace(edesc,"a href=""h","a href=""h"_$char(22,22))
-   
-   set sts = ##class(KB.Utility).PickupTags(description,"COMMAND",.tCommand)
-      
-   for i = 1:1:tCommand {
-     set replaced = tCommand(i)
-
-     set replace = "<DIV class=divcommand><PRE><CODE>"_syn_replaced_syn_"</CODE></PRE></DIV>"
-     set edesc = $replace(edesc,replaced,replace)
-     set edesc = $replace(edesc,"<DIV>","")
-     set edesc = $replace(edesc,"</DIV>","")
-     set edesc = $replace(edesc,"<div>","")
-     set edesc = $replace(edesc,"</div>","")
-     set edesc = $replace(edesc,"<Div>","")
-     set edesc = $replace(edesc,"</Div>","")
-     set edesc = $replace(edesc,"</CODE></PRE>","</CODE></PRE></DIV>")
-   }
-    
-   set sts = ##class(KB.Utility).PickupTags(description,"URL",.tUrl)
-      
-   for i = 1:1:tUrl {
-	 set replaced = tUrl(i)
-     set url = $replace(replaced,crlf,"")
-     set url = $extract(url,1)_syn_$extract(url,2,*)
-     set replace = "<A href="_url_" target=""blank"">"_url_"</A><br>"
-     
-     set edesc = $replace(edesc,replaced,replace)
-   }
-     
-   set edesc = $replace(edesc,"<COMMAND>","")
-   set edesc = $replace(edesc,"</COMMAND>","")
-   set edesc = $replace(edesc,"<command>","")
-   set edesc = $replace(edesc,"</command>","")
-   set edesc = $replace(edesc,"<Command>","")
-   set edesc = $replace(edesc,"</Command>","")
-   set edesc = $replace(edesc,"<URL>","")
-   set edesc = $replace(edesc,"</URL>","")
-   set edesc = $replace(edesc,"<url>","")
-   set edesc = $replace(edesc,"</url>","")
-   set edesc = $replace(edesc,"<Url>","")
-   set edesc = $replace(edesc,"</Url>","")
                    
    set lineno = $length(edesc,crlf)
       
@@ -227,22 +194,8 @@ if $Get(%session.Data("Access"))="" {
 	   for j = 1:1:count {
 	     set line(i) = ##class(KB.Utility).EscapeTag(line(i),"script")
 	   }
-
-	   set count = ##class(KB.Utility).NoOfTags(line(i),"code")
-
-       for j = 1:1:count {
-	     set line(i) = ##class(KB.Utility).EscapeTagInCommand(line(i))
- 	   }
- 	   
- 	   set line(i) = $replace(line(i),"&lt;br /&gt;","<br />")
- 	   
-	   if (line(i) [ syn) {
-	      
-	       write $Translate(line(i),syn,"")_"<br>"
-	   }
-       else {
-	       write line(i)_"<br>"
-       }
+ 	    	   
+	   write line(i)_"<br>"
    }
  </SCRIPT>
 
@@ -296,6 +249,10 @@ if $Get(%session.Data("Access"))="" {
   <SPAN class="mail"><A href="mailto:jpnsup@intersystems.com?subject=Question>>>FAQ #(TopicID)#"><IMG src="./images/button/mail01-y.gif" border=0> このトピックに関するお問い合わせ</A></SPAN>
 </DIV>
 </P>
+<DIV class="gotoppage" align="center">
+  <A href="FAQ.FAQApp.cls" id="gotoppage"> FAQトップに戻る</A>
+</DIV>
+</P>
 <DIV class="closebtn" align="center">
   <Input type="image" id="closebtn" src="./images/button/tojiru1.gif" border="0" onclick="window.close()" style="visibility:hidden;"><br>
 </DIV>
@@ -339,7 +296,6 @@ set %session.Data("noAudit")=0
 set %session.Data("EnqChk",DocNo)=%session.SessionId
 
 quit
-
 
 </script>
 
