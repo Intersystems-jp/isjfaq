@@ -157,6 +157,16 @@ if $Get(%session.Data("Access"))="" {
 	 Set tWidth = 16
 	 Set tHight = 16
  }
+ ElseIf (tProductId = 4) { //HealthShare
+	 Set tLogo = "healthshare.png"
+	 Set tWidth = 16
+	 Set tHight = 16
+ }
+ ElseIf (tProductId = 5) { //Ensemble
+	 Set tLogo = "iris.png"
+	 Set tWidth = 16
+	 Set tHight = 16
+ }
     
 </SCRIPT>
 
