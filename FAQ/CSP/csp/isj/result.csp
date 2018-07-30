@@ -1,6 +1,6 @@
 <SCRIPT LANGUAGE="cache" RUNAT="Server">
- set companylogourl = %request.CgiEnvs("HTTP_HOST")_$piece(%request.CgiEnvs("REQUEST_URI"),"/",1,2)_"/images/logo/CompanyLogo.png"
- set url = %request.CgiEnvs("HTTP_HOST")_%request.CgiEnvs("REQUEST_URI")
+ set companylogourl = %request.CgiEnvs("HTTP_HOST")_$piece(%request.GetCgiEnv("REQUEST_URI"),"/",1,3)_"/images/logo/CompanyLogo.png"
+ set url = %request.CgiEnvs("HTTP_HOST")_%request.GetCgiEnv("REQUEST_URI")
 </SCRIPT>
 
 <CSP:PARAMETER name="EXPIRES" value="">
