@@ -217,6 +217,13 @@ Method %OnAfterCreatePage() As %Status
 	quit $$$OK
 }
 
+ClassMethod %OnPreHTTP() As %Boolean [ ServerOnly = 1 ]
+{
+ #dim %response As %CSP.Response
+ set %response.ServerSideRedirect="FAQ.FAQApp.cls"
+ quit $$$OK
+}
+
 ClientMethod setTabSize() [ Language = javascript ]
 {
 	

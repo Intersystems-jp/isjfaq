@@ -1522,3 +1522,19 @@ REQUEST_URI　cgi環境変数はIISでは存在しないため、取得方法を
 result.csp
 KB.Utility.cls
 
+------------------------------------------------------------------------------------
+
+修正ID		HS087
+
+日付			2018/8/20
+
+内容
+
+
+FAQ.TopicSearch.clsが直接ブックマークされている場合にFAQ.FAQAｐｐ.clsに飛ぶように変更
+
+修正モジュール
+
+FAQ.TopicSearch.cls
+KB.Utility.cls
+
