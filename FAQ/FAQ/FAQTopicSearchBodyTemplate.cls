@@ -152,6 +152,10 @@ table.tpTable tbody tr {
 	font-size:13px;
 }
 
+span.titlered {
+  color: red;
+}
+
 </style>
 }
 
@@ -434,27 +438,10 @@ Method CreateTitleRS(Output pSC As %Status, pInfo As %ZEN.Auxiliary.QueryInfo) A
 	
 	//最後の余分なORを取り除き、括弧で囲む
 	set productCond = "("_$Extract(productCond,1,*-2)_")"
-	set sqlselect=" ID,LPAD(ID,5,'0') TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where "_productCond
-
-	//以下の機能は旧インタフェースFAQTopicSearch（製品別タブ）から呼び出される場合のみ呼び出される
-	If ..Product = $$$Cache || ..Product = $$$General || ..Product = $$$Ensemble { 
-	  If crosssearch {
-		
-		// Ensembleタブで検索する場合のみCache（コアテクノロジー）を含めるオプションを持たせる
-		// Product = 2 Cache 
-		// Product = 3 Ensemble
-		
-	  set sqlselect=" ID,TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where (Product = 2 OR Product = 3)"
-	  }
-	  Else {
-	  set sqlselect=" ID,TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version from KB.Topic where Product="_..Product
-	  }
-	
-    }
+	set sqlselect=" ID,LPAD(ID,5,'0') TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version, DeleteFlg from KB.Topic where "_productCond
 
 	//Guestユーザの参照共通条件のセット
 	set comcond="Completed=1 and Visible=1 and DeleteFlg!=1"
-
 
 	//SQL文の構築
 	
@@ -549,6 +536,11 @@ Method DrawTitleCell(pTable As %ZEN.Component.tablePane, pName As %String, pSeed
  
  	set id = %query(pTable.valueColumn)
  	set pName=..EscapeHTML(%query(pName))
+ 	
+ 	if %query("DeleteFlg") {
+	 	set pName = "<span class=""titlered"">"_pName_"</span>"
+ 	}
+ 	
  	&html<<a href="javascript:zenPage.openResult(#(id)#)" >#(pName)#</a>>
 	Quit $$$OK
 }

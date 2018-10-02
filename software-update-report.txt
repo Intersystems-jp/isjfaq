@@ -1538,3 +1538,18 @@ FAQ.TopicSearch.clsが直接ブックマークされている場合にFAQ.FAQA�
 FAQ.TopicSearch.cls
 KB.Utility.cls
 
+------------------------------------------------------------------------------------
+
+修正ID		HS088
+
+日付			2018/9/28
+
+内容
+
+
+トピック編集権限を持っているユーザーに対する検索リストのタイトル表示で削除済のものを赤字で表示するように変更
+
+修正モジュール
+
+FAQ.TopicSearchBodyTemplate.cls
+KB.Utility.cls
