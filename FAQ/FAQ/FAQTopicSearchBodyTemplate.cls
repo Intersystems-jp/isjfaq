@@ -27,18 +27,6 @@ Property SearchKey As %String;
 
 Property SearchFacility As %String;
 
-Property crosschecked As %Boolean;
-
-Property nonproduct As %Boolean;
-
-Property cache As %Boolean;
-
-Property ensemble As %Boolean;
-
-Property healthshare As %Boolean;
-
-Property iris As %Boolean;
-
 /// この Style ブロックにはページ固有のCSSスタイル定義が含まれます。
 XData Style
 {
@@ -169,16 +157,7 @@ XData Contents [ XMLNamespace = "http://www.intersystems.com/zen" ]
 <hgroup height="50%" valign="top">
 <spacer width="20" />
 <expando id="frequentTree" caption="特に参照の多いトピック" expanded="true" childIndent="20px" remember="false" imageExpanded="images/treeminus.gif" imageContracted="images/treeplus.gif">
-<repeatingGroup id="frequentTopicsGroup1"
-                  sql="SELECT Top 10 ID,Title,CASE WHEN LENGTH(Title)&lt;=25 then Title WHEN LENGTH(Title)&gt;25 then SUBSTR(Title,1,18)||'...' END As ShortTitle from KB.Topic where Completed=1 and Visible=1 and DeleteFlg!=1 and Product=? order by UsersVoice->RefFreq desc"
-                  >
-<parameter value="#(%page.Product)#" /> 
-<spacer height="10" />
-<hgroup>
-<link href="javascript:zenPage.openResult(#(%query.ID)#)" caption="#(%query.ShortTitle)#" title="#(%query.Title)#"/>
-</hgroup>
-</repeatingGroup>
-<repeatingGroup id="frequentTopicsGroup2"
+<repeatingGroup id="frequentTopicsGroup"
                   sql="SELECT Top 10 ID,Title,CASE WHEN LENGTH(Title)&lt;=25 then Title WHEN LENGTH(Title)&gt;25 then SUBSTR(Title,1,18)||'...' END As ShortTitle from KB.Topic where Completed=1 and Visible=1 and DeleteFlg!=1 order by UsersVoice->RefFreq desc"
                   >
 <spacer height="10" />
@@ -192,16 +171,7 @@ XData Contents [ XMLNamespace = "http://www.intersystems.com/zen" ]
 <hgroup height="50%" valign="top">
 <spacer width="20" />
 <expando caption="最近追加されたトピック" expanded="true" childIndent="20px" remember="true" imageExpanded="images/treeminus.gif" imageContracted="images/treeplus.gif">
-<repeatingGroup id="newTopicsGroup1"
-                  sql="SELECT ID,Title,CASE WHEN LENGTH(Title)&lt;=25 then Title WHEN LENGTH(Title)&gt;25 then SUBSTR(Title,1,18)||'...' END As ShortTitle from KB.Topic where Completed=1 and Visible=1 and DeleteFlg!=1 and IssueDate&gt;($Horolog-180) and Product=? order by IssueDate desc"
-                  >
-<parameter value="#(%page.Product)#" />
-<spacer height="10" />
-<hgroup>
-<link href="javascript:zenPage.openResult(#(%query.ID)#)" caption="#(%query.ShortTitle)#" title="#(%query.Title)#" />
-</hgroup>
-</repeatingGroup>
-<repeatingGroup id="newTopicsGroup2"
+<repeatingGroup id="newTopicsGroup"
                   sql="SELECT ID,Title,CASE WHEN LENGTH(Title)&lt;=25 then Title WHEN LENGTH(Title)&gt;25 then SUBSTR(Title,1,18)||'...' END As ShortTitle from KB.Topic where Completed=1 and Visible=1 and DeleteFlg!=1 and IssueDate&gt;($Horolog-180) order by IssueDate desc"
                   >
 <spacer height="10" />
@@ -228,13 +198,6 @@ XData Contents [ XMLNamespace = "http://www.intersystems.com/zen" ]
 <radioButton name="SearchOption" optionValue="keycate" onchange="zenPage.searchOption();"/>
 <label id="KeyWordLabel" value="キーワードで検索：" enclosingClass="searchLabel"/>
 <text name="SearchKey" id="SearchKey" size="30" maxlength="100" hint="*複数キーワード検索可*" hintStyle="color:dimgray;" title="検索キーワードを入力" onfocus="zenPage.autoCheck('keycate');" onkeypress="zenPage.enterPress();" enclosingClass="searchTextBox"/>
-<checkbox id="CrossSeachCheck" caption="コアテクノロジを含む" label="" value="0"/>
-<checkbox id="Nonproduct" caption="一般的質問" label="" value="0"/>
-<checkbox id="Cache" caption="Caché" label="" value="0"/>
-<checkbox id="Ensemble" caption="Ensemble" label="" value="0"/>
-<checkbox id="HealthShare" caption="HealthShare" label="" value="0"/>
-<checkbox id="IRIS" caption="IRIS" label="" value="0"/>
-
 </hgroup>
 </vgroup>
 <spacer width="30" />
@@ -360,30 +323,6 @@ ClientMethod executeQuery() [ Language = javascript ]
 	var keyval=key.getValue();
 	zenPage.setProperty('SearchKey',keyval);
 	
-	var crossSearch=this.getComponentById('CrossSeachCheck');
-	var crosschecked = crossSearch.getValue();
-	zenPage.setProperty('crosschecked',crosschecked);
-	
-	var nonproduct=this.getComponentById('Nonproduct');
-	var nonproductv = nonproduct.getValue();
-	zenPage.setProperty('nonproduct',nonproductv);
-
-	var cache=this.getComponentById('Cache');
-	var cachev = cache.getValue();
-	zenPage.setProperty('cache',cachev);
-
-	var ensemble=this.getComponentById('Ensemble');
-	var ensemblev = ensemble.getValue();
-	zenPage.setProperty('ensemble',ensemblev);
-
-	var healthshare=this.getComponentById('HealthShare');
-	var healthsharev = healthshare.getValue();
-	zenPage.setProperty('healthshare',healthsharev);
-
-	var iris=this.getComponentById('IRIS');
-	var irisv = iris.getValue();
-	zenPage.setProperty('iris',irisv);
-
 	zen('TopicTitleTable').executeQuery();
 }
 
@@ -401,44 +340,8 @@ Method CreateTitleRS(Output pSC As %Status, pInfo As %ZEN.Auxiliary.QueryInfo) A
 	set searchid=%page.SearchId
 	set keylist=%page.SearchKey
 	set facilist=%page.SearchFacility
-	set crosssearch=%page.crosschecked 
-	
-	set cache = %page.cache
-	set nonproduct = %page.nonproduct
-	set ensemble = %page.ensemble
-	set healthshare = %page.healthshare
-	set iris = %page.iris
-		
-	// 製品別にタブを分けない様に仕様変更。　その結果、一般的質問のTopicIDを使う必要がなくなったため、単にゼロパディングする。
-	
-	if nonproduct {
-	  set productCond = $Get(productCond)_" PRODUCT = 1 OR"
-	}
-
-	if cache {
-	  set productCond = $Get(productCond)_" PRODUCT = 2 OR"
-	}
-
-	if ensemble {
-	  set productCond = $Get(productCond)_" PRODUCT = 3 OR"
-	}
-
-	if healthshare {
-	  set productCond = $Get(productCond)_" PRODUCT = 4 OR"
-	}
-	
-	if iris {
-	  set productCond = $Get(productCond)_" PRODUCT = 5 OR"
-	}
-	
-	if $Get(productCond) = "" {
-	  //どの製品も検索対象ではない時、PRODUCT = 99 （将来的にもあり得ない製品）を指定し、結果として該当トピックがない状態を作る
-	  set productCond = " PRODUCT = 99 OR"
-	}
-	
-	//最後の余分なORを取り除き、括弧で囲む
-	set productCond = "("_$Extract(productCond,1,*-2)_")"
-	set sqlselect=" ID,LPAD(ID,5,'0') TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version, DeleteFlg from KB.Topic where "_productCond
+				
+	set sqlselect=" ID,LPAD(ID,5,'0') TopicID,TopicSubID,Facility->Description Facility,Title,VersionRange As Version, DeleteFlg from KB.Topic "
 
 	//Guestユーザの参照共通条件のセット
 	set comcond="Completed=1 and Visible=1 and DeleteFlg!=1"
@@ -454,16 +357,11 @@ Method CreateTitleRS(Output pSC As %Status, pInfo As %ZEN.Auxiliary.QueryInfo) A
 	
 	if searchoption="tid" {
 		if searchid'="" {
-			if ..Product=$$$General {
-				set cond=" and (TopicSubID='"_$translate($justify(searchid,3)," ","0")_"' or TopicID='"_searchid_"') "
-			}
-			else {
-				set cond=" and (TopicID='"_$translate($justify(searchid,$$$TopicDigitsNo)," ","0")_"' or ID='"_searchid_"') "
-			}
+			set cond="where (ID='"_searchid_"') "
 		}
 	}elseif searchoption="keycate"{
 		if keycond'="" {
-			set cond="and "_keycond
+			set cond="where "_keycond
 		}
 	}
 	
@@ -471,16 +369,11 @@ Method CreateTitleRS(Output pSC As %Status, pInfo As %ZEN.Auxiliary.QueryInfo) A
 		if cond'="" {
 			set cond = cond_" and "_comcond
 		}else{
-			set cond = "and "_comcond
+			set cond = "where "_comcond
 		}
 	}
 	
-	if ..Product = $$$General {
-	  set orderclause=" order by TopicID"
-	}
-	Else {
-	  set orderclause=" order by ID"
-	}
+	set orderclause=" order by ID"
 	
 	set sql="Select"_sqlselect_" "_cond_orderclause
 			
@@ -607,98 +500,10 @@ ClientMethod onresizeHandler() [ Language = javascript ]
 Method %OnAfterCreatePage() As %Status
 {
 	
-	set frequentTopicsGroup2 = %page.%GetComponentById("frequentTopicsGroup2")
-	set frequentTopicsGroup2.enclosingStyle="display:none;"  //="visibility: hidden;"
-
-	set newTopicsGroup2 = %page.%GetComponentById("newTopicsGroup2")
-	set newTopicsGroup2.enclosingStyle="display:none;"  //="visibility: hidden;"
-	
-	set nonproduct = %page.%GetComponentById("Nonproduct")
-	set nonproduct.enclosingStyle="display:none;"  //="visibility: hidden;"
-
-	set cache = %page.%GetComponentById("Cache")
-	set cache.enclosingStyle="display:none;"  //="visibility: hidden;"
-
-	set ensemble = %page.%GetComponentById("Ensemble")
-	set ensemble.enclosingStyle="display:none;"  //="visibility: hidden;"
-
-	set healthshare = %page.%GetComponentById("HealthShare")
-	set healthshare.enclosingStyle="display:none;"  //="visibility: hidden;"
-	
-	set iris = %page.%GetComponentById("IRIS")
-	set iris.enclosingStyle="display:none;"  //="visibility: hidden;"
-
-	//TABを分けなくなったためCrossSearchは現在は使用していない。
-	If (..Product = $$$General) || (..Product = $$$Cache) {
-	    //この条件は現時点では成立しないはず	
-
-		Set CrossSeachCheck = %page.%GetComponentById("CrossSeachCheck")
-	    Set CrossSeachCheck.enclosingStyle="display:none;"  //="visibility: hidden;"
-	}
-	ElseIf ..Product = $$$Ensemble {
-	    //この条件は現時点では成立しないはず	
-
-		Set CrossSeachCheck = %page.%GetComponentById("CrossSeachCheck")
-		Set CrossSeachCheck.value = 1
-		Set %page.crosschecked = CrossSeachCheck.value
-		
-	}
-	
-	ElseIf (..Product = $$$All) {
-        //現時点ではこの条件のみ成立する
-	    set frequentTopicsGroup1 = %page.%GetComponentById("frequentTopicsGroup1")
-	    set frequentTopicsGroup1.enclosingStyle="display:none;"  //="visibility: hidden;"
-	    set newTopicsGroup1 = %page.%GetComponentById("newTopicsGroup1")
-	    set newTopicsGroup1.enclosingStyle="display:none;"  //="visibility: hidden;"
-
-	    set frequentTopicsGroup2 = %page.%GetComponentById("frequentTopicsGroup2")
-	    set frequentTopicsGroup2.enclosingStyle="display:block;"  //="visibility: yes;"
-	    set newTopicsGroup2 = %page.%GetComponentById("newTopicsGroup2")
-	    set newTopicsGroup2.enclosingStyle="display:block;"  //="visibility: yes;"
-
-		Set CrossSeachCheck = %page.%GetComponentById("CrossSeachCheck")
-	    Set CrossSeachCheck.enclosingStyle="display:none;"  //="visibility: hidden;"
-
-		Set nonproduct = %page.%GetComponentById("Nonproduct")
-	    Set nonproduct.enclosingStyle="display:block;"  //="visibility: hidden;"
-		Set nonproduct.value = 0
-		Set %page.nonproduct = nonproduct.value
-
-		Set cache = %page.%GetComponentById("Cache")
-	    Set cache.enclosingStyle="display:block;"  //="visibility: hidden;"
-		Set cache.value = 1
-		Set %page.cache = cache.value
-
-		Set ensemble = %page.%GetComponentById("Ensemble")
-	    Set ensemble.enclosingStyle="display:block;"  //="visibility: hidden;"
-		Set ensemble.value = 1
-		Set %page.ensemble = ensemble.value
-
-		Set healthshare = %page.%GetComponentById("HealthShare")
-	    Set healthshare.enclosingStyle="display:block;"  //="visibility: hidden;"
-		Set healthshare.value = 1
-		Set %page.healthshare = healthshare.value
-
-		Set iris = %page.%GetComponentById("IRIS")
-	    Set iris.enclosingStyle="display:block;"  //="visibility: hidden;"
-		Set iris.value = 1
-		Set %page.iris = iris.value
-	    }
-	else {
-	    //この条件は現時点では成立しないはず	
-		Set CrossSeachCheck = %page.%GetComponentById("CrossSeachCheck")
-	    Set CrossSeachCheck.enclosingStyle="display:none;"  //="visibility: hidden;"
-
-		Set nonproduct = %page.%GetComponentById("Nonproduct")
-		Set nonproduct.enclosingStyle="display:none;"  //="visibility: hidden;"
-
-		Set cache = %page.%GetComponentById("Cache")
-		Set cache.enclosingStyle="display:none;"  //="visibility: hidden;"
-
-		Set ensemble = %page.%GetComponentById("Ensemble")
-		Set ensemble.enclosingStyle="display:none;"  //="visibility: hidden;"
-
-		}
+	set frequentTopicsGroup = %page.%GetComponentById("frequentTopicsGroup")
+	set frequentTopicsGroup.enclosingStyle="display:block;"  //="visibility: yes;"
+	set newTopicsGroup = %page.%GetComponentById("newTopicsGroup")
+	set newTopicsGroup.enclosingStyle="display:block;"  //="visibility: yes;"
 
 	Quit $$$OK
 }

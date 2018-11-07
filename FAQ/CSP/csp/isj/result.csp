@@ -1,6 +1,17 @@
 <SCRIPT LANGUAGE="cache" RUNAT="Server">
- set companylogourl = %request.CgiEnvs("HTTP_HOST")_$piece(%request.GetCgiEnv("REQUEST_URI"),"/",1,3)_"/images/logo/CompanyLogo.png"
- set url = %request.CgiEnvs("HTTP_HOST")_%request.GetCgiEnv("REQUEST_URI")
+ set companylogourl = "http://"_%request.CgiEnvs("HTTP_HOST")_$piece(%request.GetCgiEnv("REQUEST_URI"),"/",1,3)_"/images/logo/CompanyLogo.png"
+ set url = "http://"_%request.CgiEnvs("HTTP_HOST")_%request.GetCgiEnv("REQUEST_URI")
+ Set DocNo=%request.Get("DocNo")
+ set title = ""
+ set desc = ""
+ if DocNo'="" {
+	 Set topic = ##Class(KB.Topic).%OpenId(DocNo)
+ 	if $isobject(topic) {
+	 	 set title=topic.Title
+	 	 set desc = $piece(topic.Description,$char(13,10),1,3)  //内容を3行分だけ抽出
+ 	}else{
+ 	}
+  }
 </SCRIPT>
 
 <CSP:PARAMETER name="EXPIRES" value="">
@@ -10,11 +21,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta name="GENERATOR" content="IBM HomePage Builder 2001 V5.0.0 for Windows">
-<meta property="og:title" content="FAQ検索結果ページ">
+<meta property="og:title" content="#(title)#">
 <meta property="og:type" content="article">
 <meta property="og:image" content="#(companylogourl)#">
 <meta property="og:url" content="#(url)#">
-<title>Cach&eacute; FAQ Database Seach Result Detail</title>
+<meta property="og:description" content="#(desc)#">
+<title>InterSystems FAQ Database Seach Result Detail</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="style.css" >
 <!-- Specify that this page is PRIVATE -->
 <!--<csp:CLASS PRIVATE=1>-->
@@ -71,6 +83,7 @@ if $Get(%session.Data("Access"))="" {
 
 <SCRIPT LANGUAGE="cache" RUNAT="Server">
 
+ #include FAQ 
  Set %session.Data("DocNo")=DocNo
  
  Set roles=$Get(%session.Data("roles"))
@@ -142,45 +155,52 @@ if $Get(%session.Data("Access"))="" {
  set %session.Data("filepath")=filepath
  set %session.Data("fileexists")=fileexists
  
- Set tProductId = topic.Product.%Id()
+ Set tProductId = topic.Product.ProductId
+ Set tProductText = ""
  
- If (tProductId = 1) { //一般
-	 Set tLogo = ""
+ If (tProductId = $$$General) { //一般
+	 Set tProductText = "一般的質問"
  }
- ElseIf (tProductId = 2) { //Cache
-	 Set tLogo = "cachecube.png"
-	 Set tWidth = 16
-	 Set tHight = 16
+ ElseIf (tProductId = $$$Cache) { //Cache
+	 Set tProductText = "Cach&eacute;"
  }
- ElseIf (tProductId = 3) { //Ensemble
-	 Set tLogo = "ensemblecube.png"
-	 Set tWidth = 16
-	 Set tHight = 16
+ ElseIf (tProductId = $$$Ensemble) { //Ensemble
+	 Set tProductText = "Ensemble"
  }
- ElseIf (tProductId = 4) { //HealthShare
-	 Set tLogo = "healthshare.png"
-	 Set tWidth = 16
-	 Set tHight = 16
+ ElseIf (tProductId = $$$HealthShare) { //HealthShare
+	 Set tProductText = "HealthShare"
  }
- ElseIf (tProductId = 5) { //Ensemble
-	 Set tLogo = "iris.png"
-	 Set tWidth = 16
-	 Set tHight = 16
+ ElseIf (tProductId = $$$IRIS) { //IRIS
+	 Set tProductText = "IRIS Data Platform"
+ }
+ ElseIf (tProductId = $$$OldDataplatform) { //Old Data Platform
+	 Set tProductText = "Cach&eacute;, Ensemble"
+ }
+ ElseIf (tProductId = $$$OldDataplatformHealthShare) { //Old Data Platform with HealthShare
+	 Set tProductText = "Cach&eacute;, Ensemble, HealthShare"
+ }
+ ElseIf (tProductId = $$$Interoperability) { //InterOperability
+	 Set tProductText = "Ensemble, IRIS Data Platform"
+ }
+ ElseIf (tProductId = $$$InteroperabilityHealthShare) { //InterOperability with HealthShare
+	 Set tProductText = "Ensemble, IRIS Data Platform, HealthShare"
+ }
+ ElseIf (tProductId = $$$Dataplatform) { //All Products
+	 Set tProductText = "Cach&eacute;, Ensemble, HealthShare, IRIS Data Platform"
+ }
+ ElseIf (tProductId = $$$NewInteroperability) { //IRIS & HealthShare IRIS based
+	 Set tProductText = "IRIS Data Platform, HealthShare(IRIS版)"
  }
     
 </SCRIPT>
 
-<!--Cache' Version-->
+<!--Product Version-->
 <csp:if condition='vrange=""'>
 <csp:else>
   <DIV class="version"><SPAN class="version">Version #(vrange)#</SPAN></DIV>
 </csp:if>
 <!--Topic Title-->
 <DIV class="title"><IMG class="titleicon" src="./images/others/Question.gif">&nbsp;&nbsp;#(title)#
-<csp:if condition='tLogo=""'>
-<csp:else>
-<IMG class="producticon" width="#(tWidth)#" height="#(tHight)#" src="./images/logo/#(tLogo)#">
-</csp:if>
 </DIV>
 <!--<DIV><hr></DIV>-->
 <!--Description-->
@@ -210,6 +230,8 @@ if $Get(%session.Data("Access"))="" {
  </SCRIPT>
 
 </DIV>
+<!--該当する製品-->
+<DIV class="Product"><SPAN class="refhead">該当する製品:  <SPAN class="refbody"> #(tProductText)#</SPAN></SPAN></DIV>
 <!--関連トピック-->
 <DIV>
   <SPAN class="refhead">関連トピック：</SPAN>

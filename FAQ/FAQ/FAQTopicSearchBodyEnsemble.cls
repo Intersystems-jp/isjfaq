@@ -1,28 +1,10 @@
-Class FAQ.FAQTopicSearchBodyEnsemble Extends FAQ.FAQTopicSearchBodyTemplate
+Class FAQ.FAQTopicSearchBodyEnsemble Extends  %ZEN.Component.page
 {
-
-/// このページが属するアプリケーションのクラス名です。
-Parameter APPLICATION = "FAQ.FAQApp";
-
-/// このページの表示名です。
-Parameter PAGENAME = "InterSystems FAQ";
-
-/// ローカライズで使用されるドメインです。
-Parameter DOMAIN;
-
-/// この Style ブロックにはページ固有のCSSスタイル定義を記述します。
-XData Style
-{
-<style type="text/css">
-</style>
-}
-
-Property Product As %String [ InitialExpression = 3 ];
 
 ClassMethod %OnPreHTTP() As %Boolean [ ServerOnly = 1 ]
 {
  #dim %response As %CSP.Response
- set %response.ServerSideRedirect="FAQ.FAQApp.cls"
+ set %response.ServerSideRedirect="transfer.csp"
  quit $$$OK
 }
 

@@ -3,7 +3,7 @@ Class FAQ.FAQTopicSearch2 Extends %ZEN.Component.page
 
 // 製品別に検索ページをタブでわけるのをやめ、ページ上に製品別のチェックボックスを配置した。
 
-// FAQ.FAQTopicSearchは旧インタフェースとして残す。
+// FAQ.FAQTopicSearchから呼ばれた場合には、そのままこのページにリダイレクトする
 
 /// このページが属するアプリケーションのクラス名です。
 Parameter APPLICATION = "FAQ.FAQApp";

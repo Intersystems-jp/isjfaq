@@ -1553,3 +1553,85 @@ KB.Utility.cls
 
 FAQ.TopicSearchBodyTemplate.cls
 KB.Utility.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS089
+
+日付			2018/10/09
+
+内容
+
+検索条件から製品を外す（製品オプションボタンを削除）
+結果ページに該当製品の項目を追加
+
+修正モジュール
+
+FAQ.TopicSearchBodyTemplate.cls
+FAQ.TopicSearchBodyAll.cls(コンパイル必要)
+KB.Utility.cls
+result.csp
+style.css
+KB.Product.cls
+FAQ.inc
+howto.csp
+
+------------------------------------------------------------------------------------
+
+修正ID		HS090
+
+日付			2018/10/10
+
+内容
+
+正式なエントリーポイント以外からアクセスした場合には、将来的に使えなくなる旨を伝えるとともに正式ポイントにリダイレクトするように変更
+
+修正モジュール
+
+FAQ.TopicSearch.cls
+FAQ.TopicSearchBodyCache.clｓ
+FAQ.TopicSearchBodyGeneral.clｓ
+FAQ.TopicSearchBodyEnsemble.clｓ
+KB.Utility.cls
+transfer.csp
+
+------------------------------------------------------------------------------------
+
+修正ID		HS091
+
+日付			2018/10/15
+
+内容
+
+Productの組み合わせを柔軟に表現できるようにProductIdを追加
+プロダクトの種類を追加
+　　('HealthShare/IRIS',16))  //HealthShare IRIS based
+　　('旧データプラットフォーム共通',3))  //Caché & Ensemble
+　　('旧データプラットフォーム共通(HealthShare)',7))  //Caché & Ensemble & HealthShare
+　　('インターオペラビリティ共通',10))  //Ensemble & IRIS
+　　('インターオペラビリティ共通(HealthShare)',14))  //Ensemble & IRIS & HealthShare
+　　('データプラットフォーム共通',15))  //Caché & Ensemble & HealthShare & IRIS
+　　('新インターオペラビリティ共通',24))  //IRIS & HealthShare IRIS based
+
+修正モジュール
+
+KB.Product.cls
+FAQ.inc
+KB.Utility.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS092
+
+日付			2018/11/05
+
+内容
+
+HS083の修正ではサムネールが意図したとおり反映されない問題に対処
+
+修正モジュール
+
+result.csp
+KB.Utility.cls
+
+
