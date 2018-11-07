@@ -8,7 +8,7 @@
 	 Set topic = ##Class(KB.Topic).%OpenId(DocNo)
  	if $isobject(topic) {
 	 	 set title=topic.Title
-	 	 set desc = $piece(topic.Description,$char(13,10),1,3)  //内容を3行分だけ抽出
+	 	 set desc = ..EscapeHTML($extract(topic.Description,1,100))  //内容を100文字分だけ抽出
  	}else{
  	}
   }
