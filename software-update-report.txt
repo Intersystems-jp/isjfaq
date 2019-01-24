@@ -1634,4 +1634,82 @@ HS083の修正ではサムネールが意図したとおり反映されない問
 result.csp
 KB.Utility.cls
 
+------------------------------------------------------------------------------------
 
+修正ID		HS093
+
+日付			2018/11/30
+
+内容
+
+HS089の修正で製品名の表示が小さすぎる問題を解消
+
+修正モジュール
+
+style.css
+KB.Utility.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS094
+
+日付			2018/12/06
+
+内容
+
+HS091のカテゴリーを調整
+表示製品名の変更など
+
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('一般',1024))
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('Caché',1))
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('Ensemble',2))
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('HealthShare',4))
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('IRIS Data Platform',8))
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('HealthShare/IRIS Based',16)) //Including IRIS for Health
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('旧データプラットフォーム共通',3))  //Caché & Ensemble
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('旧インターオペラビリティ共通(HealthShare)',6))  //Ensemble & HealthShare/Caché Based
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('旧データプラットフォーム共通(HealthShare)',7))  //Caché & Ensemble & HealthShare/Caché Based
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('インターオペラビリティ共通',10))  //Ensemble & IRIS
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('インターオペラビリティ共通(Ensemble + HealthShare/Caché Based + IRIS)',14))  //Ensemble & HealthShare/Caché Based + IRIS
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('データプラットフォーム共通',15))  //Caché & Ensemble & HealthShare & IRIS
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('インターオペラビリティ/Healthcare共通',22))  //Ensemble & HealthShare & IRIS for Health & HealthShare/IRIS Based
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('新インターオペラビリティ共通',24))  //IRIS & HealthShare IRIS based & IRIS for Health
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('インターオペラビリティ共通(HealthShare)',30))  //Ensemble & IRIS & HealthShare & IRIS for Health
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('データプラットフォーム共通(Health)',31))  //Caché & Ensemble & HealthShare & IRIS & HealthShare/IRIS Based & IRIS for Health
+
+
+修正モジュール
+
+FAQ.inc
+result.csp
+KB.Utility.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS095
+
+日付			2018/12/11
+
+内容
+
+製品機能（Facility）の内容を最新にアップデート
+
+修正モジュール
+
+Facility.cls
+KB.Utility.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS096
+
+日付			2018/12/11
+
+内容
+
+HS091の修正に伴い、Productが一般的な質問の場合、判定条件を変更する必要があった
+
+修正モジュール
+
+Topic.cls
+KB.Utility.cls

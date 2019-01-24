@@ -23,7 +23,7 @@ ClassMethod Init()
 {
 	Do ##class(KB.Facility).%KillExtent()
 	&SQL(insert into KB.Facility (Description) values ('一般的質問'))
-	&SQL(insert into KB.Facility (Description) values ('Caché ObjectScript'))
+	&SQL(insert into KB.Facility (Description) values ('InterSystems ObjectScript'))
 	&SQL(insert into KB.Facility (Description) values ('Object'))
 	&SQL(insert into KB.Facility (Description) values ('SQL'))
 	&SQL(insert into KB.Facility (Description) values ('CSP'))
@@ -34,9 +34,9 @@ ClassMethod Init()
 	&SQL(insert into KB.Facility (Description) values ('Web Service'))
 	&SQL(insert into KB.Facility (Description) values ('システム'))
 	&SQL(insert into KB.Facility (Description) values ('その他'))
-	&SQL(insert into KB.Facility (Description) values ('Ensemble'))
-	&SQL(insert into KB.Facility (Description) values ('DeepSee'))
-	&SQL(insert into KB.Facility (Description) values ('iKnow'))
+	&SQL(insert into KB.Facility (Description) values ('Interoperability'))
+	&SQL(insert into KB.Facility (Description) values ('InterSystems Business Intelligence'))
+	&SQL(insert into KB.Facility (Description) values ('InterSystems Text Analytics'))
 }
 
 Storage Default
@@ -55,7 +55,7 @@ Storage Default
 <IdLocation>^KB.FacilityD</IdLocation>
 <IndexLocation>^KB.FacilityI</IndexLocation>
 <StreamLocation>^KB.FacilityS</StreamLocation>
-<Type>%Library.CacheStorage</Type>
+<Type>%Storage.Persistent</Type>
 }
 
 }

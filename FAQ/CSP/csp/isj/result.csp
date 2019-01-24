@@ -157,40 +157,39 @@ if $Get(%session.Data("Access"))="" {
  
  Set tProductId = topic.Product.ProductId
  Set tProductText = ""
+ // ProductIdを2進数に変換する
+ kill %B
+ set %DB = tProductId
+ do INT^%DB
+ set Productidb = $reverse(%B)
  
- If (tProductId = $$$General) { //一般
-	 Set tProductText = "一般的質問"
- }
- ElseIf (tProductId = $$$Cache) { //Cache
-	 Set tProductText = "Cach&eacute;"
- }
- ElseIf (tProductId = $$$Ensemble) { //Ensemble
-	 Set tProductText = "Ensemble"
- }
- ElseIf (tProductId = $$$HealthShare) { //HealthShare
-	 Set tProductText = "HealthShare"
- }
- ElseIf (tProductId = $$$IRIS) { //IRIS
-	 Set tProductText = "IRIS Data Platform"
- }
- ElseIf (tProductId = $$$OldDataplatform) { //Old Data Platform
-	 Set tProductText = "Cach&eacute;, Ensemble"
- }
- ElseIf (tProductId = $$$OldDataplatformHealthShare) { //Old Data Platform with HealthShare
-	 Set tProductText = "Cach&eacute;, Ensemble, HealthShare"
- }
- ElseIf (tProductId = $$$Interoperability) { //InterOperability
-	 Set tProductText = "Ensemble, IRIS Data Platform"
- }
- ElseIf (tProductId = $$$InteroperabilityHealthShare) { //InterOperability with HealthShare
-	 Set tProductText = "Ensemble, IRIS Data Platform, HealthShare"
- }
- ElseIf (tProductId = $$$Dataplatform) { //All Products
-	 Set tProductText = "Cach&eacute;, Ensemble, HealthShare, IRIS Data Platform"
- }
- ElseIf (tProductId = $$$NewInteroperability) { //IRIS & HealthShare IRIS based
-	 Set tProductText = "IRIS Data Platform, HealthShare(IRIS版)"
- }
+ set tProductText = ""
+ 
+ If $extract(Productidb,$$$Cache) {
+   set tProductText = tProductText_"Cach&eacute;, "
+   }
+
+ If $extract(Productidb,$$$Ensemble) {
+   set tProductText = tProductText_"Ensemble, "
+   }
+ 
+ If $extract(Productidb,$$$HealthShare) {
+   set tProductText = tProductText_"HealthShare/Cach&eacute; Based, "
+   }
+
+ If $extract(Productidb,$$$IRIS) {
+   set tProductText = tProductText_"IRIS Data Platform, "
+   }
+
+ If $extract(Productidb,$$$HealthShareIRIS) {
+   set tProductText = tProductText_"HealthShare/IRIS Based, IRIS for Health, "
+   }
+
+ If $extract(Productidb,$$$General) {
+   set tProductText = tProductText_"一般的質問, "
+   }
+
+ set tProductText = $extract(tProductText,1,*-2)
     
 </SCRIPT>
 

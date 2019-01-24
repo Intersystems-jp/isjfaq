@@ -7,9 +7,9 @@ Class KB.Topic Extends (%Persistent, %XML.Adaptor) [ Inheritance = right ]
 /// Topic ID(FAQサイトへの表示ID)
 Property TopicID As %String [ Calculated, SqlComputeCode = { Set {TopicID}=##class(KB.Topic).ComputeTopicID({ID})}, SqlComputed ];
 
+/// 一般的質問用のSubID
 Property TopicSubID As %String;
 
-/// 一般的質問用のSubID
 /// 製品名 (Caché/Ensemble/一般)
 Property Product As KB.Product;
 
@@ -106,7 +106,7 @@ Method %OnBeforeSave(pInsert As %Boolean) As %Status [ Private, ServerOnly = 1 ]
 {
 	
 	If pInsert {
-		If (..Product.%Id() = $$$General) {
+		If (..Product.ProductId = $$$General) {
 		   Set ..TopicSubID = ..GetCurTopicSubID()
 		}
 	}
@@ -208,7 +208,7 @@ ClassMethod ComputeTopicID(pId As %Integer) As %String
 	  set tTopic = ##class(KB.Topic).%OpenId(pId,,.tSC)
 	  
 	  If $IsObject(tTopic) {
-		  If tTopic.Product.%Id() = $$$General {
+		  If tTopic.Product.ProductId = $$$General {
 			  set tTopicId = $Translate("G-"_$Justify(tTopic.TopicSubID,3)," ",0)
 		  }
 		  Else {
@@ -376,6 +376,7 @@ ClassMethod RemoveLink(pId As %Integer, pOldValue As %String, pNewValue As %Stri
 	Quit tSC
 }
 
+/*
 Method DescriptionGet() As %Text
 {
  set crlf = $char(13,10)
@@ -399,6 +400,7 @@ Method DescriptionGet() As %Text
  
  quit Description
 }
+*/
 
 ClassMethod ChangeUrlPathForImages() {
    try {
@@ -422,6 +424,64 @@ ClassMethod ChangeUrlPathForImages() {
     catch ex {
       set status = ##class(FAQ.Error).StoreErrorInformation(ex)  
     }	
+}
+    	
+ClassMethod UpdatePropertyOfMultipleTopics(pTopicIdPropertyOBJ As %String) As %Status {
+   try {
+     //TopicId, PropertyペアのArrayを入力とし、該当するTopicのPropertyを更新する
+     // Property = [Product,Category,Facility,Completed,Visible,DeleteFlg]
+     //
+     set status = $$$OK
+     set DynamicOBJ = {}
+     set DynamicOBJ = DynamicOBJ.%FromJSON(pTopicIdPropertyOBJ)
+     set PropertyName = DynamicOBJ.PropertyName
+     set DynamicArray = DynamicOBJ.KVArray
+     for i = 0:1:DynamicArray.%Size()-1 {
+       set topicid = DynamicArray.i."topicid"
+       set PropertyValue = DynamicArray.i.PropertyName 
+       set topic = ##class(KB.Topic).%OpenId(topicid,,.status)
+       if 'status $$$ThrowStatus(status)
+       if (PropertyName = "Product") || (PropertyName = "Category") || (PropertyName = "Facility") {
+         set $Property(topic,PropertyName) = PropertyValue
+       }
+       else {
+         set $Property(topic,PropertyName) = $select(PropertyValue=1:1,1:0)
+       }
+       set status = topic.%Save() 
+       if 'status  $$$ThrowStatus(status)             
+     }
+    }
+    catch ex {
+      set exstatus = ##class(FAQ.Error).StoreErrorInformation(ex)  
+    }	
+    
+    quit status
+}
+
+ClassMethod CopyFromTopics(pTopicIdList As %List, Output pNewTopicIdList As %List) As %Status {
+   try {
+     //パラメータpTopicIdListで指定されたtopicidのインスタンスをコピーして新しいトピックを生成する
+     //新しいtopicidのリストを出力パラメータとして第2パラメータで返す
+     //
+     set status = $$$OK
+     set pNewTopicIdList = ""
+     for i = 1:1:$listlength(pTopicIdList) {
+       set topicid = $list(pTopicIdList,i)
+       set topic = ..%OpenId(topicid)
+       if $isobject(topic) {
+         set clone = topic.%ConstructClone(1)
+         set status = clone.%Save()
+         if 'status $$$ThrowStatus(status)
+         set newid = clone.%Id()
+         set $list(pNewTopicIdList,$listlength(pNewTopicIdList)+1) = newid
+       }
+     }
+    }
+    catch ex {
+      set exstatus = ##class(FAQ.Error).StoreErrorInformation(ex)  
+    }	
+    
+    quit status
 }
 
 Storage Default
@@ -560,7 +620,7 @@ Storage Default
 <IdLocation>^KB.TopicD</IdLocation>
 <IndexLocation>^KB.TopicI</IndexLocation>
 <StreamLocation>^KB.TopicS</StreamLocation>
-<Type>%Library.CacheStorage</Type>
+<Type>%Storage.Persistent</Type>
 }
 
 }

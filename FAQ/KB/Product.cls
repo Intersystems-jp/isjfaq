@@ -27,13 +27,17 @@ ClassMethod Init()
 	&SQL(insert into KB.Product (ProductName,ProductId) values ('Ensemble',2))
 	&SQL(insert into KB.Product (ProductName,ProductId) values ('HealthShare',4))
 	&SQL(insert into KB.Product (ProductName,ProductId) values ('IRIS Data Platform',8))
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('HealthShare/IRIS',16))  //HealthShare IRIS based
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('HealthShare/IRIS Based',16)) //Including IRIS for Health
 	&SQL(insert into KB.Product (ProductName,ProductId) values ('旧データプラットフォーム共通',3))  //Caché & Ensemble
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('旧データプラットフォーム共通(HealthShare)',7))  //Caché & Ensemble & HealthShare
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('旧インターオペラビリティ共通(HealthShare)',6))  //Ensemble & HealthShare/Caché Based
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('旧データプラットフォーム共通(HealthShare)',7))  //Caché & Ensemble & HealthShare/Caché Based
 	&SQL(insert into KB.Product (ProductName,ProductId) values ('インターオペラビリティ共通',10))  //Ensemble & IRIS
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('インターオペラビリティ共通(HealthShare)',14))  //Ensemble & IRIS & HealthShare
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('インターオペラビリティ共通(Ensemble + HealthShare/Caché Based + IRIS)',14))  //Ensemble & HealthShare/Caché Based + IRIS
 	&SQL(insert into KB.Product (ProductName,ProductId) values ('データプラットフォーム共通',15))  //Caché & Ensemble & HealthShare & IRIS
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('新インターオペラビリティ共通',24))  //IRIS & HealthShare IRIS based
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('インターオペラビリティ/Healthcare共通',22))  //Ensemble & HealthShare & IRIS for Health & HealthShare/IRIS Based
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('新インターオペラビリティ共通',24))  //IRIS & HealthShare IRIS based & IRIS for Health
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('インターオペラビリティ共通(HealthShare)',30))  //Ensemble & IRIS & HealthShare & IRIS for Health
+	&SQL(insert into KB.Product (ProductName,ProductId) values ('データプラットフォーム共通(Health)',31))  //Caché & Ensemble & HealthShare & IRIS & HealthShare/IRIS Based & IRIS for Health
 }
 
 Storage Default
