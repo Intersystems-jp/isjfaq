@@ -27,6 +27,8 @@ ClassMethod Init()
 	&SQL(insert into KB.Platform (Name) values ('Solaris'))
 	&SQL(insert into KB.Platform (Name) values ('AIX'))
 	&SQL(insert into KB.Platform (Name) values ('OpenVMS'))
+	&SQL(insert into KB.Platform (Name) values ('Linux/UNIX'))
+	&SQL(insert into KB.Platform (Name) values ('プラットフォーム共通'))
 }
 
 Storage Default
@@ -45,7 +47,7 @@ Storage Default
 <IdLocation>^KB.PlatformD</IdLocation>
 <IndexLocation>^KB.PlatformI</IndexLocation>
 <StreamLocation>^KB.PlatformS</StreamLocation>
-<Type>%Library.CacheStorage</Type>
+<Type>%Storage.Persistent</Type>
 }
 
 }

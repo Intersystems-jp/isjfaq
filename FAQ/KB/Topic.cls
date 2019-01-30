@@ -469,8 +469,8 @@ ClassMethod CopyFromTopics(pTopicIdList As %List, Output pNewTopicIdList As %Lis
        set topicid = $list(pTopicIdList,i)
        set topic = ..%OpenId(topicid)
        if $isobject(topic) {
-         set clone = topic.%ConstructClone(1)
-         set status = clone.%Save()
+         set clone = topic.%ConstructClone(0)
+         set status = clone.%Save(0)
          if 'status $$$ThrowStatus(status)
          set newid = clone.%Id()
          set $list(pNewTopicIdList,$listlength(pNewTopicIdList)+1) = newid
