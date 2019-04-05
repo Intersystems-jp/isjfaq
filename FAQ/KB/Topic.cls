@@ -302,8 +302,11 @@ Method RefCheckLink(pDebug As %Boolean) As %Status
 			  }
 			  if pDebug Write "tFindFlag = "_tFindFlag,!
 			  if 'tFindFlag {
+			      if pDebug Write "tOther.RefTopic = "_tOther.RefTopic,!
 				  set tOther.RefTopic = tOther.RefTopic_","_tId
+			      if pDebug Write "tOther.RefTopic = "_tOther.RefTopic,!
 				  if $extract(tOther.RefTopic) = "," Set tOther.RefTopic = $Extract(tOther.RefTopic,2,*)
+			      if pDebug Write "tOther.RefTopic = "_tOther.RefTopic,!
 				  $$$THROWONERROR(tSC,tOther.%Save())
 			  }
 		  }
@@ -436,13 +439,17 @@ ClassMethod UpdatePropertyOfMultipleTopics(pTopicIdPropertyOBJ As %String) As %S
      set DynamicOBJ = DynamicOBJ.%FromJSON(pTopicIdPropertyOBJ)
      set PropertyName = DynamicOBJ.PropertyName
      set DynamicArray = DynamicOBJ.KVArray
-     for i = 0:1:DynamicArray.%Size()-1 {
-       set topicid = DynamicArray.i."topicid"
-       set PropertyValue = DynamicArray.i.PropertyName 
+     set it = DynamicArray.%GetIterator()
+     while it.%GetNext(.i,.do) {
+       set topicid = do."topicid"
+       set PropertyValue = do."PropertyValue" 
        set topic = ##class(KB.Topic).%OpenId(topicid,,.status)
        if 'status $$$ThrowStatus(status)
        if (PropertyName = "Product") || (PropertyName = "Category") || (PropertyName = "Facility") {
-         set $Property(topic,PropertyName) = PropertyValue
+         set classname = "KB."_PropertyName
+         set oref = $classmethod(classname,"%OpenId",PropertyValue,,.status)
+         if '$isobject(oref) $$$ThrowStatus(status)
+         set $Property(topic,PropertyName) = oref
        }
        else {
          set $Property(topic,PropertyName) = $select(PropertyValue=1:1,1:0)

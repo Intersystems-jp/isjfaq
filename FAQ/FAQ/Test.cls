@@ -33,6 +33,7 @@ ClassMethod Reflink2(pId1 As %Integer, pId2 As %Integer) As %String
 	Set tSC = $$$OK
 	set tTopic1 = ##class(KB.Topic).%OpenId(pId1)
 	set tTopic1.RefTopic = pId2
+	set status = tTopic1.%Save()
 	set tSC =tTopic1.RefCheckLink(0)
     set tRefTopic1 = tTopic1.RefTopic
 	set tTopic2 = ##class(KB.Topic).%OpenId(pId2)
@@ -45,6 +46,7 @@ ClassMethod Reflink3(pId1 As %Integer, pId2 As %Integer, pId3 As %Integer) As %S
 	Set tSC = $$$OK
 	set tTopic1 = ##class(KB.Topic).%OpenId(pId1)
 	set tTopic1.RefTopic = pId2_","_pId3
+	set status = tTopic1.%Save()
 	set tSC =tTopic1.RefCheckLink(0)
     set tRefTopic1 = tTopic1.RefTopic
 	set tTopic2 = ##class(KB.Topic).%OpenId(pId2)

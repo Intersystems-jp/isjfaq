@@ -1743,6 +1743,65 @@ IRISリリースに伴い、ファシリティ（機能）、プラットフォ�
 
 修正モジュール
 
-Facility.cls
-Platform.cls
+KB.Facility.cls
+KB.Platform.cls
 KB.Utility.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS099
+
+日付			2019/2/13
+
+内容
+
+Topicクラスのいくつかのプロパティを更新するAPIを用意した
+
+ClassMethod UpdatePropertyOfMultipleTopics(pTopicIdPropertyOBJ As %String) As %Status
+     //TopicId, PropertyペアのArrayを入力とし、該当するTopicのPropertyを更新する
+     // Property = [Product,Category,Facility,Completed,Visible,DeleteFlg]
+
+修正モジュール
+
+KB.Topic.ｃｌｓ
+FAQ.UnitTests.cls
+FAQ.Test.cls
+RsetAPI.cls
+KB.Utility.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS100
+
+日付			2019/4/2
+
+内容
+
+全Topic内のurlの妥当性を検証するメソッドを追加
+
+ClassMethod URLsExistingTest() As %Status
+
+正しく動作するためには、管理ポータルでSSL/TLS構成で、FAQSSLという名前の構成を作成する必要がある。
+（SSL/TLS構成はデフォルト設定でOK）
+
+修正モジュール
+
+KB.Utility.cls
+FAQ.Tools.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS101
+
+日付			2019/4/2
+
+内容
+
+全Topic内の特定の文字列を置換するメソッドを追加
+
+ClassMethod ReplaceTextInTopics(pTargetText As %String, pReplaceText As %String) As %Status
+
+修正モジュール
+
+KB.Utility.cls
+FAQ.Tools.cls

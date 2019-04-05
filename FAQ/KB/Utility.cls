@@ -542,7 +542,7 @@ ClassMethod CreateUsersVoice() As %Status
 
 ClassMethod ShowVersion() As %String
 {
-	quit "1.2.098"
+	quit "1.2.101"
 }
 
 ClassMethod FindKatakanaKeywords() As %Status
@@ -599,6 +599,37 @@ ClassMethod PickupTags(pText As %String, pTag As %String, ByRef pResults As %Str
 			    set end = efind-$length(ETag) - 1
 		    }
 		    set pResults(counter) = $extract(pText,sfind,end)
+		    set pResults = counter
+	    }
+	    If 'sfind quit
+	    If 'efind quit
+    }
+    	
+	Quit $$$OK
+}
+
+ClassMethod PickupURLs(pText As %String, ByRef pResults As %String) As %Status
+{
+	set UText = $zcvt(pText,"U")
+    set counter = 0
+    set pResults = counter
+    set sfind = 0
+    set SURL = "<A HREF="""
+    set EURL = """"
+    
+    For {
+	    set sfind = $Find(UText,SURL,sfind)
+	    set efind = $Find(UText,EURL,sfind)
+	    If sfind {
+		    set counter = $increment(counter)
+		    If 'efind {
+			    set end =$length(pText)
+		    }
+		    Else {
+			    set end = efind-$length(EURL) - 1
+		    }
+		    set pResults(counter) = $extract(pText,sfind,end)
+		    //set pResults(counter) = $translate($extract(pText,sfind,end),"""","")
 		    set pResults = counter
 	    }
 	    If 'sfind quit
