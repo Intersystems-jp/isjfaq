@@ -38,8 +38,6 @@ XData FAQManifest [ XMLNamespace = INSTALLER ]
 <Invoke Class="%SYSTEM.OBJ" Method="Load" CheckStatus="0" Return="RetVal"> 
     <Arg Value="${GlobalFileName}"/>
 </Invoke>
-<Invoke Class="KB.Topic" Method="ChangeUrlPathForImages" CheckStatus="0"> 
-</Invoke>
 <Invoke Class="KB.Topic" Method="%BuildIndices" CheckStatus="0" Return="RetVal"> 
 </Invoke>
 </If>
@@ -52,7 +50,7 @@ XData FAQManifest [ XMLNamespace = INSTALLER ]
 <Invoke Class="KB.Setup" Method="copyImages" CheckStatus="0" Return="RetVal"> 
     <Arg Value="${setupdir}"/>
 </Invoke>
-<Invoke Class="KB.Setup" Method="copyCSPs" CheckStatus="0" Return="RetVal"> 
+<Invoke Class="KB.Setup" Method="copyCSSs" CheckStatus="0" Return="RetVal"> 
     <Arg Value="${CSPFileDir}"/>
 </Invoke>
 </If>
@@ -114,20 +112,21 @@ ClassMethod runInstaller(datestr As %String) As %Status
 			set datestr=$zdate($h,8)
 		}
 		
-		set setupdir = ##class(KB.Config).getSetupDirectory()_##class(KB.Config).getDirectorySeparator()_datestr_##class(KB.Config).getDirectorySeparator()
+		set dirSep = ##class(KB.Config).getDirectorySeparator()
+		set setupdir = ##class(KB.Config).getSetupDirectory()_dirSep_datestr
         set vars("setupdir") = setupdir
 		set vars("FTPDirectory") = ##class(KB.Config).getFTPDirectory()
 		if setuptype=1 {
-			set vars("ClassFileDir") = setupdir_##class(KB.Config).getClassFileDir()
-			set vars("GlobalFileName") = setupdir_##class(KB.Config).getGlobalFileName()
+			set vars("ClassFileDir") = setupdir_dirSep_##class(KB.Config).getClassFileDir()
+			set vars("GlobalFileName") = setupdir_dirSep_##class(KB.Config).getGlobalFileName()
 		}elseif setuptype=2 {
-			set vars("ClassFileDir") = setupdir_##class(KB.Config).getClassFileDir()
-			set vars("GlobalFileName") = setupdir_##class(KB.Config).getGlobalFileName()
+			set vars("ClassFileDir") = setupdir_dirSep_##class(KB.Config).getClassFileDir()
+			set vars("GlobalFileName") = setupdir_dirSep_##class(KB.Config).getGlobalFileName()
 		}elseif setuptype=3 {
 			set vars("ClassFileDir") = ""
-			set vars("GlobalFileName") = setupdir_##class(KB.Config).getGlobalFileName()
+			set vars("GlobalFileName") = setupdir_dirSep_##class(KB.Config).getGlobalFileName()
 		}elseif setuptype=4 {
-			set vars("ClassFileDir") = setupdir_##class(KB.Config).getClassFileDir()
+			set vars("ClassFileDir") = setupdir_dirSep_##class(KB.Config).getClassFileDir()
 			set vars("GlobalFileName") = ""
 		}			
 				
@@ -143,7 +142,7 @@ ClassMethod runInstaller(datestr As %String) As %Status
         }
         else {
 		  //以下のディレクトリ構造はGitHubリポジトリーに依存しているため固定
-		  set vars("CSPFileDir") = setupdir_##class(KB.Config).getClassFileDir()
+		  set vars("CSPFileDir") = setupdir_dirSep_##class(KB.Config).getClassFileDir()
 		  set vars("CSPFileDir") = vars("CSPFileDir")_##class(KB.Config).getDirectorySeparator()_"CSP"
 		  set vars("CSPFileDir") = vars("CSPFileDir")_##class(KB.Config).getDirectorySeparator()_"csp"
 		  set vars("CSPFileDir") = vars("CSPFileDir")_##class(KB.Config).getDirectorySeparator()_"isj"

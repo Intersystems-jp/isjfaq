@@ -126,18 +126,12 @@ ClassMethod copyDownloadFiles(pSetupDir As %String) As %Status
 	set dirSep = ##class(KB.Config).getDirectorySeparator()
 	//ディレクトリがなければコピーしない
 	if '##class(%File).Exists(pSetupDir_dirSep_"downloads") quit $$$OK
-	  
-	if dirSep = "\" {
-       set copyParam = pSetupDir_dirSep_"downloads "_ftpDir
-       set copyCommand = "xcopy /e /y "_copyParam
-    }
-    else  {
-       set ftpDir = $piece(ftpDir,dirSep,1,*-1)
-       set copyParam = pSetupDir_dirSep_"downloads "_ftpDir
-       set copyCommand = "cp -R "_copyParam
-    }
-       
-    quit $zf(-1,copyCommand)
+	
+	set sourcedir = pSetupDir_dirSep_"downloads"
+	set dest = ftpDir
+	set overlay = 1
+	set boolean = ##class(%File).CopyDir(sourcedir,dest,overlay)
+	quit $$$OK  
 }
 
 ClassMethod copyImages(pSetupDir As %String) As %Status
@@ -147,38 +141,59 @@ ClassMethod copyImages(pSetupDir As %String) As %Status
 	//ディレクトリがなければコピーしない
 	if '##class(%File).Exists(pSetupDir_dirSep_"images") quit $$$OK
 	  
-	if dirSep = "\" {
-	   set imagesDir = ##class(KB.Config).getCSPDirectory()_dirSep_"images"
-       set copyParam = pSetupDir_dirSep_"images "_imagesDir
-       set copyCommand = "xcopy /e /y "_copyParam
-    }
-    else  {
-	   set imagesDir = ##class(KB.Config).getCSPDirectory()
-       set copyParam = pSetupDir_dirSep_"images "_imagesDir
-       set copyCommand = "cp -R "_copyParam
-    }
-       
-    quit $zf(-1,copyCommand)
+	set sourcedir = pSetupDir_dirSep_"images"
+	set dest = ##class(KB.Config).getCSPDirectory()_dirSep_"images"
+	set overlay = 1
+	set boolean = ##class(%File).CopyDir(sourcedir,dest,overlay)  
+
+	set sourcedir = pSetupDir_dirSep_"images"_dirSep_"background"
+	set dest = ##class(KB.Config).getCSPDirectory()_dirSep_"images"_dirSep_"background"
+	set overlay = 1
+	set boolean = ##class(%File).CopyDir(sourcedir,dest,overlay)  
+
+	set sourcedir = pSetupDir_dirSep_"images"_dirSep_"button"
+	set dest = ##class(KB.Config).getCSPDirectory()_dirSep_"images"_dirSep_"button"
+	set overlay = 1
+	set boolean = ##class(%File).CopyDir(sourcedir,dest,overlay)  
+
+	set sourcedir = pSetupDir_dirSep_"images"_dirSep_"logo"
+	set dest = ##class(KB.Config).getCSPDirectory()_dirSep_"images"_dirSep_"logo"
+	set overlay = 1
+	set boolean = ##class(%File).CopyDir(sourcedir,dest,overlay)  
+
+	set sourcedir = pSetupDir_dirSep_"images"_dirSep_"others"
+	set dest = ##class(KB.Config).getCSPDirectory()_dirSep_"images"_dirSep_"others"
+	set overlay = 1
+	set boolean = ##class(%File).CopyDir(sourcedir,dest,overlay)
+	
+	quit $$$OK  
 }
 
-ClassMethod copyCSPs(pSetupDir As %String) As %Status
+ClassMethod copyCSSs(pCSPFileDir As %String) As %Status
 {
-	//cspファイルやcssファイルをcspディレクトリーにコピーする
+	//cssファイルをcspディレクトリーにコピーする
 	set CSPDir = ##class(KB.Config).getCSPDirectory()
 	set dirSep = ##class(KB.Config).getDirectorySeparator()
 	//ディレクトリがなければコピーしない
-	if '##class(%File).Exists(pSetupDir) quit $$$OK
+	if '##class(%File).Exists(pCSPFileDir) quit $$$OK
 	
-	set copyParam = pSetupDir_" "_CSPDir
-  
-	if dirSep = "\" {
-       set copyCommand = "xcopy /e /y "_copyParam
-    }
-    else  {
-       set copyCommand = "cp -R "_copyParam
-    }
+	set from = pCSPFileDir_dirSep_"style.css"
+	set to = CSPDir_dirSep  
+    set status = ##class(%File).CopyFile(from,to)
        
-    quit $zf(-1,copyCommand)
+	set from = pCSPFileDir_dirSep_"FAQ.js"
+	set to = CSPDir_dirSep  
+    set status = ##class(%File).CopyFile(from,to)
+    
+	set from = pCSPFileDir_dirSep_"styleedit.css"
+	set to = CSPDir_dirSep  
+    set status = ##class(%File).CopyFile(from,to)
+    
+	set from = pCSPFileDir_dirSep_"stylehowto.css"
+	set to = CSPDir_dirSep  
+    set status = ##class(%File).CopyFile(from,to)
+
+    quit $$$OK
 }
 
 }

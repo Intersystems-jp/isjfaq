@@ -1805,3 +1805,21 @@ ClassMethod ReplaceTextInTopics(pTargetText As %String, pReplaceText As %String)
 
 KB.Utility.cls
 FAQ.Tools.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS102
+
+日付			2019/4/24
+
+内容
+
+ダウンロードファイル、イメージファイルのコピー方法の見直し
+（$zf(-1)をやめる）
+
+
+修正モジュール
+
+KB.Utility.cls
+FAQ.Installer.cls
+KB.Setup.cls
