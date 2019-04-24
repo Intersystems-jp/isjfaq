@@ -542,7 +542,7 @@ ClassMethod CreateUsersVoice() As %Status
 
 ClassMethod ShowVersion() As %String
 {
-	quit "1.2.101"
+	quit "1.2.102"
 }
 
 ClassMethod FindKatakanaKeywords() As %Status

@@ -174,7 +174,7 @@ ClassMethod runInstaller(datestr As %String) As %Status
 
 ClassMethod getVersion() As %String
 {
-	quit "1.0.022"
+	quit "1.0.102"
 }
 
 }
