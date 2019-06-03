@@ -1823,3 +1823,22 @@ FAQ.Tools.cls
 KB.Utility.cls
 FAQ.Installer.cls
 KB.Setup.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS103
+
+日付			2019/6/03
+
+内容
+
+HS092の修正（微調整）
+サムネールのイメージが大きすぎるのを小さくする
+
+
+
+修正モジュール
+
+KB.Utility.cls
+result.csp
+CompanyLogo-Small.png
