@@ -37,8 +37,8 @@ function loadEvent()
 {
    var wname=window.name;
    var wnamesub=wname.substring(0,16);
-   
-   if (wnamesub=='TopicDescription') {
+      
+   if (wnamesub=='TopicDescription' || wname=='new') {
 	   var closebtn=document.getElementById("closebtn");
    	   closebtn.style.visibility='visible';
 	   var gotoppage=document.getElementById("gotoppage");

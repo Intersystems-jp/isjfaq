@@ -44,7 +44,7 @@ Property FileFlg As %Boolean [ InitialExpression = 0 ];
 Property RefTopic As %String;
 
 /// 特記事項
-Property Note As %String(MAXLEN = "", XMLPROJECTION = "NONE");
+Property Note As %String(MAXLEN = 1000, XMLPROJECTION = "NONE");
 
 /// 完成フラグ
 Property Completed As %Boolean [ InitialExpression = 0 ];
@@ -178,7 +178,7 @@ Method %OnAfterSave(pInsert As %Boolean) As %Status [ Private, ServerOnly = 1 ]
 	}
 	
 	If (tSC = 0) Set tSC = $$$OK  // tSC = 0はエラー扱いしない
-	Quit tSC
+	Quit tSC 
 }
 
 ClassMethod GetCurTopicSubID() As %String
@@ -378,32 +378,6 @@ ClassMethod RemoveLink(pId As %Integer, pOldValue As %String, pNewValue As %Stri
 	}
 	Quit tSC
 }
-
-/*
-Method DescriptionGet() As %Text
-{
- set crlf = $char(13,10)
- set gt = "&gt;"
- set lt = "&lt;"
- set Description = i%Description
-
- set Description = $replace(Description,"<command>",lt_"command"_gt)
- set Description = $replace(Description,"</command>",lt_"/command"_gt)
- set Description = $replace(Description,"<Command>",lt_"Command"_gt)
- set Description = $replace(Description,"</Command>",lt_"/Command"_gt)
- set Description = $replace(Description,"<COMMAND>",lt_"COMMAND"_gt)
- set Description = $replace(Description,"</COMMAND>",lt_"/COMMAND"_gt)
-
- set Description = $replace(Description,"<url>",lt_"url"_gt)
- set Description = $replace(Description,"</url>",lt_"/url"_gt)
- set Description = $replace(Description,"<Url>",lt_"Url"_gt)
- set Description = $replace(Description,"</Url>",lt_"/Url"_gt)
- set Description = $replace(Description,"<URL>",lt_"URL"_gt)
- set Description = $replace(Description,"</URL>",lt_"/URL"_gt)
- 
- quit Description
-}
-*/
 
 ClassMethod ChangeUrlPathForImages() {
    try {

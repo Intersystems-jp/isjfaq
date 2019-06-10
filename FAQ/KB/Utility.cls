@@ -1,6 +1,11 @@
 Class KB.Utility
 {
 
+ClassMethod ShowVersion() As %String
+{
+	quit "1.2.104"
+}
+
 /// xmlインポートおよびxmlエクスポートでは、TopicのFileLoc(FileStream)は、交換できない
 ClassMethod xmlImport(filename As %String)
 {
@@ -538,11 +543,6 @@ ClassMethod CreateUsersVoice() As %Status
 		
 	}
 	quit tSC
-}
-
-ClassMethod ShowVersion() As %String
-{
-	quit "1.2.103"
 }
 
 ClassMethod FindKatakanaKeywords() As %Status
