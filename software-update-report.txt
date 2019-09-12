@@ -1859,3 +1859,21 @@ CompanyLogo-Small.png
 
 KB.Utility.cls
 result.csp
+
+------------------------------------------------------------------------------------
+
+修正ID		HS105
+
+日付			2019/9/12
+
+内容
+
+トピック詳細表示のウィンドウサイズを閉じるボタンが表示されるように調整（600->800）
+
+
+
+修正モジュール
+
+FAQ.TopicSearchBodyTemplate.cls
+FAQ.TopicSearchBodyAll.cls(クラスコンパイルのみ)
+KB.Utility.cls

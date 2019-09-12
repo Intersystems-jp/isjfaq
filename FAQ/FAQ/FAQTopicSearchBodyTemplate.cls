@@ -449,22 +449,28 @@ ClientMethod tableRowClick() [ Language = javascript ]
 ClientMethod openResult(id) [ Language = javascript ]
 {
 	var url = 'result.csp?DocNo='+id;
+	const wwidth = 1000;
+	const wheight = 800;
   	
-    window.open(url,'TopicDescription'+id,'width=1000,height=600,left='+(window.screen.width-1000)/2+',top='+(window.screen.height-600)/2+',scrollbars=1');
+    window.open(url,'TopicDescription'+id,'width='+wwidth+',height='+wheight+',left='+(window.screen.width-wwidth)/2+',top='+(window.screen.height-wheight)/2,scrollbars=1);
 }
 
 ClientMethod showNewTopic(id) [ Language = javascript ]
 {
 	var url = 'result.csp?DocNo='+id
+	const wwidth = 1000;
+	const wheight = 800;
   	
-    window.open(url,'TopicDescription'+id,'width=1000,height=600,left='+(window.screen.width-1000)/2+',top='+(window.screen.height-600)/2+',scrollbars=1');
+    window.open(url,'TopicDescription'+id,'width='+wwidth+',height='+wheight+',left='+(window.screen.width-wwidth)/2+',top='+(window.screen.height-wheight)/2,scrollbars=1);
 }
 
 ClientMethod openPrivateWindow(cspname) [ Language = javascript ]
 {
 	var url = zenPage.SetURL(cspname);
+	const wwidth = 1000;
+	const wheight = 800;
 	 	
-    window.open(url,'','width=1000,height=600,left='+(window.screen.width-1000)/2+',top='+(window.screen.height-600)/2+',scrollbars=1');
+    window.open(url,'','width='+wwidth+',height='+wheight+',left='+(window.screen.width-wwidth)/2+',top='+(window.screen.height-wheight)/2,scrollbars=1);
 }
 
 ClassMethod SetURL(cspname) As %String [ ZenMethod ]
