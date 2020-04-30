@@ -161,7 +161,7 @@ XData Contents [ XMLNamespace = "http://www.intersystems.com/zen" ]
 <page id="page" xmlns="http://www.intersystems.com/zen" title="" height="100%">
 <hgroup id="titlehgroup" width="99.3%">
 <vgroup width="50%" align="left" height="100%">
-<html align="left" ><a href="http://www.intersystems.co.jp" ><img src="images/logo/CompanyLogo.png" width="200" height="50" border="0"/></a></html>
+<html align="left" ><a href="http://www.intersystems.com/jp" ><img src="images/logo/intersystems-logo.png" width="200" height="50" border="0"/></a></html>
 </vgroup>
 <vgroup width="50%" align="right" height="100%">
 <html valign="bottom" align="right"><span id="title1" style="padding:0px 0px 0px 30px;">FAQ </span><span id="title2">(よくあるご質問)</span></html>
