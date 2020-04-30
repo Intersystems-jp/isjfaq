@@ -1893,3 +1893,4 @@ InterSystems logoの変更
 
 FAQ.TopicSearch2.cls
 KB.Utility.cls
+result.csp
