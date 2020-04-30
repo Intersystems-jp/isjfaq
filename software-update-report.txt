@@ -1891,6 +1891,5 @@ InterSystems logoの変更
 
 修正モジュール
 
-FAQ.TopicSearchBodyTemplate.cls
-FAQ.TopicSearchBodyAll.cls(クラスコンパイルのみ)
+FAQ.TopicSearch2.cls
 KB.Utility.cls
