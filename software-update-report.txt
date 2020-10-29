@@ -1894,3 +1894,20 @@ InterSystems logoの変更
 FAQ.TopicSearch2.cls
 KB.Utility.cls
 result.csp
+
+------------------------------------------------------------------------------------
+
+修正ID		HS107
+
+日付			2020/10/29
+
+内容
+
+トピックNoが存在しない場合に表示されるエラーページのトップページの戻りのリンクが古い
+
+
+修正モジュール
+
+FAQ.TopicNotFound.cls
+KB.Utility.cls
+result.csp
