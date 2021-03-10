@@ -1911,3 +1911,19 @@ result.csp
 FAQ.TopicNotFound.cls
 KB.Utility.cls
 result.csp
+
+------------------------------------------------------------------------------------
+
+修正ID		HS108
+
+日付			2021/03/10
+
+内容
+
+不正なurlだけを表示するverboseフラグをパラメータとして追加
+
+
+修正モジュール
+
+FAQ.Tools.cls
+KB.Utility.cls
