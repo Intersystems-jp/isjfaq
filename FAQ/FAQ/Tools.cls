@@ -33,6 +33,7 @@ ClassMethod URLsExistingTest(pVerbose As %Boolean = 0) As %Status
 	while rs.%Next() {
 	  set id = rs.%Get("ID")
 	  set topic = ##class(KB.Topic).%OpenId(id)
+	  if topic.DeleteFlg continue
 	  set status = ##class(KB.Utility).PickupURLs(topic.Description,.URLs)
 	  for i = 1:1:URLs {
 	    if i = 1 write !,"Topic id = ",id,!
