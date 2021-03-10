@@ -20,9 +20,9 @@ ClassMethod ListURLsInTopics() As %Status
 	}
 	  
     quit status
-  }
+}
 
-ClassMethod URLsExistingTest() As %Status
+ClassMethod URLsExistingTest(pVerbose As %Boolean = 0) As %Status
 {
     set status = $$$OK
     
@@ -35,14 +35,14 @@ ClassMethod URLsExistingTest() As %Status
 	  set topic = ##class(KB.Topic).%OpenId(id)
 	  set status = ##class(KB.Utility).PickupURLs(topic.Description,.URLs)
 	  for i = 1:1:URLs {
-	    if i = 1 write !,"Topic id = ",id,!!
-	    set status = ..httprequest(URLs(i))
+	    if i = 1 write !,"Topic id = ",id,!
+	    set status = ..httprequest(URLs(i),,pVerbose)
 	  }
 	  
     }
     quit status
-  }
-    
+}
+
 ClassMethod ReplaceTextInTopics(pTargetText As %String, pReplaceText As %String) As %Status
 {
     set status = $$$OK
@@ -59,9 +59,9 @@ ClassMethod ReplaceTextInTopics(pTargetText As %String, pReplaceText As %String)
 	}
 	  
     quit status
-  }
+}
 
-ClassMethod httprequest(pUrl As %String, pPort As %Integer = 80) As %Status
+ClassMethod httprequest(pUrl As %String, pPort As %Integer = 80, pVerbose As %Boolean = 0) As %Status
 {
     set status = $$$OK
 
@@ -71,6 +71,9 @@ ClassMethod httprequest(pUrl As %String, pPort As %Integer = 80) As %Status
 	set url = $piece(pUrl,"/",4,*)
 	set params = $piece(url,"?",2)
 	if params'="" {
+	  if $extract(params,1,5) = "&amp;" {
+		  write "params format is wrong ",url,! quit '$$$OK
+	  }	
 	  for i = 1:1:$length(params,"&amp;") {
 	    set kv= $piece(params,"&amp;",i)
 	    set kv(i,"KEY") = $piece(kv,"=",1)
@@ -98,30 +101,44 @@ ClassMethod httprequest(pUrl As %String, pPort As %Integer = 80) As %Status
 	set status = httprequest.Get(url)
 	set statuscode = httprequest.HttpResponse.StatusCode
 	if statuscode > 299 {
-	   write !,pUrl,!
+	   write pUrl,!
 	   write "status code = ",statuscode,!
 	}
 	
 	if statuscode = 200 {
-	  write !,pUrl,!
-	  write "status code = ",statuscode,!
+	  if pVerbose {	
+	    write pUrl,!
+	    write "status code = ",statuscode,!
+	  }
 	  set gzip = httprequest.HttpResponse.Data
 	  set length = 360000
 	  set contents = gzip.Read(.length,.status)
-	  if contents [ "Missing or Invalid Document" write "No Section Name",!
+	  if contents [ "Missing or Invalid Document" {
+	      write pUrl,!
+		  write "No Section Name",!
+	  }
 	  if searchtag '="" {
-	     if contents '[ searchtag write "No Keyword ",searchtag,!
+	     if contents '[ searchtag {
+	         write pUrl,!
+		     write "No Keyword ",searchtag,!
+	     }
 	  }
 	}
 	
 	if (statuscode = 301) || (statuscode = 302) || (statuscode = 303) {
-	   write !,pUrl,!
-	   write "status code = ",statuscode,!
+	   if pVerbose {	
+	     write pUrl,!
+	     write "status code = ",statuscode,!
+	   }
 	   set redirect = httprequest.HttpResponse.GetHeader("LOCATION")
-	   set status = ..httprequest(redirect,pPort)
+	   set statuscode = ..httprequest(redirect,pPort,pVerbose)
+	   if statuscode > 299 {
+	     write pUrl,!
+	     write "status code = ",statuscode,!
+	  }
     }
     
     quit status
-  }
+}
 
 }
