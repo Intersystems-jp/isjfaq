@@ -206,12 +206,9 @@ if $Get(%session.Data("Access"))="" {
 <DIV class="description" border=1>
   <SCRIPT LANGUAGE="CACHE" runat=server>
   
-   set description=##class(%CSP.Page).UnescapeHTML(topic.Description)
+   set edesc=topic.Description
 
-   set crlf = $char(13,10)
-   
-   set edesc = description
-   
+   set crlf = $char(13,10)   
                    
    set lineno = $length(edesc,crlf)
       
