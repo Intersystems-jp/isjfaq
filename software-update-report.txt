@@ -1944,3 +1944,20 @@ KB.Utility.cls
 
 result.csp
 KB.Utility.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS110
+
+日付			2022/2/7
+
+内容
+
+DC(Developer Community)に同じ内容の記事が登録されている場合には、強制的にそのページを表示する。
+（FAQEditorやFAQAdministratorのロールがある場合には、FAQ上のトピックを表示、編集できるようにする)
+
+
+修正モジュール
+
+result.csp
+KB.Utility.cls
