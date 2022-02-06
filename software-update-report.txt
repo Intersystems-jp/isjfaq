@@ -1959,5 +1959,10 @@ DC(Developer Community)に同じ内容の記事が登録されている場合に
 
 修正モジュール
 
+KB.Topc.cls
 result.csp
+new.csp
+edit.csp
+FAQ.FAQTopicSearchTemplate.cls
 KB.Utility.cls
+
