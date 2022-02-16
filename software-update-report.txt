@@ -1959,10 +1959,29 @@ DC(Developer Community)に同じ内容の記事が登録されている場合に
 
 修正モジュール
 
-KB.Topc.cls
+KB.Topic.cls
 result.csp
 new.csp
 edit.csp
+howto.csp
 FAQ.FAQTopicSearchTemplate.cls
+KB.Utility.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS111
+
+日付			2022/2/16
+
+内容
+
+Productの選択リストの表示メッセージが難しく、どのプロダクトを選択したかがわかりにくいために表現方法を変更した。
+
+
+修正モジュール
+
+FAQ.inc
+KB.Product.cls
+result.csp
 KB.Utility.cls
 
