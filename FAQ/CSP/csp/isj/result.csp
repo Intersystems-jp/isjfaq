@@ -68,14 +68,24 @@ if $Get(%session.Data("Access"))="" {
 
  Set DocNo=%request.Get("DocNo")
  
- if DocNo'="" {
-	 Set topic = ##Class(KB.Topic).%OpenId(DocNo)
- 	if topic="" {
-		 set %response.Redirect="FAQ.FAQTopicNotFound.cls"
- 	}else{
-	 	 set TopicID=topic.TopicID
- 	}
+ Set roles=$Get(%session.Data("roles"))
+ if roles="" {
+	 set roles=0
+ }
 
+ if DocNo'="" {
+   set dcurl = ""
+   Set topic = ##Class(KB.Topic).%OpenId(DocNo)
+   if $isobject(topic) set dcurl = topic.DCURL
+   if topic="" {
+     set %response.Redirect="FAQ.FAQTopicNotFound.cls"
+   }
+   elseif (dcurl'="") && (roles = 0) {
+     set %response.Redirect=dcurl
+   } 
+   else{
+	 set TopicID=topic.TopicID
+   }
  }
   
  quit $$$OK
@@ -174,15 +184,15 @@ if $Get(%session.Data("Access"))="" {
    }
  
  If $extract(Productidb,$$$HealthShare) {
-   set tProductText = tProductText_"HealthShare/Cach&eacute; Based, "
+   set tProductText = tProductText_"旧HealthShare, "
    }
 
  If $extract(Productidb,$$$IRIS) {
    set tProductText = tProductText_"IRIS Data Platform, "
    }
 
- If $extract(Productidb,$$$HealthShareIRIS) {
-   set tProductText = tProductText_"HealthShare/IRIS Based, IRIS for Health, "
+ If $extract(Productidb,$$$IRIS4H) {
+   set tProductText = tProductText_"IRIS for Health, "
    }
 
  If $extract(Productidb,$$$General) {
