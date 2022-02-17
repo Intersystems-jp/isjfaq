@@ -77,16 +77,28 @@ ClassMethod setConfigParams(envID As %Integer) As %Status
 		set classfiledir = "FAQ"
 		set globalfilename = "TopicD.xml"
 		
+		//Docker(お試し)環境
+	} elseif envID=4 {
+		set ns = "USER"
+		set auth = "64"
+		set separator = "/"
+		set cspdir = "/usr/irissys/csp/user"
+		set cspurl = "/csp/user"
+		set ftpdir = "/usr/irissys/csp/user/downloads"
+		set setupdir = "/intersystems/iris"
+		set classfiledir = ""
+		set globalfilename = "TopicD.xml"
+		
 	//その他、ローカルに環境を作りたいときなどに使用(上の3つの内容を変更せずにここを利用)
 	} else {
 		set ns = "FAQ"
 		set auth = "64"		
 		set separator = "\"
-		set cspdir = "c:\InterSystems\Ensemble\CSP\faq"
+		set cspdir = "c:\InterSystems\IRIS\CSP\faq"
 		set cspurl = "/csp/faq"
-		set ftpdir = "c:\InterSystems\Ensemble\CSP\faq\downloads"
-		set setupdir = "e:\Work\FAQ"
-		set classfiledir = "FAQ"
+		set ftpdir = "c:\InterSystems\IRIS\CSP\faq\downloads"
+		set setupdir = "c:\temp\faqdemo"
+		set classfiledir = ""
 		set globalfilename = "TopicD.xml"
 	}
 	
@@ -131,7 +143,7 @@ ClassMethod copyDownloadFiles(pSetupDir As %String) As %Status
 	set dest = ftpDir
 	set overlay = 1
 	set boolean = ##class(%File).CopyDir(sourcedir,dest,overlay)
-	quit $$$OK  
+	quit $$$OK
 }
 
 ClassMethod copyImages(pSetupDir As %String) As %Status
@@ -166,7 +178,7 @@ ClassMethod copyImages(pSetupDir As %String) As %Status
 	set overlay = 1
 	set boolean = ##class(%File).CopyDir(sourcedir,dest,overlay)
 	
-	quit $$$OK  
+	quit $$$OK
 }
 
 ClassMethod copyCSSs(pCSPFileDir As %String) As %Status
@@ -181,10 +193,6 @@ ClassMethod copyCSSs(pCSPFileDir As %String) As %Status
 	set to = CSPDir_dirSep  
     set status = ##class(%File).CopyFile(from,to)
        
-	set from = pCSPFileDir_dirSep_"FAQ.js"
-	set to = CSPDir_dirSep  
-    set status = ##class(%File).CopyFile(from,to)
-    
 	set from = pCSPFileDir_dirSep_"styleedit.css"
 	set to = CSPDir_dirSep  
     set status = ##class(%File).CopyFile(from,to)
@@ -194,6 +202,19 @@ ClassMethod copyCSSs(pCSPFileDir As %String) As %Status
     set status = ##class(%File).CopyFile(from,to)
 
     quit $$$OK
+}
+
+ClassMethod SetupLocal(pDir As %String) As %Status
+{
+  // FAQ以下の内容をglobalにコピー
+  // FAQ.Installer.runInstallerでenvID=5に設定
+  Do $system.OBJ.Load(pDir_"\FAQ\Installer.cls","ck")
+  Do $system.OBJ.Load(pDir_"\KB\Setup.cls","ck")
+  Do $system.OBJ.Load(pDir_"\KB\Config.cls","ck")
+  Do $system.OBJ.Load(pDir_"\KB\Utility.cls","ck")
+  do ##class(FAQ.Installer).runInstaller("")
+
+  quit $$$OK
 }
 
 }
