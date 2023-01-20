@@ -43,6 +43,7 @@ ClassMethod Init()
 	&SQL(insert into KB.Facility (Description) values ('運用関連'))
 	&SQL(insert into KB.Facility (Description) values ('人工知能/機械学習'))
 	&SQL(insert into KB.Facility (Description) values ('マルチモデル'))
+	&SQL(insert into KB.Facility (Description) values ('Embedded Python'))
 }
 
 Storage Default
