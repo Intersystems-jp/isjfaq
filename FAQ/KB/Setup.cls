@@ -80,7 +80,7 @@ ClassMethod setConfigParams(envID As %Integer) As %Status
 		//Docker(お試し)環境
 	} elseif envID=4 {
 		set ns = "USER"
-		set auth = "64"
+		set auth = "96"
 		set separator = "/"
 		set cspdir = "/usr/irissys/csp/user"
 		set cspurl = "/csp/user"
@@ -89,15 +89,26 @@ ClassMethod setConfigParams(envID As %Integer) As %Status
 		set classfiledir = ""
 		set globalfilename = "TopicD.xml"
 		
-	//その他、ローカルに環境を作りたいときなどに使用(上の3つの内容を変更せずにここを利用)
-	} else {
+	//その他、ローカルに環境を作りたいときなどに使用(上の3つの内容を変更せずにここを利用) for Windows
+	} elseif envID=5  {
 		set ns = "FAQ"
-		set auth = "64"		
+		set auth = "96"		
 		set separator = "\"
 		set cspdir = "c:\InterSystems\IRIS\CSP\faq"
 		set cspurl = "/csp/faq"
 		set ftpdir = "c:\InterSystems\IRIS\CSP\faq\downloads"
-		set setupdir = "c:\temp\faqdemo"
+		set setupdir = "c:\git\faqdemo"
+		set classfiledir = ""
+		set globalfilename = "TopicD.xml"
+	//その他、ローカルに環境を作りたいときなどに使用(上の3つの内容を変更せずにここを利用) for MacOS
+	} elseif envID=6  {
+		set ns = "FAQ"
+		set auth = "96"		
+		set separator = "/"
+		set cspdir = "/Applications/iris/csp/faq"
+		set cspurl = "/csp/faq"
+		set ftpdir = "/Applications/iris/csp/faq/downloads"
+		set setupdir = "/Users/hiroshisato/git/FAQDEMO"
 		set classfiledir = ""
 		set globalfilename = "TopicD.xml"
 	}
@@ -116,6 +127,8 @@ ClassMethod setConfigParams(envID As %Integer) As %Status
 	do ##class(KB.Config).setSetupDirectory(setupdir)
 	do ##class(KB.Config).setClassFileDir(classfiledir)
 	do ##class(KB.Config).setGlobalFileName(globalfilename)
+	do ##class(KB.Config).setWebServer()
+
 
 	quit $$$OK
 }
@@ -191,28 +204,50 @@ ClassMethod copyCSSs(pCSPFileDir As %String) As %Status
 	
 	set from = pCSPFileDir_dirSep_"style.css"
 	set to = CSPDir_dirSep  
-    set status = ##class(%File).CopyFile(from,to)
+	set status = ##class(%File).CopyFile(from,to)
        
 	set from = pCSPFileDir_dirSep_"styleedit.css"
 	set to = CSPDir_dirSep  
-    set status = ##class(%File).CopyFile(from,to)
+	set status = ##class(%File).CopyFile(from,to)
     
 	set from = pCSPFileDir_dirSep_"stylehowto.css"
 	set to = CSPDir_dirSep  
-    set status = ##class(%File).CopyFile(from,to)
+	set status = ##class(%File).CopyFile(from,to)
 
     quit $$$OK
 }
 
 ClassMethod SetupLocal(pDir As %String) As %Status
 {
-  // FAQ以下の内容をglobalにコピー
-  // FAQ.Installer.runInstallerでenvID=5に設定
-  Do $system.OBJ.Load(pDir_"\FAQ\Installer.cls","ck")
-  Do $system.OBJ.Load(pDir_"\KB\Setup.cls","ck")
-  Do $system.OBJ.Load(pDir_"\KB\Config.cls","ck")
-  Do $system.OBJ.Load(pDir_"\KB\Utility.cls","ck")
-  do ##class(FAQ.Installer).runInstaller("")
+  // GitHubからclone
+  // FAQ.Installer.runInstallerでenvID=5に設定(Windows)
+  // FAQ.Installer.runInstallerでenvID=6に設定(MacOS)
+  // Windowsの場合, c:\git\FAQDEMO
+  // MacOSの場合, /Users/hiroshisato/git/FAQDEMO
+  // setupディレクトリ等を変更したい場合は、setConfigParamsの処理を書き換える
+
+  set namespace = $namespace
+  set $namespace = "%SYS"
+  set sec = ##class("Security.Applications").%New()
+  set sec.Name = "/api/faq"
+  set sec.NameSpace = namespace
+  set sec.DispatchClass ="FAQ.RestAPI"
+  set sec.AutheEnabled = 96
+  set status = sec.%Save()
+  set $namespace = namespace
+  
+  if ($system.Version.GetOS() = "UNIX") {
+    Do $system.OBJ.Load(pDir_"/FAQ/Installer.cls","ck")
+    Do $system.OBJ.Load(pDir_"/KB/Config.cls","ck")
+    Do $system.OBJ.Load(pDir_"/KB/Utility.cls","ck")
+    do ##class(FAQ.Installer).runInstaller("FAQ",6)
+  }
+  else {
+    Do $system.OBJ.Load(pDir_"\FAQ\Installer.cls","ck")
+    Do $system.OBJ.Load(pDir_"\KB\Config.cls","ck")
+    Do $system.OBJ.Load(pDir_"\KB\Utility.cls","ck")
+    do ##class(FAQ.Installer).runInstaller("FAQ",5)
+  }
 
   quit $$$OK
 }
