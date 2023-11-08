@@ -7,6 +7,7 @@ XData UrlMap
   <Route Url="/UpdateTopicProperty" Method="POST" Call="UpdateTopicProperty"/>
   <Route Url="/TopicSearchByKeyword/:keyword" Method="GET" Call="FAQ.RestAPI:TopicSearchByKeyword"/>
   <Route Url="/TopicGetById/:id" Method="GET" Call="FAQ.RestAPI:TopicGetById"/>
+  <Route Url="/TopicSearchByNew" Method="GET" Call="FAQ.RestAPI:TopicSearchByNew"/>
 </Routes>
 }
 
@@ -105,6 +106,42 @@ ClassMethod TopicSearchAll() As %Status
   quit status
 }
 
+ClassMethod TopicSearchByNew() As %Status
+{
+  set status = $$$OK
+  
+  try  {
+	
+    if $data(%request) {
+      set %response.ContentType="application/json"
+	    set %response.CharSet = "utf-8"
+    }
+	  
+    set sql = "SELECT id,title from kb.topic where Completed=1 and Visible=1 and DeleteFlg!=1 order by issuedate desc"
+    set statemt=##class(%SQL.Statement).%New()
+    set status=statemt.%Prepare(sql)
+    set rset=statemt.%Execute()
+    set return = []
+    while rset.%Next()  {
+      set robj = {}
+      set robj.id = rset.%Get("Id")
+      set robj.title = rset.%Get("title")
+      do return.%Push(robj)
+		    
+     }
+	   
+     write return.%ToJSON()
+	  	  
+  }
+  catch e {
+		
+    set status = e.AsStatus()
+		
+  }
+  
+  quit status
+}
+
 ClassMethod TopicGetById(pId As %Integer) As %Status
 {
   set status = $$$OK
@@ -116,7 +153,8 @@ ClassMethod TopicGetById(pId As %Integer) As %Status
       set %response.CharSet = "utf-8"
     }
 
-    set topic = ##class(KB.Topic).%OpenId(pId)	  
+    set topic = ##class(KB.Topic).%OpenId(pId,,.status)	
+    $$$ThrowOnError(status)  
     set return = {}
     set return.id = pId
     set return.Title = topic.Title
@@ -127,24 +165,32 @@ ClassMethod TopicGetById(pId As %Integer) As %Status
     set replacetext = "http://"_webserver_":"_webserverport_cspurl_"/images"
     set description = $replace(description,"./images",replacetext)
     set return.Description = description
-    set reftopic = topic.RefTopic
+    set reftopics = topic.RefTopic
     set refarray = []
-    for i = 1:1:$length(reftopic) {
-      set refno = $piece(reftopic,",",i)
+    for i = 1:1:$length(reftopics,",") {
+      set refno = $piece(reftopics,",",i)
+      if refno = "" quit
       set reftopic = ##class(KB.Topic).%OpenId(refno)
-      set index = i - 1
-      set refarray.index = refno_","_reftopic.Title
+      do refarray.%Push(refno_","_reftopic.Title)
     }
     set return.RefArray = refarray
-    set return.FileFlg = topic.FileFlg
+    set filename = ##class(KB.Config).getAttachedFileName()_pId_".zip"
+    set dir = ##class(KB.Config).getFTPDirectory()
+    set sep = ##class(KB.Config).getDirectorySeparator()
+    set filepath = dir_sep_filename
+    set fileexists = ##class(%File).Exists(filepath)    
+    set return.FileFlg = fileexists
     set return.DownloadFile =  "http://"_webserver_":"_webserverport_cspurl_"/downloads/"_##class(KB.Config).getAttachedFileName()_pId_".zip"
-	   
+    set return.DCURL = topic.DCURL
+    set return.ProductText = ##class(%CSP.Page).UnescapeHTML(##class(KB.Utility).ProductText(topic.Product.ProductId))
+    set return.VersionRange = topic.VersionRange	   
     write return.%ToJSON()
 	  	  
   }
   catch e {
 		
     set status = e.AsStatus()
+    do ##class(FAQ.Error).StoreErrorInformation(e)
 		
   }
   
