@@ -2017,3 +2017,20 @@ Facilityに最新データを追加
 KB.Facility.cls
 KB.Utility.cls
 
+------------------------------------------------------------------------------------
+
+修正ID		HS114
+
+日付			2023/11/08
+
+内容
+
+React版UIのための修正
+
+
+修正モジュール
+
+KB.Config.cls
+KB.Setup.cls
+KB.Utility.cls
+FAQ .RestAPI.cls
