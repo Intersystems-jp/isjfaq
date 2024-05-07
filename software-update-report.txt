@@ -2033,4 +2033,22 @@ React版UIのための修正
 KB.Config.cls
 KB.Setup.cls
 KB.Utility.cls
-FAQ .RestAPI.cls
+FAQ.RestAPI.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS115
+
+日付			2024/05/07
+
+内容
+
+IRIS製品バージョン更新
+機能項目追加（Vector Search）
+
+
+修正モジュール
+
+KB.Version.cls
+KB.Facility.cls
+KB.Utility.cls
