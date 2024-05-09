@@ -2052,3 +2052,19 @@ IRIS製品バージョン更新
 KB.Version.cls
 KB.Facility.cls
 KB.Utility.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS116
+
+日付			2024/05/09
+
+内容
+
+検索文字列にNOTやAND、ORが含まれるとSQLエラーとなる問題に対応
+
+
+修正モジュール
+
+FAQ.FAQTopicSearchTemplate.cls
+KB.Utility.cls
