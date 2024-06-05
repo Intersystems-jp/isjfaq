@@ -2068,3 +2068,19 @@ KB.Utility.cls
 
 FAQ.FAQTopicSearchTemplate.cls
 KB.Utility.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS117
+
+日付			2024/06/05
+
+内容
+
+ID検索の値として全角の数字指定もできるように変更
+
+
+修正モジュール
+
+FAQ.FAQTopicSearchTemplate.cls
+KB.Utility.cls
