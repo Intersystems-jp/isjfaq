@@ -2098,6 +2098,6 @@ CKEDITORがセキュリティアラートのメッセージを出力するの防
 
 修正モジュール
 
-Edit.csp
-New.csp
+edit.csp
+new.csp
 KB.Utility.cls
