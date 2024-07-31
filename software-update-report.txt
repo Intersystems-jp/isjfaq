@@ -2101,3 +2101,22 @@ CKEDITORがセキュリティアラートのメッセージを出力するの防
 edit.csp
 new.csp
 KB.Utility.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS119
+
+日付			2024/07/31
+
+内容
+
+CKEDITORにCodeSnippetプラグイン追加
+
+
+修正モジュール
+
+edit.csp
+new.csp
+result.csp
+intersystems.css
+KB.Utility.cls
