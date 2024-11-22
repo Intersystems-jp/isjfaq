@@ -81,10 +81,23 @@ ClassMethod getWebServerPort() As %String
 	quit $get(^Techinfo("WebServerPort"))
 }
 
+ClassMethod getWebServerProtocol() As %String
+{
+	quit $get(^Techinfo("WebServerProtocol"))
+}
+
 ClassMethod getWebServerAddress() As %String
 {
 	set address = $get(^Techinfo("WebServerAddress"))
 	quit $case(address,"":"localhost",:address)
+}
+
+ClassMethod getEditingMode() As %String
+{
+	// 1 - True
+	// 0 - False
+	set editingMode = $get(^Techinfo("EditingMode"))
+	quit $case(editingMode,1:1,:0)
 }
 
 ClassMethod setAttachedFileName(afile As %String) As %Status
@@ -192,13 +205,16 @@ ClassMethod setWebServer() As %Status
 	set $namespace = namespace
 	set ^Techinfo("WebServerAddress") = p("WebServerName")
 	set ^Techinfo("WebServerPort") = p("WebServerPort")
+	set ^Techinfo("WebServerProtocol") = p("WebServerProtocol")
+      
 	quit status
 }
 
-ClassMethod setWebServerPort(port As %Integer) As %Status
+ClassMethod setEditingMode(editingMode As %Integer) As %Status
 {
-	set ^Techinfo("WebServerPort") = port
-	quit $$$OK
+	set status = $$$OK
+	set ^Techinfo("editingMode") = editingMode
+	quit status
 }
 
 Storage Default
