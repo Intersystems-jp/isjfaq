@@ -3,7 +3,7 @@ Class KB.Utility
 
 ClassMethod ShowVersion() As %String
 {
-	quit "1.2.122"
+	quit "1.2.123"
 }
 
 /// xmlインポートおよびxmlエクスポートでは、TopicのFileLoc(FileStream)は、交換できない
