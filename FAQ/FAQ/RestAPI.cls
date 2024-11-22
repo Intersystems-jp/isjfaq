@@ -9,6 +9,7 @@ XData UrlMap
   <Route Url="/TopicGetById/:id" Method="GET" Call="FAQ.RestAPI:TopicGetById"/>
   <Route Url="/TopicSearchByNew" Method="GET" Call="FAQ.RestAPI:TopicSearchByNew"/>
   <Route Url="/ImageUpload" Method="POST" Call="FAQ.RestAPI:ImageUpload"/>
+  <Route Url="/EditingMode" Method="GET" Call="FAQ.RestAPI:EditingMode"/>
 </Routes>
 }
 
@@ -54,7 +55,7 @@ ClassMethod TopicSearchByKeyword(pKeyword As %String) As %Status
       set sql = "SELECT id,title from kb.topic where Completed=1 and Visible=1 and DeleteFlg!=1 order by id"
     }
     else {
-      set sql = "SELECT id,title from kb.topic where %ID %FIND Search_Index(DescriptionIndex1,(?)) or %ID %FIND Search_Index(TitleIndex1,(?))  and Completed=1 and Visible=1 and DeleteFlg!=1 order by id"
+      set sql = "SELECT id,title from kb.topic where (%ID %FIND Search_Index(DescriptionIndex1,(?)) or %ID %FIND Search_Index(TitleIndex1,(?))) and Completed=1 and Visible=1 and DeleteFlg!=1 order by id"
     }
     
     set statemt=##class(%SQL.Statement).%New()
@@ -138,7 +139,6 @@ ClassMethod TopicSearchByNew() As %Status
     set status=statemt.%Prepare(sql)
     set rset=statemt.%Execute()
     set return = []
-    set return.editingMode = ##class(KB.Config).getEditingMode()
     while rset.%Next()  {
       set robj = {}
       set robj.id = rset.%Get("Id")
@@ -169,7 +169,7 @@ ClassMethod TopicGetById(pId As %Integer) As %Status
       set %response.ContentType="application/json"
       set %response.CharSet = "utf-8"
     }
-
+    set pId=$translate(pId,$zzenkaku("0123456789"),"0123456789")
     set topic = ##class(KB.Topic).%OpenId(pId,,.status)	
     $$$ThrowOnError(status)  
     set return = {}
@@ -179,7 +179,8 @@ ClassMethod TopicGetById(pId As %Integer) As %Status
     set webserver = ##class(KB.Config).getWebServerAddress()
     set webserverport = ##class(KB.Config).getWebServerPort()
     set cspurl = ##class(KB.Config).getCSPUrl()
-    set replacetext = "http://"_webserver_":"_webserverport_cspurl_"/images"
+    set protocol = ##class(KB.Config).getWebServerProtocol()
+    set replacetext = protocol_"://"_webserver_":"_webserverport_cspurl_"/images"
     set description = $replace(description,"./images",replacetext)
     set return.Description = description
     set reftopics = topic.RefTopic
@@ -197,7 +198,7 @@ ClassMethod TopicGetById(pId As %Integer) As %Status
     set filepath = dir_sep_filename
     set fileexists = ##class(%File).Exists(filepath)    
     set return.FileFlg = fileexists
-    set return.DownloadFile =  "http://"_webserver_":"_webserverport_cspurl_"/downloads/"_##class(KB.Config).getAttachedFileName()_pId_".zip"
+    set return.DownloadFile =  protocol_"://"_webserver_":"_webserverport_cspurl_"/downloads/"_##class(KB.Config).getAttachedFileName()_pId_".zip"
     set return.DCURL = topic.DCURL
     set return.ProductText = ##class(%CSP.Page).UnescapeHTML(##class(KB.Utility).ProductText(topic.Product.ProductId))
     set return.VersionRange = topic.VersionRange	   
@@ -220,6 +221,10 @@ ClassMethod ImageUpload() As %Status
 
     try {
 
+      set webserver = ##class(KB.Config).getWebServerAddress()
+      set webserverport = ##class(KB.Config).getWebServerPort()
+      set cspurl = ##class(KB.Config).getCSPUrl()
+      set protocol = ##class(KB.Config).getWebServerProtocol()
       set upload = $get(%request.MimeData("upload",1))
 
       if upload'="" {
@@ -232,8 +237,7 @@ ClassMethod ImageUpload() As %Status
 	      set st = stream.%Save()
 	
 	      if st=$$$OK {
-          //set fileUrl = ##class(KB.Config).getCSPUrl()_"/images/"_filename_"."_fileext
-          set fileUrl = "http://localhost:8080/csp/faq/images/"_filename_"."_fileext
+          set fileUrl = protocol_"://"_webserver_":"_webserverport_cspurl_"/faq/images/"_filename_"."_fileext
           set funcNum = %request.Get("CKEditorFuncNum",1)
           set message = "ファイルがアップロードされました。"
           write "<script language=javascript>"
@@ -253,6 +257,33 @@ ClassMethod ImageUpload() As %Status
       set sts=ex.AsStatus()
     }
     quit sts
+}
+
+ClassMethod EditingMode() As %Status
+{
+  set status = $$$OK
+  
+  try  {
+	
+    set return = []
+    
+    if $roles["FAQEditor" && ##class(KB.Config).getEditingMode() {
+      set return.Editing = 1
+    }
+    else {
+      set return.Editing = 0
+    }
+
+    write return.%ToJSON()
+	  	  
+  }
+  catch e {
+		
+    set status = e.AsStatus()
+		
+  }
+  
+  quit status
 }
 
 Parameter HandleCorsRequest = 1;
