@@ -2171,3 +2171,20 @@ KB.Utility.cls
 
 result.csp
 KB.Utility.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS123
+
+日付			2024/11/22
+
+内容
+
+Reactからのアクセスの際にhttpとhttpsを自動区別する方法を追加
+
+
+修正モジュール
+
+KB.Config.cls
+FAQ.RestAPI.cls
+KB.Utility.cls
