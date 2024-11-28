@@ -203,9 +203,9 @@ ClassMethod setWebServer() As %Status
 	set $namespace = "%SYS"
 	set status = ##class(Config.Startup).Get(.p)
 	set $namespace = namespace
-	set ^Techinfo("WebServerAddress") = p("WebServerName")
+	set ^Techinfo("WebServerAddress") = $case(p("WebServerName"),"":"localhost",:p("WebServerName"))
 	set ^Techinfo("WebServerPort") = p("WebServerPort")
-	set ^Techinfo("WebServerProtocol") = p("WebServerProtocol")
+	set ^Techinfo("WebServerProtocol") = $get(p("WebServerProtocol"),"http")
       
 	quit status
 }
