@@ -72,6 +72,9 @@ ClassMethod Init()
 	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20231','2023.1.x'))
         &SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20232','2023.2.x'))
 	&SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20241','2024.1.x'))
+        &SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20242','2024.2.x'))
+        &SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20243','2024.3.x'))
+        &SQL(insert into KB.Version (InternalVersion,ExternalVersion) values ('20251','2025.1.x'))
 }
 
 Storage Default
