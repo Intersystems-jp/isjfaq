@@ -386,56 +386,80 @@ Method CreateTitleRS(Output pSC As %Status, pInfo As %ZEN.Auxiliary.QueryInfo) A
 
 Method SetKeyCond(keylist As %String) As %String
 {
-	set keylist = $translate(keylist,"　"," ")   //全角スペース
-	set keylist = $translate(keylist,","," ")    //コンマ
-	set keylist = $translate(keylist,"、"," ")   //点
-	set keylen = $length(keylist," ")
+	try {
+	  set keylist = $translate(keylist,"　"," ")   //全角スペース
+	  set keylist = $translate(keylist,","," ")    //コンマ
+	  set keylist = $translate(keylist,"、"," ")   //点
+	  set keylen = $length(keylist," ")
  	
- 	set keyno=0
-	for i=1:1:keylen{
+ 	  set keyno=0
+	  for i=1:1:keylen{
  		set keyword = $piece(keylist," ",i) 
  		if keyword'= "" {
-	 		set keyno=keyno+1
+	 	  set keyno=keyno+1
 	 		
-	 		// キーワードが(または)で終わる場合、検索エラーとなる問題に対処する
-	 		set keyword(keyno) = $replace($replace(keyword,"("," "),")"," ")
+		  set keyword(keyno) = keyword
  		}
-	}
+	  }
  	 	
- 	//キーワード5個まで全文検索実施	 
-	if keyno = 1 {
+ 	  //キーワード5個まで全文検索実施	 
+	  if keyno = 1 {
  		set ifindkey = keyword(1)
-	}
-	elseif keyno = 2 {
+	  }
+	  elseif keyno = 2 {
  		set ifindkey = keyword(1)_" "_keyword(2)
- 	}
-	elseif keyno = 3 {
+ 	  }
+	  elseif keyno = 3 {
  		set ifindkey = keyword(1)_" "_keyword(2)_" "_keyword(3)
-	}
-	elseif keyno = 4 {
+	  }
+	  elseif keyno = 4 {
  		set ifindkey = keyword(1)_" "_keyword(2)_" "_keyword(3)_" "_keyword(4)
-	}
-	else {
+	  }
+	  else {
  		set ifindkey = keyword(1)_" "_keyword(2)_" "_keyword(3)_" "_keyword(4)_" "_keyword(5)
-	}
-	
-	// 検索文字列にNOT, AND, ORが含まれるときには¥を前置してエスケープする
-    for i = 1:1:$length(ifindkey, " ") {
-	  set key(i) = $piece(ifindkey," ",i)
-	  if ($zcvt(key(i),"U") = "NOT") || ($zcvt(key(i),"U") = "AND") || ($zcvt(key(i),"U") = "OR") {
-		set key(i) = "¥"_key(i)
-	  }  
-	}
+	  }
 
-	kill ifindkey
+	  // 検索文字列に特別な意味がある文字が含まれるときには\を前置してエスケープする
+	  set ifindkey = $replace(ifindkey,"<","\<")
+	  set ifindkey = $replace(ifindkey,">","\>")
+	  set ifindkey = $replace(ifindkey,"(","\(")
+	  set ifindkey = $replace(ifindkey,")","\)")
+	  set ifindkey = $replace(ifindkey,"＜","\＜")
+	  set ifindkey = $replace(ifindkey,"＞","\＞")
+	  set ifindkey = $replace(ifindkey,"（","\（")
+	  set ifindkey = $replace(ifindkey,"）","\（")
+	  set ifindkey = $replace(ifindkey,"{","\{")
+	  set ifindkey = $replace(ifindkey,"}","\}")
+	  set ifindkey = $replace(ifindkey,"[","\[")
+	  set ifindkey = $replace(ifindkey,"]","\]")
+      
+	  // 検索文字に'がある場合は、それを除く
+      set ifindkey = $replace(ifindkey,"'","")
 
-	for j = 1:1:i {
+      for i = 1:1:$length(ifindkey, " ") {
+	    set key(i) = $piece(ifindkey," ",i)
+	    if ($zcvt(key(i),"U") = "NOT") || ($zcvt(key(i),"U") = "AND") || ($zcvt(key(i),"U") = "OR") || ($zcvt(key(i),"U") = ">") {
+		  set key(i) = "\"_key(i)
+	    }  
+	  }
+
+	  kill ifindkey
+
+	  // 検索文字列にNOT, AND, ORが含まれるときには\を前置してエスケープする
+	  for j = 1:1:i {
 		set ifindkey = $get(ifindkey)_" "_key(j)
+	  }
+
+	  set ifindkey = "'"_ifindkey_"'"
+
+	  set keycond = "(%ID %FIND search_index(DescriptionIndex1,"_ifindkey_",0) or %ID %FIND search_index(TitleIndex1,"_ifindkey_",0))"
+
 	}
-
-	set ifindkey = "'"_ifindkey_"'"
-
-	set keycond = "(%ID %FIND search_index(DescriptionIndex1,"_ifindkey_",0) or %ID %FIND search_index(TitleIndex1,"_ifindkey_",0))"
+	catch e {
+	  Set tSC = $$$OK
+	  Set tSC = e.AsStatus()
+	  set tSC2 = ##class(FAQ.Error).StoreErrorInformation(e)	
+	}  
 
 	quit keycond
 }
