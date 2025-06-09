@@ -2220,3 +2220,20 @@ KB.Utility.cls
 
 FAQ.FAQTopicSearchTemplate.cls
 KB.Utility.cls
+
+------------------------------------------------------------------------------------
+
+修正ID		HS126
+
+日付			2025/06/09
+
+内容
+
+ckeditorの不必要なメニュー項目の非表示、コードスニペットのLanguage追加
+
+
+修正モジュール
+
+New.csp
+Edit.csp
+KB.Utility.cls
