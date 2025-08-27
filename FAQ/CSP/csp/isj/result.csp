@@ -1,4 +1,4 @@
-﻿<SCRIPT LANGUAGE="cache" RUNAT="Server">
+<SCRIPT LANGUAGE="cache" RUNAT="Server">
  set companylogourl = "https://www.intersystems.com/wp-content/uploads/assets/intersystems-logo.png"
  set url = "http://"_%request.CgiEnvs("HTTP_HOST")_%request.GetCgiEnv("REQUEST_URI")
  Set DocNo=%request.Get("DocNo")
