@@ -100,6 +100,14 @@ ClassMethod getEditingMode() As %String
 	quit $case(editingMode,1:1,:0)
 }
 
+ClassMethod getVectorSearch() As %String
+{
+	// 1 - True
+	// 0 - False
+	set vectorSearch = $get(^Techinfo("VectorSearch"))
+	quit $case(vectorSearch,1:1,:0)
+}
+
 ClassMethod setAttachedFileName(afile As %String) As %Status
 {
 	set ^Techinfo("AttachedFileName") = afile
@@ -203,9 +211,9 @@ ClassMethod setWebServer() As %Status
 	set $namespace = "%SYS"
 	set status = ##class(Config.Startup).Get(.p)
 	set $namespace = namespace
-	set ^Techinfo("WebServerAddress") = $case(p("WebServerName"),"":"localhost",:p("WebServerName"))
+	set ^Techinfo("WebServerAddress") = p("WebServerName")
 	set ^Techinfo("WebServerPort") = p("WebServerPort")
-	set ^Techinfo("WebServerProtocol") = $get(p("WebServerProtocol"),"http")
+	set ^Techinfo("WebServerProtocol") = p("WebServerProtocol")
       
 	quit status
 }
@@ -214,6 +222,13 @@ ClassMethod setEditingMode(editingMode As %Integer) As %Status
 {
 	set status = $$$OK
 	set ^Techinfo("editingMode") = editingMode
+	quit status
+}
+
+ClassMethod setVectorSearch(vectorSearch As %Integer) As %Status
+{
+	set status = $$$OK
+	set ^Techinfo("VevctorSearch") = vectorSearch
 	quit status
 }
 

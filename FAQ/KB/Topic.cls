@@ -82,6 +82,8 @@ Relationship UpdateDetail As KB.UpdateHistory [ Cardinality = children, Inverse 
 /// 同じ内容のDC(Developer Community)記事URL
 Property DCURL As %String(MAXLEN = 100, XMLPROJECTION = "NONE");
 
+Property DescriptionVector As %Vector(DATATYPE = "DOUBLE", LEN = 768);
+
 Index IndexIssueDate On IssueDate;
 
 Index IndexTitle On Title;
@@ -97,6 +99,8 @@ Index TitleIndex1 On (Title) As %iFind.Index.Basic(INDEXOPTION = 0, LANGUAGE = "
 Index DescriptionIndex1 On (Description) As %iFind.Index.Basic(INDEXOPTION = 0, LANGUAGE = "ja", LOWER = 1);
 
 Index CreatorIndex On Creator;
+
+Index HNSWDescriptionIndex On (DescriptionVector) As %SQL.Index.HNSW(Distance = "DotProduct");
 
 /// This callback method is invoked by the <METHOD>%Save</METHOD> method to 
 /// provide notification that the object is being saved. It is called before 
@@ -114,37 +118,83 @@ Method %OnBeforeSave(pInsert As %Boolean) As %Status [ Private, ServerOnly = 1 ]
 		}
 	}
 	
-	if $Get(%session)'=""{
-		if pInsert {
-			set ..Creator = $username
-			set ..IssueDate = +$h
-		}else {
-			if $Get(%session.Data("noAudit"))'=1{
-				set ..Updater = $username
-				set ..UpdateDate = +$h
-			}
-		}
+	if pInsert {
+	  set ..Creator = $username
+	  set ..IssueDate = +$h
+	} 
+	else {
+	  if $Get(%session.Data("noAudit"))'=1{
+	    set ..Updater = $username
+		set ..UpdateDate = +$h
+	  }
 	}
 	
+    // 	スペースを取り除く、存在しないトピック番号があれば取り除く
+	set ..RefTopic = ..RefListChk(..RefTopic)
 	// 参照トピックリスト内に自分自身が入っていたら取り除く
 	set ..RefTopic = ..RemoveRefNoForOwn(..RefTopic, ..%Id())
 	// 参照トピックリスト内の重複を取り除く
 	set ..RefTopic = ..RemoveDuplicatedRefNo(..RefTopic)
 	
-	//トピック内の参照イメージのurlを絶対パスから相対パスに変更する
-	//データ本番移行の際、namespaceの違いを考慮する必要をなくすため
+	// react経由の場合、イメージの記述形式がCSPとは異なるため、先頭のhttp://hostname:portを外して、相対パスに変更する
 	
+	set webserveraddress = ##class(KB.Config).getWebServerAddress()
+	set protocol = ##class(KB.Config).getWebServerProtocol()
+	set webserverport = ##class(KB.Config).getWebServerPort()
+	if $data(%request) {
+	  set webserver = %request.CgiEnvs("SERVER_NAME")
+      set webserverport = %request.CgiEnvs("SERVER_PORT")
+      if %request.CgiEnvs("SERVER_PORT_SECURE") {
+        set protocol = "https"
+      }
+      else {
+        set protocol = "http"
+      }
+	
+	}
+
 	set namespace = $ZCVT($namespace,"L")
 	set apath = "/csp/"_namespace_"/images"
 	set rpath = "./images"
+	set ourl = protocol_"://"_webserveraddress_":"_webserverport_apath
+	set rurl = "./images"
+    set ..Description = $replace(..Description,ourl,rurl)
+
+    //  for CSP/Zen版
+	//トピック内の参照イメージのurlを絶対パスから相対パスに変更する
+	//データ本番移行の際、namespaceの違いを考慮する必要をなくすため
+	
 	set ..Description = $replace(..Description,apath,rpath)
-    // Codesnippetの言語名を表示するための処理
+
+	// Codesnippetの言語名を表示するための処理
 	set crlf = $char(13,10)
-	//二重に<div>を付加するのを防ぐ　ckeditorが自動的に<div>の後ろにcrlfを付加することを想定
+	set lf = $char(10)
+	//二重に<div>を付加するのを防ぐ　ckeditorが自動的に<div>の後ろにcrlfまたはlfを付加することを想定
 	set ..Description = $replace(..Description,"<div class=""hljs-wrap"">"_crlf_"<pre>","<pre>")
 	set ..Description = $replace(..Description,"</pre>"_crlf_"</div>","</pre>")
+	set ..Description = $replace(..Description,"<div class=""hljs-wrap"">"_lf_"<pre>","<pre>")
+	set ..Description = $replace(..Description,"</pre>"_lf_"</div>","</pre>")
 	set ..Description = $replace(..Description,"<pre>","<div class=""hljs-wrap""><pre>")
 	set ..Description = $replace(..Description,"</pre>","</pre></div>")
+
+	set ..VersionRange = ##class(KB.Version).SetVersionRange(..StartVersion, ..EndVersion)
+
+    /*
+	// タイトルとトピック内容からベクトル変数を生成する
+	// ベクトル化にかなり処理時間がかかるため、インタラクティブな保存処理に組み込むかどうか検討要
+	set statement = ##class(%SQL.Statement).%New()
+	set sql = "select TO_VECTOR(?,DOUBLE,768) as embedding"
+	set status = statement.%Prepare(sql)
+	set description = ..RemoveHTMLTag(..Description)
+	set title = ..Title
+	set vector = $translate(..GetEmbedding(title_" "_description)," '[]")
+
+	set rs = statement.%Execute(vector)
+	while rs.%Next() {
+	  set embedding = rs.%Get("embedding")
+	  set ..DescriptionVector = embedding    	
+	}
+    */
 	
 	Quit $$$OK
 }
@@ -161,28 +211,26 @@ Method %OnAfterSave(pInsert As %Boolean) As %Status [ Private, ServerOnly = 1 ]
 	set tSC = $$$OK
 		
 	Try {
-	  if $Get(%session)'=""{
-		  if pInsert {
-    	      set message = "作成トピック "_..%Id()
-			  // tSC = 0 となることがあるが、エラーとしない
-        	  set tSC = $system.Security.Audit("FAQ","Create","Topic",message)
+	  if pInsert {
+        set message = "作成トピック "_..%Id()
+		// tSC = 0 となることがあるが、エラーとしない
+        set tSC = $system.Security.Audit("FAQ","Create","Topic",message)
 			
-			  //UsersVoiceの新規セット
-   			  set uv=##class(UsersVoice).%New()
-			  set ..UsersVoice=uv
-			  set uv.TopicId=..%Id()
-		  }
-		  else {
- 			  if %session.Data("noAudit")'=1 {
-				  set message = "修正トピック "_..%Id()
-				  // tSC = 0 となることがあるが、エラーとしない
-    	   		  set tSC = $system.Security.Audit("FAQ","Update","Topic",message)
- 			  }
-		  }		
+		//UsersVoiceの新規セット
+   		set uv=##class(UsersVoice).%New()
+		set ..UsersVoice=uv
+		set uv.TopicId=..%Id()
+	  }
+	  else {
+ 	    if %session.Get("noAudit")'=1 {
+		  set message = "修正トピック "_..%Id()
+		  // tSC = 0 となることがあるが、エラーとしない
+    	  set tSC = $system.Security.Audit("FAQ","Update","Topic",message)
+ 		}
 	  }
 	}
 	Catch  tE {
-		Set tSC = $$$OK
+		do tE.log()
 		Set tSC = tE.AsStatus()
 		set tSC2 = ##class(FAQ.Error).StoreErrorInformation(tE)
 	}
@@ -387,6 +435,35 @@ ClassMethod RemoveLink(pId As %Integer, pOldValue As %String, pNewValue As %Stri
 	Quit tSC
 }
 
+ClassMethod RefListChk(rlist As %String) As %String
+{
+
+  set rlist = $REPLACE(rlist," ","")
+  set rlist = $REPLACE(rlist,"　","")
+
+  set refchk=rlist
+  If refchk = "" Quit refchk
+  set rlen=$LENGTH(rlist,",")
+  if rlen=1 {
+	set reftopic=##class(KB.Topic).%OpenId(rlist)
+	if '$IsObject(reftopic) {
+	  set refchk=""
+	}
+  }
+  else {
+	for i=1:1:rlen {
+	  set refid=$PIECE(rlist,",",i)
+	  set reftopic=##class(KB.Topic).%OpenId(refid)
+	  if '$IsObject(reftopic) {
+	    set refchk=""
+	  }
+	}
+  }
+
+   //チェックNGの場合は""、チェックOKの場合は、スペースを抜いた文字列を返す
+  quit refchk
+}
+
 ClassMethod ChangeUrlPathForImages()
 {
    try {
@@ -474,6 +551,57 @@ ClassMethod CopyFromTopics(pTopicIdList As %List, Output pNewTopicIdList As %Lis
     }	
     
     quit status
+}
+
+ClassMethod GetEmbedding(sentences) As %String [ Language = python, SqlProc ]
+{
+   from sentence_transformers import SentenceTransformer as ST
+   # vector =  DOUBLE,768
+   model = ST('stsb-xlm-r-multilingual')
+   embeddings = model.encode(sentences,normalize_embeddings=True)
+   # convert the embeddings to a string
+   embeddings_list = [str(embedding.tolist()) for embedding in embeddings]
+   return str(embeddings_list).replace('\'','')
+}
+
+ClassMethod RemoveHTMLTag(text) As %String [ Language = python ]
+{
+  import re
+
+  clean = re.compile('<.*?>')
+  return re.sub(clean, '', text)
+}
+
+ClassMethod BuildVectorForDescriptions() As %Status
+{
+  //　全トピックのDescriptionに対してベクター（エンべディング）を生成し、最後にHNSWインデックスを付加する	
+  set status = $$$OK
+  try {
+	set statement = ##class(%SQL.Statement).%New()
+	set sql = "select ID,TITLE,DESCRIPTION from kb.topic"
+	set status = statement.%Prepare(sql)
+	$$$ThrowOnError(status)
+	set updatestatement = ##class(%SQL.Statement).%New()
+	set updatesql = "update kb.topic set descriptionvector = TO_VECTOR(?,DOUBLE,768) where id = ?"
+	$$$ThrowOnError(status)
+	set rs = statement.%Execute()
+	while rs.%Next() {
+	  set id = rs.%Get("ID")
+	  set description = ..RemoveHTMLTag(rs.%Get("DESCRIPTION"))
+	  set title = rs.%Get("TITLE")
+	  set vector = $translate(..GetEmbedding(title_" "_description)," '[]")
+	  set rs2 = updatestatement.%ExecDirect(,updatesql,vector,id)    	
+	}
+
+    set status =  ..%BuildIndices($listbuild("HNSWDescriptionIndex"))
+	$$$ThrowOnError(status)
+  }
+  Catch e {
+	do e.Log()
+	Set status = e.AsStatus()
+	set status2 = ##class(FAQ.Error).StoreErrorInformation(e)
+  }
+  quit status
 }
 
 Storage Default
@@ -607,6 +735,9 @@ Storage Default
 </Value>
 <Value name="43">
 <Value>DCURL</Value>
+</Value>
+<Value name="44">
+<Value>DescriptionVector</Value>
 </Value>
 </Data>
 <DataLocation>^KB.TopicD</DataLocation>

@@ -105,10 +105,12 @@ ClassMethod setConfigParams(envID As %Integer) As %Status
 		set ns = "FAQ"
 		set auth = "96"		
 		set separator = "/"
-		set cspdir = "/Applications/iris/csp/faq"
+		set installdir = $system.Util.InstallDirectory()
+		set cspdir = installdir_"csp/faq"
 		set cspurl = "/csp/faq"
-		set ftpdir = "/Applications/iris/csp/faq/downloads"
-		set setupdir = "/Users/hiroshisato/git/FAQDEMO"
+		set ftpdir = installdir_"csp/faq/downloads"
+		set homedir = $system.Util.GetEnviron("HOME")
+		set setupdir = homedir_"/git/faqdemo"
 		set classfiledir = ""
 		set globalfilename = "TopicD.xml"
 	}
@@ -128,6 +130,8 @@ ClassMethod setConfigParams(envID As %Integer) As %Status
 	do ##class(KB.Config).setClassFileDir(classfiledir)
 	do ##class(KB.Config).setGlobalFileName(globalfilename)
 	do ##class(KB.Config).setWebServer()
+	//ベクトル検索を行うためには、以下を1に変更
+	do ##class(KB.Config).setVectorSearch(0)
 
 
 	quit $$$OK
@@ -214,7 +218,43 @@ ClassMethod copyCSSs(pCSPFileDir As %String) As %Status
 	set to = CSPDir_dirSep  
 	set status = ##class(%File).CopyFile(from,to)
 
-    quit $$$OK
+	set from = pCSPFileDir_dirSep_"intersystems.css"
+	set to = CSPDir_dirSep  
+	set status = ##class(%File).CopyFile(from,to)
+
+        quit $$$OK
+}
+
+ClassMethod copyFlask(pSetupDir As %String) As %Status
+{
+	//Flask関連ファイルをflaskディレクトリーにコピーする
+	//flaskディレクトリは、csp/faqと同レベルのcsp/faqflask
+	set dirSep = ##class(KB.Config).getDirectorySeparator()
+	//ディレクトリがなければコピーしない
+	if '##class(%File).Exists(pSetupDir) quit $$$OK
+	  
+	set sourcedir = pSetupDir
+	set dest = $piece(##class(KB.Config).getCSPDirectory(),dirSep,1,*-1)_dirSep_"faqflask"
+	set overlay = 1
+	set boolean = ##class(%File).CopyDir(sourcedir,dest,overlay)  
+	
+	quit $$$OK
+}
+
+ClassMethod copyReact(pSetupDir As %String, pAppName As %String) As %Status
+{
+	//React関連ファイルをflaskディレクトリーにコピーする
+	//reactディレクトリは、csp/faqと同レベルのcsp/faq/{pAppName}
+	set dirSep = ##class(KB.Config).getDirectorySeparator()
+	//ディレクトリがなければコピーしない
+	if '##class(%File).Exists(pSetupDir_dirSep_pAppName) quit $$$OK
+	  
+	set sourcedir = pSetupDir_dirSep_pAppName
+	set dest = ##class(KB.Config).getCSPDirectory()_dirSep_pAppName
+	set overlay = 1
+	set boolean = ##class(%File).CopyDir(sourcedir,dest,overlay)  
+	
+	quit $$$OK
 }
 
 ClassMethod SetupLocal(pDir As %String) As %Status
@@ -223,8 +263,15 @@ ClassMethod SetupLocal(pDir As %String) As %Status
   // FAQ.Installer.runInstallerでenvID=5に設定(Windows)
   // FAQ.Installer.runInstallerでenvID=6に設定(MacOS)
   // Windowsの場合, c:\git\FAQDEMO
-  // MacOSの場合, /Users/hiroshisato/git/FAQDEMO
+  // MacOSの場合, /Users/<User Name>/git/FAQDEMO
   // setupディレクトリ等を変更したい場合は、setConfigParamsの処理を書き換える
+
+  if ($system.Version.GetOS() = "UNIX") {
+    set sep = "/"
+  }
+  else {
+    set sep = "¥"
+  }
 
   set namespace = $namespace
   set $namespace = "%SYS"
@@ -234,18 +281,32 @@ ClassMethod SetupLocal(pDir As %String) As %Status
   set sec.DispatchClass ="FAQ.RestAPI"
   set sec.AutheEnabled = 96
   set status = sec.%Save()
+
+  set sec = ##class("Security.Applications").%New()
+  set sec.Name = "/csp/faqflask"
+  set sec.NameSpace = namespace
+  set sec.DispatchClass ="%SYS.Python.WSGI"
+  set sec.AutheEnabled = 96
+  set installdir = $system.Util.InstallDirectory()
+  set sec.WSGIAppLocation = installdir_"csp"_sep_"faqflask"_sep
+  set sec.WSGIAppName = "topicbyid"
+  set sec.WSGICallable = "app"
+  set sec.WSGIDebug = 1
+  set sec.WSGIType = 1
+  do sec.MatchRoles.Insert(":%All")
+  set status = sec.%Save()
   set $namespace = namespace
   
   if ($system.Version.GetOS() = "UNIX") {
-    Do $system.OBJ.Load(pDir_"/FAQ/Installer.cls","ck")
-    Do $system.OBJ.Load(pDir_"/KB/Config.cls","ck")
-    Do $system.OBJ.Load(pDir_"/KB/Utility.cls","ck")
+    Do $system.OBJ.Import(pDir_"/FAQ/Installer.cls","ck")
+    Do $system.OBJ.Import(pDir_"/KB/Config.cls","ck")
+    Do $system.OBJ.Import(pDir_"/KB/Utility.cls","ck")
     do ##class(FAQ.Installer).runInstaller("FAQ",6)
   }
   else {
-    Do $system.OBJ.Load(pDir_"\FAQ\Installer.cls","ck")
-    Do $system.OBJ.Load(pDir_"\KB\Config.cls","ck")
-    Do $system.OBJ.Load(pDir_"\KB\Utility.cls","ck")
+    Do $system.OBJ.Import(pDir_"\FAQ\Installer.cls","ck")
+    Do $system.OBJ.Import(pDir_"\KB\Config.cls","ck")
+    Do $system.OBJ.Import(pDir_"\KB\Utility.cls","ck")
     do ##class(FAQ.Installer).runInstaller("FAQ",5)
   }
 
