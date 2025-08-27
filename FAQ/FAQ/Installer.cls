@@ -57,17 +57,6 @@ XData FAQManifest [ XMLNamespace = INSTALLER ]
 <Invoke Class="KB.Setup" Method="copyCSSs" CheckStatus="0" Return="RetVal"> 
     <Arg Value="${CSPFileDir}"/>
 </Invoke>
-<Invoke Class="KB.Setup" Method="copyFlask" CheckStatus="0" Return="RetVal"> 
-    <Arg Value="${FlaskFileDir}"/>
-</Invoke>
-<Invoke Class="KB.Setup" Method="copyReact" CheckStatus="0" Return="RetVal"> 
-    <Arg Value="${ReactFileDir}"/>
-    <Arg Value="${ReactAppName}"/>
-</Invoke>
-<If Condition='${VectorSearch}'>
-<Invoke Class="FAQ.Installer" Method="BuildVectorForDescriptions" CheckStatus="0" Return="RetVal">
-</Invoke>
-</If>
 </If>
 </Namespace>
 </Manifest>
@@ -115,17 +104,6 @@ ClassMethod runInstaller(datestr As %String, envID As %Integer = 4) As %Status
     set vars("CSPFileDir") = vars("CSPFileDir")_##class(KB.Config).getDirectorySeparator()_"isj"
 
     set vars("CSPFileDir") = $replace(vars("CSPFileDir"),sep_sep,sep)
-
-    set vars("FlaskFileDir") = setupdir_##class(KB.Config).getClassFileDir()
-    set vars("FlaskFileDir") = vars("FlaskFileDir")_##class(KB.Config).getDirectorySeparator()_"flask"
-
-    set vars("FlaskFileDir") = $replace(vars("FlaskFileDir"),sep_sep,sep)
-    
-    set vars("ReactFileDir") = setupdir_##class(KB.Config).getClassFileDir()
-
-    set vars("ReactAppName") = "faqedit"
-
-    set vars("VectorSearch") = ##class(KB.Config).getVectorSearch()
 
     do ..setup(.vars,3)
 }
