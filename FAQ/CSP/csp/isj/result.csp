@@ -33,16 +33,23 @@
 
 .hljs-wrap code[data-language]::before {
   content: attr(data-language);
-  position:absolute;
+  position: absolute;
   top: 1;
-  right: 5;
+  right: 10px;
   color: #808080;
-  display: inline-block;
+  display: none;
   padding: 0.5rem;
+  opacity: 0;
 }
 
 .hljs-wrap code[data-language] {
-  padding-top: 2rem;
+  padding-top: 0rem;
+}
+
+.hljs-wrap pre code[data-language]:hover:before {
+  opacity: 1;
+  visibility: visible;
+  display: inline-block;
 }
 </style>
 <title>InterSystems FAQ Database Seach Result Detail</title>
