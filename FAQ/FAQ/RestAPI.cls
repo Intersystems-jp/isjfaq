@@ -23,7 +23,6 @@ XData UrlMap
   <Route Url="/Login/:username/:password" Method="GET" Call="FAQ.RestAPI:SLogin"/>
   <Route Url="/AttachedUpload/:id" Method="POST" Call="FAQ.RestAPI:AttachedUpload"/>
   <Route Url="/DeleteAttached/:id" Method="GET" Call="FAQ.RestAPI:DeleteAttached"/>
-  <Route Url="/TopicVectorSearch" Method="POST" Call="FAQ.RestAPI:TopicVectorSearch"/>
 </Routes>
 }
 
@@ -805,73 +804,6 @@ ClassMethod DeleteAttached(pId As %Integer) As %Status
       do ##class(FAQ.Error).StoreErrorInformation(ex)
     }
     quit sts
-}
-
-ClassMethod TopicVectorSearch(pQueryText As %String) As %Status
-{
-  set status = $$$OK
-
-  if ($roles [ "FAQAdministrator") || ($roles [ "FAQEditor") {
-    set editor = 1
-  } 
-  else {
-    set editor = 0
-  }
-  
-  try  {
-	
-    if $data(%request) {
-      set %response.ContentType="application/json"
-      set %response.CharSet = "utf-8"
-    }
-
-    set len = 1000000
-		set jsontext = %request.Content.Read(.len,.status)
-		set json = {}.%FromJSON(jsontext)
-    
-    set queryText = json.queryText
-
-    // 検索キーワードが未入力の場合、null,undefinedという文字列で渡ってくる
-    if queryText = "null" set queryText = ""
-    if queryText = "undefined" set queryText = ""
- 
-    set return = []
-
-    if queryText = "" {
-      write return.%ToJSON()
-    }
-    else {
-      set QueryEmbedding =$tr(##class(KB.Topic).GetEmbeddingFlask(queryText)," '[]")
-
-      if editor {
-        set sql = "SELECT top 10 id,title from kb.topic order by vector_dot_product(DescriptionVector, TO_VECTOR(?, DOUBLE, 768)) desc"
-      }
-      else {
-        set sql = "SELECT top 10 id,title from kb.topic where (Completed=1 and Visible=1 and DeleteFlg!=1) order by vector_dot_product(DescriptionVector, TO_VECTOR(?, DOUBLE, 768)) desc"
-      }
-    
-      set statemt=##class(%SQL.Statement).%New()
-      set status=statemt.%Prepare(sql)
-      set rset=statemt.%Execute(QueryEmbedding)
-
-      while rset.%Next()  {
-        set robj = {}
-        set robj.id = rset.%Get("Id")
-        set robj.title = rset.%Get("title")
-        do return.%Push(robj)
-		    
-      }
-	   
-      write return.%ToJSON()
-    }  	  
-  }
-  catch e {
-		
-    set status = e.AsStatus()
-		
-  }
-  
-  quit status
 }
 
 Parameter HandleCorsRequest = 1;
