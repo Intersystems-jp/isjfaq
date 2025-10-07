@@ -77,10 +77,10 @@ ClassMethod TopicSearchByKeyword(pKeyword As %String) As %Status
 
   if pKeyword = "" {
     if editor {
-      set sql = "SELECT id,title from kb.topic order by id"  
+      set sql = "SELECT top 100 id,title from kb.topic order by id desc"  
     }	
     else {
-      set sql = "SELECT id,title from kb.topic where Completed=1 and Visible=1 and DeleteFlg!=1 order by id"
+      set sql = "SELECT top 100 id,title from kb.topic where Completed=1 and Visible=1 and DeleteFlg!=1 order by id desc"
     }  
   }
   else {
@@ -341,6 +341,12 @@ ClassMethod TopicSave() As %Status
     if (+json.ProductId > 0) {
       set product = ##class(KB.Product).%OpenId(json.ProductId)
       set topic.Product = product
+    }
+    else {
+      // Productが選択されていない場合、全ての製品（16）とみなす
+      set product = ##class(KB.Product).%OpenId(16)
+      set topic.Product = product
+
     }
     if (+json.FacilityId > 0) {
       set facility = ##class(KB.Facility).%OpenId(json.FacilityId)
@@ -835,7 +841,7 @@ ClassMethod TopicVectorSearch(pQueryText As %String) As %Status
       write return.%ToJSON()
     }
     else {
-      set QueryEmbedding =$tr(##class(KB.Topic).GetEmbedding(queryText)," '[]")
+      set QueryEmbedding =$tr(##class(KB.Topic).GetEmbeddingFlask(queryText)," '[]")
 
       if editor {
         set sql = "SELECT top 10 id,title from kb.topic order by vector_dot_product(DescriptionVector, TO_VECTOR(?, DOUBLE, 768)) desc"
