@@ -6,8 +6,8 @@ XData FAQManifest [ XMLNamespace = INSTALLER ]
 {
 <Manifest>
 
-<Log Text="Setting up namespace ${Namespace}" Level="0"/>
-<Namespace Name="${Namespace}" Create="no"> 
+<Namespace Name="${NAMESPACE}" 
+           Create="no">
 <CSPApplication 
     Url="${CSPUrl}"
     Description=""
@@ -23,11 +23,7 @@ XData FAQManifest [ XMLNamespace = INSTALLER ]
 <Invoke Class="KB.Utility" Method="cspUtf8AddBOM" CheckStatus="0" Return="RetVal"> 
     <Arg Value="${CSPFileDir}"/>
 </Invoke>
-<Import File="${FAQClassFileDir}" Flags="ckr" Recurse="1" IgnoreErrors="1"> 
-</Import>
-<Import File="${KBClassFileDir}" Flags="ckr" Recurse="1" IgnoreErrors="1"> 
-</Import>
-<Import File="${CSPClassFileDir}" Flags="ckr" Recurse="1" IgnoreErrors="1"> 
+<Import File="${ClassFileDir}" Flags="ckr" Recurse="1" IgnoreErrors="1"> 
 </Import>
 <Invoke Class="%SYSTEM.OBJ" Method="Compile" CheckStatus="0" Return="RetVal"> 
     <Arg Value="KB.Topic"/>
@@ -75,42 +71,110 @@ ClassMethod setup(ByRef pVars, pLogLevel As %Integer = 3, pInstaller As %Install
 
 // datestr：セットアップキットのディレクトリ名に使った日付(YYYYMMDD)　※ディレクトリ名が今日の日付の場合は空でOK
 
-ClassMethod runInstaller(datestr As %String, envID As %Integer = 4) As %Status
+ClassMethod runInstaller(datestr As %String) As %Status
 {
-    set setuptype = 1
-    do ##class(KB.Setup).setConfigParams(envID)
-    set setupdir = ##class(KB.Config).getSetupDirectory()_##class(KB.Config).getDirectorySeparator()_datestr_##class(KB.Config).getDirectorySeparator()
-    set vars("setupdir") = setupdir
-    set vars("FTPDirectory") = ##class(KB.Config).getFTPDirectory()
-    set vars("ClassFileDir") = setupdir_##class(KB.Config).getClassFileDir()
-    set vars("FAQClassFileDir") = setupdir_##class(KB.Config).getClassFileDir()_##class(KB.Config).getDirectorySeparator()_"FAQ"
-    set vars("KBClassFileDir") = setupdir_##class(KB.Config).getClassFileDir()_##class(KB.Config).getDirectorySeparator()_"KB"
-    set vars("CSPClassFileDir") = setupdir_##class(KB.Config).getClassFileDir()_##class(KB.Config).getDirectorySeparator()_"CSP"
-    set vars("GlobalFileName") = setupdir_##class(KB.Config).getGlobalFileName()
+	write "★実行する対象のenvIDを入力してください。",!,"  [クラウド(本番)環境＝1、jpnfilesrv＝2、クラウド(テスト)環境＝3、その他＝4]：",!
+	read envID,!
+	
+	write "★setuptypeを入力してください。[setuptype：初期セットアップ＝1、データとソースの更新＝2、データのみ更新＝3、アプリケーションソースのみ更新＝4]：",!
+	read setuptype,!
+	
+	if envID=1 {
+		set envname="クラウド(本番)環境"
+	}elseif envID=2 {
+		set envname="jpnfilesrv"
+	}elseif envID=3 {
+		set envname="クラウド(テスト)環境"
+	}else {
+		set envname="その他環境"
+	}
+	
+	if setuptype=1 {
+		set setuptypename="初期セットアップ"
+	} elseif setuptype=2 {
+		set setuptypename="データとソースの更新"
+	} elseif setuptype=3 {
+		set setuptypename="データのみ更新"
+	} elseif setuptype=4 {
+		set setuptypename="アプリケーションソースのみ更新"
+	}
+	
+	write envname_" の "_setuptypename_" を実行します。よろしいですか？(Y/N)："
+	read answer,!
+	
+	if $zconvert(answer,"U") = "Y" {
+		
+		if setuptype=1 {
+			do ##class(KB.Setup).setConfigParams(envID)
+		}
+		
+		if $get(datestr)="" {
+			set datestr=$zdate($h,8)
+		}
+		
+		set dirSep = ##class(KB.Config).getDirectorySeparator()
+		set setupdir = ##class(KB.Config).getSetupDirectory()_dirSep_datestr
+        set vars("setupdir") = setupdir
+		set vars("FTPDirectory") = ##class(KB.Config).getFTPDirectory()
+		if setuptype=1 {
+			set vars("ClassFileDir") = setupdir_dirSep_##class(KB.Config).getClassFileDir()
+			set vars("GlobalFileName") = setupdir_dirSep_##class(KB.Config).getGlobalFileName()
+		}elseif setuptype=2 {
+			set vars("ClassFileDir") = setupdir_dirSep_##class(KB.Config).getClassFileDir()
+			set vars("GlobalFileName") = setupdir_dirSep_##class(KB.Config).getGlobalFileName()
+		}elseif setuptype=3 {
+			set vars("ClassFileDir") = ""
+			set vars("GlobalFileName") = setupdir_dirSep_##class(KB.Config).getGlobalFileName()
+		}elseif setuptype=4 {
+			set vars("ClassFileDir") = setupdir_dirSep_##class(KB.Config).getClassFileDir()
+			set vars("GlobalFileName") = ""
+		}			
 				
-    set vars("SetupType") = setuptype
-    set vars("Namespace") = ##class(KB.Config).getNamespace()
-    set vars("CSPUrl") = ##class(KB.Config).getCSPUrl() 
-    set vars("CSPDirectory") = ##class(KB.Config).getCSPDirectory() 
-    set vars("CustomErrorPage") = ##class(KB.Config).getErrorPage()
-    set vars("AuthenticationMethods") = ##class(KB.Config).getAuthenticationMethods()
-
-    set sep = ##class(KB.Config).getDirectorySeparator()
-    set vars("CSPFileDir") = setupdir_##class(KB.Config).getClassFileDir()
+		set vars("SetupType")			  = setuptype
+		set vars("NAMESPACE")			  = ##class(KB.Config).getNamespace()
+		set vars("CSPUrl")				  = ##class(KB.Config).getCSPUrl() 
+		set vars("CSPDirectory") 		  = ##class(KB.Config).getCSPDirectory() 
+		set vars("CustomErrorPage") 	  = ##class(KB.Config).getErrorPage()
+		set vars("AuthenticationMethods") = ##class(KB.Config).getAuthenticationMethods()
     
-    //以下のディレクトリ構造はGitHubリポジトリーに依存しているため固定
-    set vars("CSPFileDir") = vars("CSPFileDir")_##class(KB.Config).getDirectorySeparator()_"CSP"
-    set vars("CSPFileDir") = vars("CSPFileDir")_##class(KB.Config).getDirectorySeparator()_"csp"
-    set vars("CSPFileDir") = vars("CSPFileDir")_##class(KB.Config).getDirectorySeparator()_"isj"
+        if vars("ClassFileDir") = "" {
+           set vars("CSPFileDir") = ""
+        }
+        else {
+		  //以下のディレクトリ構造はGitHubリポジトリーに依存しているため固定
+		  set vars("CSPFileDir") = setupdir_dirSep_##class(KB.Config).getClassFileDir()
+		  set vars("CSPFileDir") = vars("CSPFileDir")_##class(KB.Config).getDirectorySeparator()_"CSP"
+		  set vars("CSPFileDir") = vars("CSPFileDir")_##class(KB.Config).getDirectorySeparator()_"csp"
+		  set vars("CSPFileDir") = vars("CSPFileDir")_##class(KB.Config).getDirectorySeparator()_"isj"
+        }
+        
+    	if (vars("ClassFileDir")'="") && (##class(%File).Exists(vars("ClassFileDir"))'=1) {
+	    	w vars("ClassFileDir"),"は存在しません。ファイルを確認してください。",!
+	    	quit 0
+    	}
+    	
+    	if (vars("CSPFileDir")'="") && (##class(%File).Exists(vars("CSPFileDir"))'=1) {
+	    	w vars("CSPFileDir"),"は存在しません。ファイルを確認してください。",!
+	    	quit 0
+    	}
 
-    set vars("CSPFileDir") = $replace(vars("CSPFileDir"),sep_sep,sep)
-
-    do ..setup(.vars,3)
+    	if (vars("GlobalFileName")'="") && (##class(%File).Exists(vars("GlobalFileName"))'= 1) {
+    		w vars("GlobalFileName"),"は存在しません。ファイルを確認してください。",!
+	    	quit 0
+    	}
+    
+		do ..setup(.vars,3)
+		
+	}else{
+		w !,"Installerの実行を中止しました"
+	}
+	
+	w "Installerの実行が完了しました",!
 }
 
 ClassMethod getVersion() As %String
 {
-	quit "1.0.027"
+	quit "1.0.102"
 }
 
 }
