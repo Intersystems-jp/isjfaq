@@ -23,6 +23,7 @@ XData UrlMap
   <Route Url="/Login/:username/:password" Method="GET" Call="FAQ.RestAPI:SLogin"/>
   <Route Url="/AttachedUpload/:id" Method="POST" Call="FAQ.RestAPI:AttachedUpload"/>
   <Route Url="/DeleteAttached/:id" Method="GET" Call="FAQ.RestAPI:DeleteAttached"/>
+  <Route Url="/TopicVectorSearch" Method="POST" Call="FAQ.RestAPI:TopicVectorSearch"/>
 </Routes>
 }
 
@@ -804,6 +805,79 @@ ClassMethod DeleteAttached(pId As %Integer) As %Status
       do ##class(FAQ.Error).StoreErrorInformation(ex)
     }
     quit sts
+}
+
+ClassMethod TopicVectorSearch() As %Status
+{
+  set status = $$$OK
+
+  if ($roles [ "FAQAdministrator") || ($roles [ "FAQEditor") {
+    set editor = 1
+  } 
+  else {
+    set editor = 0
+  }
+  
+  try  {
+	
+    if $data(%request) {
+      set %response.ContentType="application/json"
+      set %response.CharSet = "utf-8"
+    }
+
+    set len = 1000000
+		set jsontext = %request.Content.Read(.len,.status)
+		set json = {}.%FromJSON(jsontext)
+    
+    set queryText = json.queryText
+
+    // 検索キーワードが未入力の場合、null,undefinedという文字列で渡ってくる
+    if queryText = "null" set queryText = ""
+    if queryText = "undefined" set queryText = ""
+ 
+    set return = []
+
+    if queryText = "" {
+      write return.%ToJSON()
+    }
+    else {
+      set QueryEmbedding =$tr(##class(FAQ.TopicVector).GetEmbeddingFlask(queryText)," '[]")
+
+      if editor {
+        set sql = "SELECT top 50 tv.topicid as Id, t.title as title from faq.topicvector as tv inner join kb.topic as t on tv.topicid = t.id order by vector_dot_product(tv.DescriptionVector, TO_VECTOR(?, DOUBLE, 768)) desc"
+      }
+      else {
+        set sql = "SELECT top 50 tv.topicid as Id, t.title as title from faq.topicvector as tv inner join kb.topic as t on tv.topicid = t.id where (t.Completed=1 and t.Visible=1 and t.DeleteFlg!=1) order by vector_dot_product(tv.DescriptionVector, TO_VECTOR(?, DOUBLE, 768)) desc"
+      }
+    
+      set statemt=##class(%SQL.Statement).%New()
+      set status=statemt.%Prepare(sql)
+      set rset=statemt.%Execute(QueryEmbedding)
+
+      kill ^idlist
+      set listcount = 0
+      while rset.%Next()  {
+        set robj = {}
+        set id = rset.%Get("Id")
+        if $data(^idlist(id)) continue
+        set ^idlist(id) = ""
+        set listcount = listcount + 1
+        set robj.id = id
+        set robj.title = rset.%Get("title")
+        do return.%Push(robj)
+        if listcount = 10 quit		    
+      }
+	   
+      write return.%ToJSON()
+    }  	  
+  }
+  catch e {
+		
+    set status = e.AsStatus()
+		
+  }
+  
+  quit status
 }
 
 Parameter HandleCorsRequest = 1;
