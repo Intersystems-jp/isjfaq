@@ -170,6 +170,7 @@ Method %OnBeforeSave(pInsert As %Boolean) As %Status [ Private, ServerOnly = 1 ]
 	set ..Description = $replace(..Description,"</pre>"_crlf_"</div>","</pre>")
 	set ..Description = $replace(..Description,"<div class=""hljs-wrap"">"_lf_"<pre>","<pre>")
 	set ..Description = $replace(..Description,"</pre>"_lf_"</div>","</pre>")
+    // 初めてコードスニペットのコードが挿入された場合、カラー表示されるようにスタイルシート用タグを追加する
 	set ..Description = $replace(..Description,"<pre>","<div class=""hljs-wrap""><pre>")
 	set ..Description = $replace(..Description,"</pre>","</pre></div>")
 
