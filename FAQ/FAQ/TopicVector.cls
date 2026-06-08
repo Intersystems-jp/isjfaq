@@ -11,6 +11,8 @@ Index TopicIdIndex On TopicId;
 
 Index HNSWDescriptionIndex On (DescriptionVector) As %SQL.Index.HNSW(Distance = "DotProduct");
 
+/*
+
 ClassMethod GetEmbeddingFlask(sentences) As %String [ Language = python, SqlProc ]
 {
     import requests
@@ -119,6 +121,8 @@ ClassMethod BuildVectorForDescriptions() As %Status
   }
   quit status
 }
+
+*/
 
 Storage Default
 {
