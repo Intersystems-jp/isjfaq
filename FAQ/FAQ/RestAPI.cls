@@ -1,7 +1,7 @@
 Class FAQ.RestAPI Extends %CSP.REST
 {
 
-// POSTデータに日本語(UTF8)が含まれるためこのパラネータ設定が必要
+// POSTデータに日本語(UTF8)が含まれるためこのパラメータ設定が必要
 
 Parameter CONVERTINPUTSTREAM = 1;
 
@@ -23,7 +23,6 @@ XData UrlMap
   <Route Url="/Login/:username/:password" Method="GET" Call="FAQ.RestAPI:SLogin"/>
   <Route Url="/AttachedUpload/:id" Method="POST" Call="FAQ.RestAPI:AttachedUpload"/>
   <Route Url="/DeleteAttached/:id" Method="GET" Call="FAQ.RestAPI:DeleteAttached"/>
-  <Route Url="/TopicVectorSearch" Method="POST" Call="FAQ.RestAPI:TopicVectorSearch"/>
 </Routes>
 }
 
@@ -807,6 +806,8 @@ ClassMethod DeleteAttached(pId As %Integer) As %Status
     quit sts
 }
 
+/*
+
 ClassMethod TopicVectorSearch() As %Status
 {
   set status = $$$OK
@@ -879,6 +880,8 @@ ClassMethod TopicVectorSearch() As %Status
   
   quit status
 }
+
+*/
 
 Parameter HandleCorsRequest = 1;
 
