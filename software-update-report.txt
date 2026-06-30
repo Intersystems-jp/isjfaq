@@ -2391,3 +2391,18 @@ KB.Utility.cls
 KB.Version.cls
 KB.Utility.cls
 
+------------------------------------------------------------------------------------
+
+修正ID		HS137
+
+日付			2026/06/30
+
+内容
+
+Facility項目追加＆内容変更
+
+修正モジュール
+
+KB.Facility.cls
+KB.Utility.cls
+
