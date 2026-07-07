@@ -1,7 +1,7 @@
 Class FAQ.RestAPI Extends %CSP.REST
 {
 
-// POSTデータに日本語(UTF8)が含まれるためこのパラメータ設定が必要
+// POSTデータに日本語(UTF8)が含まれるためこのパラネータ設定が必要
 
 Parameter CONVERTINPUTSTREAM = 1;
 
@@ -23,6 +23,7 @@ XData UrlMap
   <Route Url="/Login/:username/:password" Method="GET" Call="FAQ.RestAPI:SLogin"/>
   <Route Url="/AttachedUpload/:id" Method="POST" Call="FAQ.RestAPI:AttachedUpload"/>
   <Route Url="/DeleteAttached/:id" Method="GET" Call="FAQ.RestAPI:DeleteAttached"/>
+  <Route Url="/TopicVectorSearch" Method="POST" Call="FAQ.RestAPI:TopicVectorSearch"/>
 </Routes>
 }
 
@@ -76,18 +77,18 @@ ClassMethod TopicSearchByKeyword(pKeyword As %String) As %Status
 
   if pKeyword = "" {
     if editor {
-      set sql = "SELECT top 100 id,title from kb.topic order by id desc"  
+      set sql = "SELECT top 100 id,title,DeleteFlg from kb.topic order by id desc"  
     }	
     else {
-      set sql = "SELECT top 100 id,title from kb.topic where Completed=1 and Visible=1 and DeleteFlg!=1 order by id desc"
+      set sql = "SELECT top 100 id,title,DeleteFlg from kb.topic where Completed=1 and Visible=1 and DeleteFlg!=1 order by id desc"
     }  
   }
   else {
     if editor {
-      set sql = "SELECT id,title from kb.topic where (%ID %FIND Search_Index(DescriptionIndex1,(?)) or %ID %FIND Search_Index(TitleIndex1,(?))) order by id"
+      set sql = "SELECT id,title,DeleteFlg from kb.topic where (%ID %FIND Search_Index(DescriptionIndex1,(?)) or %ID %FIND Search_Index(TitleIndex1,(?))) order by id"
     }
     else {
-      set sql = "SELECT id,title from kb.topic where (%ID %FIND Search_Index(DescriptionIndex1,(?)) or %ID %FIND Search_Index(TitleIndex1,(?))) and Completed=1 and Visible=1 and DeleteFlg!=1 order by id"
+      set sql = "SELECT id,title,DeleteFlg from kb.topic where (%ID %FIND Search_Index(DescriptionIndex1,(?)) or %ID %FIND Search_Index(TitleIndex1,(?))) and Completed=1 and Visible=1 and DeleteFlg!=1 order by id"
     }
     
   }
@@ -105,6 +106,7 @@ ClassMethod TopicSearchByKeyword(pKeyword As %String) As %Status
     set robj = {}
     set robj.id = rset.%Get("Id")
     set robj.title = rset.%Get("title")
+    set robj.DeleteFlg = rset.%Get("DeleteFlg")
     do return.%Push(robj)
 		    
   }
@@ -806,8 +808,6 @@ ClassMethod DeleteAttached(pId As %Integer) As %Status
     quit sts
 }
 
-/*
-
 ClassMethod TopicVectorSearch() As %Status
 {
   set status = $$$OK
@@ -835,7 +835,22 @@ ClassMethod TopicVectorSearch() As %Status
     // 検索キーワードが未入力の場合、null,undefinedという文字列で渡ってくる
     if queryText = "null" set queryText = ""
     if queryText = "undefined" set queryText = ""
- 
+
+    // facilitiesリストからIN句を構築
+    set facilitiesArray = json.facilities
+    set facilityFilter = ""
+    set facilityJoin = "left join kb.facility as f on t.Facility = f.ID"
+    if $isobject(facilitiesArray) && (facilitiesArray.%Size() > 0) {
+      set inClause = ""
+      set iter = facilitiesArray.%GetIterator()
+      while iter.%GetNext(.key, .val) {
+        if inClause '= "" set inClause = inClause_","
+        set inClause = inClause_"'"_$replace(val,"'","''")_"'"
+      }
+      set facilityFilter = " AND f.Description IN ("_inClause_")"
+      set facilityJoin = "inner join kb.facility as f on t.Facility = f.ID"
+    }
+
     set return = []
 
     if queryText = "" {
@@ -845,28 +860,29 @@ ClassMethod TopicVectorSearch() As %Status
       set QueryEmbedding =$tr(##class(FAQ.TopicVector).GetEmbeddingFlask(queryText)," '[]")
 
       if editor {
-        set sql = "SELECT top 50 tv.topicid as Id, t.title as title from faq.topicvector as tv inner join kb.topic as t on tv.topicid = t.id order by vector_dot_product(tv.DescriptionVector, TO_VECTOR(?, DOUBLE, 768)) desc"
+        set sql = "SELECT top 100 tv.topicid as Id, t.title as title, tv.splitteddescription as sdescription from faq.topicvector as tv inner join kb.topic as t on tv.topicid = t.id "_facilityJoin_" where 1=1"_facilityFilter_" order by vector_dot_product(tv.DescriptionVector, TO_VECTOR(?, DOUBLE, 768)) desc"
       }
       else {
-        set sql = "SELECT top 50 tv.topicid as Id, t.title as title from faq.topicvector as tv inner join kb.topic as t on tv.topicid = t.id where (t.Completed=1 and t.Visible=1 and t.DeleteFlg!=1) order by vector_dot_product(tv.DescriptionVector, TO_VECTOR(?, DOUBLE, 768)) desc"
+        set sql = "SELECT top 100 tv.topicid as Id, t.title as title, tv.splitteddescription as sdescription from faq.topicvector as tv inner join kb.topic as t on tv.topicid = t.id "_facilityJoin_" where (t.Completed=1 and t.Visible=1 and t.DeleteFlg!=1)"_facilityFilter_" order by vector_dot_product(tv.DescriptionVector, TO_VECTOR(?, DOUBLE, 768)) desc"
       }
-    
+
       set statemt=##class(%SQL.Statement).%New()
       set status=statemt.%Prepare(sql)
       set rset=statemt.%Execute(QueryEmbedding)
 
-      kill ^idlist
       set listcount = 0
+      set count = 0
       while rset.%Next()  {
+        set count = count + 1
         set robj = {}
         set id = rset.%Get("Id")
-        if $data(^idlist(id)) continue
-        set ^idlist(id) = ""
+        if $data(idlist(id)) continue
+        set idlist(id) = ""
         set listcount = listcount + 1
         set robj.id = id
         set robj.title = rset.%Get("title")
         do return.%Push(robj)
-        if listcount = 10 quit		    
+        if listcount = 100 quit		    
       }
 	   
       write return.%ToJSON()
@@ -880,8 +896,6 @@ ClassMethod TopicVectorSearch() As %Status
   
   quit status
 }
-
-*/
 
 Parameter HandleCorsRequest = 1;
 
