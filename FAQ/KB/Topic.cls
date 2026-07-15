@@ -82,6 +82,8 @@ Relationship UpdateDetail As KB.UpdateHistory [ Cardinality = children, Inverse 
 /// 同じ内容のDC(Developer Community)記事URL
 Property DCURL As %String(MAXLEN = 100, XMLPROJECTION = "NONE");
 
+Property DescriptionVector As %Vector(DATATYPE = "DOUBLE", LEN = 768);
+
 Index IndexIssueDate On IssueDate;
 
 Index IndexTitle On Title;
@@ -119,9 +121,11 @@ Method %OnBeforeSave(pInsert As %Boolean) As %Status [ Private, ServerOnly = 1 ]
 	  set ..IssueDate = +$h
 	} 
 	else {
-	  if $Get(%session.Data("noAudit"))'=1{
-	    set ..Updater = $username
-		set ..UpdateDate = +$h
+	  if $isobject($get(%session)) {
+	    if $Get(%session.Data("noAudit"))'=1{
+	      set ..Updater = $username
+		  set ..UpdateDate = +$h
+	    }
 	  }
 	}
 	
@@ -170,7 +174,6 @@ Method %OnBeforeSave(pInsert As %Boolean) As %Status [ Private, ServerOnly = 1 ]
 	set ..Description = $replace(..Description,"</pre>"_crlf_"</div>","</pre>")
 	set ..Description = $replace(..Description,"<div class=""hljs-wrap"">"_lf_"<pre>","<pre>")
 	set ..Description = $replace(..Description,"</pre>"_lf_"</div>","</pre>")
-    // 初めてコードスニペットのコードが挿入された場合、カラー表示されるようにスタイルシート用タグを追加する
 	set ..Description = $replace(..Description,"<pre>","<div class=""hljs-wrap""><pre>")
 	set ..Description = $replace(..Description,"</pre>","</pre></div>")
 
@@ -202,11 +205,13 @@ Method %OnAfterSave(pInsert As %Boolean) As %Status [ Private, ServerOnly = 1 ]
 		set uv.TopicId=..%Id()
 	  }
 	  else {
- 	    if %session.Get("noAudit")'=1 {
-		  set message = "修正トピック "_..%Id()
-		  // tSC = 0 となることがあるが、エラーとしない
-    	  set tSC = $system.Security.Audit("FAQ","Update","Topic",message)
- 		}
+	    if $isobject($get(%session)) {
+ 	      if %session.Get("noAudit")'=1 {
+		    set message = "修正トピック "_..%Id()
+		    // tSC = 0 となることがあるが、エラーとしない
+    	    set tSC = $system.Security.Audit("FAQ","Update","Topic",message)
+ 		  }
+	    }
 	  }
 	}
 	Catch  tE {
