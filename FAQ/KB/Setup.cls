@@ -243,8 +243,8 @@ ClassMethod copyFlask(pSetupDir As %String) As %Status
 
 ClassMethod copyReact(pSetupDir As %String, pAppName As %String) As %Status
 {
-	//React関連ファイルをflaskディレクトリーにコピーする
-	//reactディレクトリは、csp/faqと同レベルのcsp/faq/{pAppName}
+	//React関連ファイルをReactディレクトリーにコピーする
+	// 組み込みのWeb Serverの利用をやめ、Webgatewayを別に用意したため、この処理は必要なくなった
 	set dirSep = ##class(KB.Config).getDirectorySeparator()
 	//ディレクトリがなければコピーしない
 	if '##class(%File).Exists(pSetupDir_dirSep_pAppName) quit $$$OK
