@@ -10,7 +10,7 @@ Index ProductNameIndex On ProductName;
 
 Query QueryAll() As %SQLQuery(CONTAINID = 1)
 {
-SELECT %ID FROM Category
+SELECT %ID FROM Product
  ORDER BY %ID
 }
 
@@ -21,23 +21,25 @@ SELECT %ID,ProductName FROM Product
 
 ClassMethod Init()
 {
-	Do ##class(KB.Product).%KillExtent()
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('一般',1024))
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('Caché',1))
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('Ensemble',2))
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('旧HealthShare',4))
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('IRIS',8))
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('IRIS4H',16))
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('Caché & Ensemble',3))
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('Ensemble & 旧HealthShare',6))
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('Caché & Ensemble & 旧HealthShare',7))
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('Ensemble & IRIS',10))
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('Ensemble + 旧HealthShare + IRIS',14))  
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('Caché & Ensemble & 旧HealthShare & IRIS',15))  
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('Ensemble & 旧HealthShare & IRIS4H',22)) 
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('IRIS & IRIS for Health',24)) 
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('Ensemble & IRIS & 旧HealthShare & IRIS4H',30))  
-	&SQL(insert into KB.Product (ProductName,ProductId) values ('Caché & Ensemble & 旧HealthShare & IRIS4H',31))
+  Do ##class(KB.Product).%KillExtent()
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('一般',1024))
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('Caché',1))
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('Ensemble',2))
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('旧HealthShare',4))
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('IRIS Data Platform',8))
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('IRIS for Health',16))
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('Caché & Ensemble',3))
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('Ensemble & 旧HealthShare',6))
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('Caché & Ensemble & 旧HealthShare',7))
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('Ensemble & IRIS Data Platform',10))
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('Ensemble & 旧HealthShare & IRIS Data Platform',14))  
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('Caché & Ensemble & 旧HealthShare & IRIS Data Platform',15))  
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('Ensemble & 旧HealthShare & IRIS for Health',22)) 
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('IRIS Data Platform & IRIS for Health',24)) 
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('Ensemble & IRIS Data Platform & 旧HealthShare & IRIS for Health',30))  
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('Caché & Ensemble & 旧HealthShare & IRIS Data Platform & IRIS for Health',31))
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('Health Connect',32))
+  &SQL(insert into KB.Product (ProductName,ProductId) values ('Ensemble & 旧HealthShare & IRIS for Health & Health Connect',62))
 }
 
 Storage Default
