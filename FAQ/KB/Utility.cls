@@ -5,7 +5,7 @@ Class KB.Utility
 
 ClassMethod ShowVersion() As %String
 {
-	quit "1.2.140"
+	quit "1.2.141"
 }
 
 /*
@@ -310,7 +310,6 @@ ClassMethod ModFilename(startID As %String, endID As %String)
 	}
 }
 */
-
 ClassMethod SetFileFlg(startID, endID)
 {
 	for i=startID:1:endID {
@@ -388,6 +387,7 @@ ClassMethod CopyFilename(startID, endID)
 	}
 }
 
+
 // 旧コード→新コードへ
 
 ClassMethod ChangeFacility() As %Status
@@ -411,7 +411,6 @@ ClassMethod ChangeFacility() As %Status
 		}
 	}
 }
-*/
 
 // Version設定方法を変更したため、既存データを加工
 
@@ -465,7 +464,7 @@ ClassMethod RenameFiles(dir, wildcard) As %Status
 	
 	quit sc
 }
-
+*/
 ClassMethod SetVersionRange(tid) As %Status
 {
 	w tid,":"
@@ -529,7 +528,7 @@ ClassMethod CreateUsersVoice() As %Status
 	set tSC = $$$OK
 	for i=^KB.UsersVoiceD+1:1:^KB.TopicD {
 		w "check:",i,"-"
-		set uv=##class(UsersVoice).%New()
+		set uv=##class(KB.UsersVoice).%New()
 		set tp=##class(KB.Topic).%OpenId(i)
 		if tp {
 			//トピックにUsersVoiceオブジェクトが設定されていない場合＝新規トピックの場合は、
