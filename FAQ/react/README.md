@@ -6,8 +6,6 @@
 set app("NameSpace") = "FAQ"
 set app("DispatchClass") = "FAQ.RestAPI"
 set app("AutheEnabled") = 64 + 32
-set app("CorsAllowlist") = "http://localhost:8885"
-set app("CorsCredentialsAllowed") = 1
 set status = ##class(Security.Applications).Create("/api/faq",.app)  
 ```
 
