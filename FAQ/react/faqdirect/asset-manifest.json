@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/faqdirect/static/css/main.41c84da4.css",
+    "main.js": "/faqdirect/static/js/main.b5733af1.js",
+    "index.html": "/faqdirect/index.html",
+    "main.41c84da4.css.map": "/faqdirect/static/css/main.41c84da4.css.map",
+    "main.b5733af1.js.map": "/faqdirect/static/js/main.b5733af1.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.41c84da4.css",
+    "static/js/main.b5733af1.js"
+  ]
+}
