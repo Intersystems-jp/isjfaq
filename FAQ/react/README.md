@@ -12,9 +12,9 @@ faqsearch
 
 /var/www/html
 
-## csp.confの変更
+## CSP.confの変更
 
-webgatewayコンテナのcsp.confに以下の行を追加
+webgatewayコンテナのCSP.confに以下の行を追加
 
 ### dir_moduleのロード
 
