@@ -2,7 +2,7 @@
 
 ## webgatewayのドキュメントルートにbuildデータをコピー
 
-faqreaact.zipファイルを解凍すると、以下のディレクトリ一式をwebgatewayのドキュメントルートにコピー
+この場所の以下ディレクトリ一式をwebgatewayのドキュメントルートにコピー
 
 faqdirect
 faqmobile
