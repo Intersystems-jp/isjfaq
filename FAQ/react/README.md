@@ -1,5 +1,16 @@
 # React版FAQクライアントを本番環境にセットアップする手順
 
+## api設定
+
+```
+set app("NameSpace") = "FAQ"
+set app("DispatchClass") = "FAQ.RestAPI"
+set app("AutheEnabled") = 64 + 32
+set app("CorsAllowlist") = "http://localhost:8885"
+set app("CorsCredentialsAllowed") = 1
+set status = ##class(Security.Applications).Create("/api/faq",.app)  
+```
+
 ## webgatewayのドキュメントルートにbuildデータをコピー
 
 この場所の以下ディレクトリ一式をwebgatewayのドキュメントルートにコピー
