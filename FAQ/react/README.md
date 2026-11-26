@@ -1,6 +1,6 @@
 # React版FAQクライアントを本番環境にセットアップする手順
 
-## api設定
+## api設定(%SYSネームスペース）
 
 ```
 set app("NameSpace") = "FAQ"
@@ -13,9 +13,9 @@ set status = ##class(Security.Applications).Create("/api/faq",.app)
 
 この場所の以下ディレクトリ一式をwebgatewayのドキュメントルートにコピー
 
-faqdirect
-faqmobile
-faqsearch
+- faqdirect
+- faqmobile
+- faqsearch
 
 ドキュメントルートは設定次第でカスタマイズ可能だが、デフォルトは以下の通り
 
